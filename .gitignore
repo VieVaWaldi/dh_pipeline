@@ -1,6 +1,7 @@
 ### Custom ignores ###
 
-
+.env
+/logs
 
 
 ######################
