@@ -1,6 +1,5 @@
 certifi==2024.6.2
 charset-normalizer==3.3.2
--e git+https://github.com/VieVaWaldi/DIGICHer_Cordis_Pipeline@4ad9cb7f0bd3fcf51aefd4b1eb6d8fa7fcb86ea8#egg=DIGICHer_Cordis_Pipeline
 idna==3.7
 load-dotenv==0.1.0
 python-dotenv==1.0.1

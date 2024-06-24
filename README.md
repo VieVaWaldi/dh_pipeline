@@ -1,4 +1,4 @@
-# DIGICHer_Cordis_Pipeline
+# DIGICHer Pipeline
 
 This is an EU funded project.
 
