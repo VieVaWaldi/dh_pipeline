@@ -1,6 +1,9 @@
+import os
 import requests
 import json
 import logging
+
+from utils.file_handling import ensure_path
 
 
 def make_request(url, params):
@@ -21,16 +24,22 @@ def make_request(url, params):
         raise Exception(err_msg)
 
 
-def download_file(url, path):
+def download_file(url, save_path):
+    ensure_path(save_path)
+
+    filename = os.path.basename(url)
+    save_path = os.path.join(save_path, filename)
+
     try:
-        with requests.get(url, stream=True) as r:
-            r.raise_for_status()
-            with open(path, "wb") as f:
-                for chunk in r.iter_content(chunk_size=8192):
-                    f.write(chunk)
-        logging.info(f"File downloaded successfully to {path}")
-        return path
-    except requests.exceptions.RequestException as e:
+        response = requests.get(url)
+        response.raise_for_status()
+
+        with open(save_path, "wb") as file:
+            file.write(response.content)
+
+            logging.info(f"File downloaded successfully to {save_path}")
+        return save_path
+    except Exception as e:
         err_msg = f"Error fetching data: {e}"
         logging.error(err_msg)
         raise Exception(err_msg)
