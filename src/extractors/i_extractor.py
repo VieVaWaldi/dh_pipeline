@@ -1,34 +1,29 @@
-import os
-from abc import ABC, abstractmethod
 import logging
+from abc import ABC, abstractmethod
 
+from utils.log_config import setup_logging
 from utils.file_handling import ensure_path
 
 
 class IExtractor(ABC):
     def __init__(self, extractor_name):
         self.logging_path = f"logs/extractors/{extractor_name}/"
-        logging.error("CHANGE THIS FOR DRACO! or simply a config.")
-        # AUCH HIER ein ordner pro checkpoint run ...
-        self.save_data_path = f"./data/extractors/{extractor_name}/"
+        self.save_path = f"./data/extractors/{extractor_name}/"
         self.checkpoint_path = f"./checkpoints/extractors/{extractor_name}/"
 
         ensure_path(self.logging_path)
-        ensure_path(self.save_data_path)
+        ensure_path(self.save_path)
         ensure_path(self.checkpoint_path)
 
         self.last_checkpoint = self.load_checkpoint()
 
-        self.setup_logging()
-        logging.info(
-            f"Starting data extraction for {extractor_name} from checkpoint {self.load_checkpoint()}.",
-            format="%(asctime)s - %(name)s - %(levelname)s - %(filename)s:%(lineno)d - %(message)s",
-        )
+        setup_logging(self.logging_path)
 
-    def setup_logging(self):
-        logging.basicConfig(
-            filename=os.path.join(self.logging_path, "data_source.log"),
-            level=logging.INFO,
+        logging.info(
+            f">>> Starting NEW data extraction for {extractor_name} from checkpoint {self.load_checkpoint()}."
+        )
+        logging.error(
+            "CHANGE PATHS FOR DRACO! or simply add a config with prod and dev."
         )
 
     def load_checkpoint(self):

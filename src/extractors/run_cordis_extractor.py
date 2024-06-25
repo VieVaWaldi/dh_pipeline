@@ -1,7 +1,7 @@
 import os
 import time
-import logging
 import zipfile
+import logging
 
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
@@ -26,12 +26,13 @@ class CordisExtractor(IExtractor):
         api_key = os.getenv("API_KEY_CORDIS")
         last_response = self.cordis_get_extraction(api_key, query)
 
-        if last_response["payload"].get("error"):
-            err_msg = f"Response error: {last_response['payload']['error']}"
-            logging.error(err_msg)
-            raise Exception(err_msg)
+        # if last_response["payload"].get("error"):
+        #     err_msg = f"Response error: {last_response['payload']['error']}"
+        #     logging.error(err_msg)
+        #     raise Exception(err_msg)
 
-        task_id = last_response["payload"]["taskID"]
+        # task_id = last_response["payload"]["taskID"]
+        task_id = 149927592
         start_time = datetime.now()
 
         while True:
@@ -56,19 +57,19 @@ class CordisExtractor(IExtractor):
 
         self.cordis_delete_extraction(api_key, task_id)
 
-    def store_extracted_data(self, source):
+    def store_extracted_data(self, url):
         """
         CORDIS data is returned as a ZIP and must be extracted that way.
         """
-        zip_path = download_file(source)
+        zip_path = download_file(url, self.save_path)
+        save_directory = os.path.dirname(zip_path)
 
         with zipfile.ZipFile(zip_path, "r") as zip_ref:
-            zip_ref.extractall(self.save_data_path)
+            zip_ref.extractall(save_directory)
+            logging.info(f"Extracted all files to: {save_directory}")
 
-        logging.info(f"Data saved to {self.save_path}.")
-
-        # os.remove(zip_path)
-        logging.error(f"REMOVE ZIP {self.save_path}.")
+        os.remove(zip_path)
+        logging.info(f"Removed the zip file: {zip_path}")
 
     def store_new_checkpoint(self):
         logging.error("Not implemented yet")
@@ -100,5 +101,5 @@ if __name__ == "__main__":
     extractor = CordisExtractor(extractor_name)
 
     # query = "('cultural' AND 'heritage')"
-    query = "cultural AND heritage AND computing AND print"
+    query = "ice AND print AND computing AND sea AND future AND rise"
     extractor.extract_until_next_checkpoint(query)
