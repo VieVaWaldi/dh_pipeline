@@ -11,6 +11,7 @@ from extractors.i_extractor import IExtractor
 from utils.file_handling import unpack_and_remove_zip
 from utils.logger import log_and_raise_exception
 from utils.requests import make_delete_request, make_get_request, download_file
+from utils.xml_parser import XMLCheckpointParser
 
 
 class CordisExtractor(IExtractor):
@@ -23,23 +24,24 @@ class CordisExtractor(IExtractor):
     5. deleteExtraction
     """
 
+    def __init__(self, extractor_name: str, checkpoint: str):
+        super().__init__(extractor_name, checkpoint)
+        self.parser = XMLCheckpointParser(checkpoint)
+
     def extract_until_next_checkpoint(self, query: str) -> None:
 
-        # api_key = os.getenv("API_KEY_CORDIS")
-        # if not api_key:
-        #     return log_and_raise_exception("API Key not found")
+        api_key = os.getenv("API_KEY_CORDIS")
+        if not api_key:
+            return log_and_raise_exception("API Key not found")
 
-        # task_id = self.cordis_get_extraction_task_id(api_key, query)
+        task_id = self.cordis_get_extraction_task_id(api_key, query)
+        download_uri = self.cordis_get_download_uri(api_key, task_id)
+        self.save_extracted_data(download_uri)
 
-        # download_uri = self.cordis_get_download_uri(api_key, task_id)
-        # self.save_extracted_data(download_uri)
+        checkpoint = self.get_new_checkpoint()
+        self.save_checkpoint(checkpoint)
 
-        # checkpoint = self.get_new_checkpoint()
-        # self.save_checkpoint(checkpoint)
-
-        # self.cordis_delete_extraction(api_key, task_id)
-
-        # self.get_new_checkpoint()
+        self.cordis_delete_extraction(api_key, task_id)
 
         logging.info(">>> Successfully finished extraction")
 
@@ -53,7 +55,11 @@ class CordisExtractor(IExtractor):
         unpack_and_remove_zip(xml_zip_path)
 
     def get_new_checkpoint(self) -> str:
-        pass
+        """."""
+        checkpoint = self.parser.get_largest_checkpoint(self.data_path)
+        if not checkpoint:
+            return log_and_raise_exception("Couldnt get checkpoint")
+        return checkpoint
 
     def cordis_get_extraction_task_id(self, key: str, query: str) -> str:
         """
@@ -116,8 +122,14 @@ class CordisExtractor(IExtractor):
 if __name__ == "__main__":
     load_dotenv()
 
-    extractor = CordisExtractor("cordis_TEST")
+    for i in range(5):
+        CHECKPOINT = "startDate"
+        extractor = CordisExtractor(extractor_name="cordis_TEST", checkpoint=CHECKPOINT)
 
-    # query = "('cultural' AND 'heritage')"
-    QUERY = "ice AND print AND computing AND sea AND future AND rise"
-    extractor.extract_until_next_checkpoint(QUERY)
+        CHECKPOINT_FROM = extractor.restore_checkpoint()
+        CHECKPOINT_TO = extractor.get_max_checkpoint_for_this_run(5)
+
+        QUERY = f"{CHECKPOINT}={CHECKPOINT_FROM}-{CHECKPOINT_TO} AND "
+        QUERY += "(cultural AND heritage)"
+
+        extractor.extract_until_next_checkpoint(QUERY)

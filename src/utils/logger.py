@@ -15,7 +15,7 @@ class CustomFormatter(logging.Formatter):
         return super().format(record)
 
 
-def setup_logging(log_dir):
+def setup_logging(log_dir: str) -> None:
     """
     Sets up and configures the logging module.
     Call once at the beginning of each run.

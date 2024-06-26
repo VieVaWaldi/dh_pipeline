@@ -59,16 +59,16 @@ def download_file(url: str, save_path: str) -> str:
     ensure_path(save_path)
 
     filename = os.path.basename(url)
-    save_path = os.path.join(save_path, filename)
+    file_path = os.path.join(save_path, filename)
 
     try:
         response = requests.get(url, timeout=60)
         response.raise_for_status()
 
-        with open(save_path, "wb") as file:
+        with open(file_path, "wb") as file:
             file.write(response.content)
 
-            logging.info("File downloaded successfully to %s", save_path)
-        return save_path
+            logging.info("File downloaded successfully to %s", file_path)
+        return file_path
     except Exception as e:
         return log_and_raise_exception(f"Error fetching data: {e}")
