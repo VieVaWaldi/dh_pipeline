@@ -1,7 +1,20 @@
+astroid==3.2.2
+black==24.4.2
 certifi==2024.6.2
 charset-normalizer==3.3.2
+click==8.1.7
+-e git+https://github.com/VieVaWaldi/DIGICHer_Pipeline@33180bb746ce76df64e04ed27ed76bbb903ec502#egg=DIGICHER_Pipeline
+dill==0.3.8
 idna==3.7
+isort==5.13.2
 load-dotenv==0.1.0
+mccabe==0.7.0
+mypy-extensions==1.0.0
+packaging==24.1
+pathspec==0.12.1
+platformdirs==4.2.2
+pylint==3.2.3
 python-dotenv==1.0.1
 requests==2.32.3
+tomlkit==0.12.5
 urllib3==2.2.2
