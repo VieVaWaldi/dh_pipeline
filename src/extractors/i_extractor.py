@@ -25,7 +25,7 @@ class IExtractor(ABC):
         ensure_path(self.checkpoint_path)
         self.last_checkpoint = self.restore_checkpoint()
 
-        self.logging_path = f"./data/logs/extractors/{extractor_name}/last_{checkpoint_name}_{self.last_checkpoint}/"
+        self.logging_path = f"./data/logs/extractors/{extractor_name}/"
         self.data_path = f"./data/pile/extractors/{extractor_name}/last_{checkpoint_name}_{self.last_checkpoint}/"
         ensure_path(self.logging_path)
         ensure_path(self.data_path)
@@ -55,7 +55,7 @@ class IExtractor(ABC):
         """
         Overwrites the checkpoint file with the latest checkpoint.
         """
-        with open(self.checkpoint_path + self.checkpoint_file, "w") as file:
+        with open(self.checkpoint_path + self.checkpoint_file, "w+") as file:
             file.write(new_checkpoint)
 
     def get_max_checkpoint_for_this_run(self, years: int) -> str:

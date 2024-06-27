@@ -1,6 +1,9 @@
 import os
+import logging
 import xml.etree.ElementTree as ET
 from typing import List, Tuple, Optional
+
+from utils.logger import log_and_raise_exception
 
 
 class XMLCheckpointParser:
@@ -46,8 +49,7 @@ class XMLCheckpointParser:
             return (os.path.basename(file_path), first_checkpoint)
 
         except ET.ParseError as e:
-            print(f"Error parsing XML file {file_path}: {e}")
-            return None
+            return log_and_raise_exception(f"Error parsing XML file {file_path}: {e}")
 
     def get_largest_checkpoint(self, directory_path: str) -> str | None:
         """
@@ -63,5 +65,5 @@ class XMLCheckpointParser:
 
 if __name__ == "__main__":
     parser = XMLCheckpointParser("startDate")
-    DIRECTORY_PATH = "/Users/wehrenberger/Code/DIGICHer/DIGICHer_Pipeline/data/extractors/cordis_TEST/xml"
+    DIRECTORY_PATH = "/Users/wehrenberger/Code/DIGICHer/DIGICHer_Pipeline/data/pile/extractors/cordis_TEST/last_startDate_1990-01-01/xml"
     print(parser.get_largest_checkpoint(DIRECTORY_PATH))
