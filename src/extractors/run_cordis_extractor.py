@@ -56,7 +56,7 @@ class CordisExtractor(IExtractor):
 
     def get_new_checkpoint(self) -> str:
         """."""
-        checkpoint = self.parser.get_largest_checkpoint(self.data_path)
+        checkpoint = self.parser.get_largest_checkpoint(self.data_path + "/xml")
         if not checkpoint:
             return log_and_raise_exception("Couldnt get checkpoint")
         return checkpoint
@@ -122,14 +122,14 @@ class CordisExtractor(IExtractor):
 if __name__ == "__main__":
     load_dotenv()
 
-    for i in range(5):
+    for i in range(3):
         CHECKPOINT = "startDate"
-        extractor = CordisExtractor(extractor_name="cordis_TEST", checkpoint=CHECKPOINT)
+        extractor = CordisExtractor(extractor_name="cordis_TEST_2", checkpoint=CHECKPOINT)
 
         CHECKPOINT_FROM = extractor.restore_checkpoint()
         CHECKPOINT_TO = extractor.get_max_checkpoint_for_this_run(5)
 
         QUERY = f"{CHECKPOINT}={CHECKPOINT_FROM}-{CHECKPOINT_TO} AND "
-        QUERY += "(cultural AND heritage)"
+        QUERY += "(cultural OR heritage)"
 
         extractor.extract_until_next_checkpoint(QUERY)
