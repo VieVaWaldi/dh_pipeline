@@ -77,7 +77,7 @@ class IExtractor(ABC):
         """
 
     @abstractmethod
-    def save_extracted_data(self, url: str) -> None:
+    def save_extracted_data(self, data: str) -> None:
         """
         Once the extraction is done, save all the data.
         """
