@@ -24,9 +24,9 @@ class CordisExtractor(IExtractor):
     5. deleteExtraction
     """
 
-    def __init__(self, extractor_name: str, checkpoint: str):
-        super().__init__(extractor_name, checkpoint)
-        self.parser = XMLCheckpointParser(checkpoint)
+    def __init__(self, extractor_name: str, checkpoint_name: str):
+        super().__init__(extractor_name, checkpoint_name)
+        self.parser = XMLCheckpointParser(checkpoint_name)
 
     def extract_until_next_checkpoint(self, query: str) -> None:
 
@@ -45,9 +45,9 @@ class CordisExtractor(IExtractor):
 
         logging.info(">>> Successfully finished extraction")
 
-    def save_extracted_data(self, url: str) -> None:
+    def save_extracted_data(self, data: str) -> None:
         base_url = "https://cordis.europa.eu/"
-        zip_path = download_file(base_url + url, self.data_path)
+        zip_path = download_file(base_url + data, self.data_path)
         unpack_and_remove_zip(zip_path)
 
         # Cordis returns a zip in a fucking zip
@@ -124,7 +124,9 @@ if __name__ == "__main__":
 
     for i in range(3):
         CHECKPOINT = "startDate"
-        extractor = CordisExtractor(extractor_name="cordis_TEST_2", checkpoint=CHECKPOINT)
+        extractor = CordisExtractor(
+            extractor_name="cordis_TEST_2", checkpoint_name=CHECKPOINT
+        )
 
         CHECKPOINT_FROM = extractor.restore_checkpoint()
         CHECKPOINT_TO = extractor.get_max_checkpoint_for_this_run(5)
