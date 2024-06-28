@@ -3,7 +3,6 @@ black==24.4.2
 certifi==2024.6.2
 charset-normalizer==3.3.2
 click==8.1.7
--e git+https://github.com/VieVaWaldi/DIGICHer_Pipeline@cecdc4f3cdca6dca7c75105eeba6a6fcd03c7789#egg=DIGICHER_Pipeline
 dill==0.3.8
 idna==3.7
 isort==5.13.2
