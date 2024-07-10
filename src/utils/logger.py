@@ -1,12 +1,15 @@
-import os
 import logging
+import os
+
 from utils.file_handling import ensure_path
+
+LOG_LEVEL = logging.DEBUG
 
 
 class CustomFormatter(logging.Formatter):
     """
     Custom formatter for logging to
-    - Padd all columns to a fixed width
+    - Pad all columns to a fixed width
     """
 
     def format(self, record):
@@ -24,24 +27,26 @@ def setup_logging(log_dir: str) -> None:
 
     logger = logging.getLogger()
 
-    if not logger.hasHandlers():
-        logger.setLevel(logging.INFO)
+    if logger.hasHandlers():
+        return
 
-        file_handler = logging.FileHandler(os.path.join(log_dir, "data_source.log"))
-        console_handler = logging.StreamHandler()
+    logger.setLevel(LOG_LEVEL)
 
-        file_handler.setLevel(logging.DEBUG)
-        console_handler.setLevel(logging.DEBUG)
+    file_handler = logging.FileHandler(os.path.join(log_dir, "log_source.log"))
+    console_handler = logging.StreamHandler()
 
-        formatter = CustomFormatter(
-            "[%(levelname)s] [%(asctime)s] [%(filename)-15s:%(lineno)-4d] %(message)s",
-            datefmt="%Y-%m-%d %H:%M:%S",
-        )
-        file_handler.setFormatter(formatter)
-        console_handler.setFormatter(formatter)
+    file_handler.setLevel(LOG_LEVEL)
+    console_handler.setLevel(LOG_LEVEL)
 
-        logger.addHandler(file_handler)
-        logger.addHandler(console_handler)
+    formatter = CustomFormatter(
+        "[%(levelname)s] [%(asctime)s] [%(filename)-15s:%(lineno)-4d] %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
+    )
+    file_handler.setFormatter(formatter)
+    console_handler.setFormatter(formatter)
+
+    logger.addHandler(file_handler)
+    logger.addHandler(console_handler)
 
 
 def log_and_raise_exception(err_msg: str):

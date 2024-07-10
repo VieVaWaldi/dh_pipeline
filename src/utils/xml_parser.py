@@ -1,6 +1,5 @@
 import os
-import logging
-import xml.etree.ElementTree as ET
+import xml.etree.ElementTree as et
 from typing import List, Tuple, Optional
 
 from utils.logger import log_and_raise_exception
@@ -32,7 +31,7 @@ class XMLCheckpointParser:
         Parses a single XML file and extracts the checkpoint data.
         """
         try:
-            tree = ET.parse(file_path)
+            tree = et.parse(file_path)
             root = tree.getroot()
             checkpoints = root.findall(f".//{self.checkpoint}")
 
@@ -46,9 +45,9 @@ class XMLCheckpointParser:
 
             # Assuming we only care about the first checkpoint element if there are multiple
             first_checkpoint = checkpoints[0].text if checkpoints else None
-            return (os.path.basename(file_path), first_checkpoint)
+            return os.path.basename(file_path), first_checkpoint
 
-        except ET.ParseError as e:
+        except et.ParseError as e:
             return log_and_raise_exception(f"Error parsing XML file {file_path}: {e}")
 
     def get_largest_checkpoint(self, directory_path: str) -> str | None:

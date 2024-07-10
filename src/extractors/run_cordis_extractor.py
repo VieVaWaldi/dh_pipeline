@@ -1,13 +1,12 @@
 import logging
 import os
 import time
-
 from datetime import datetime, timedelta
-from venv import logger
+
 from dotenv import load_dotenv
 
-
 from extractors.i_extractor import IExtractor
+from utils.config_loader import get_query_config
 from utils.file_handling import unpack_and_remove_zip
 from utils.logger import log_and_raise_exception
 from utils.requests import make_delete_request, make_get_request, download_file
@@ -27,23 +26,38 @@ class CordisExtractor(IExtractor):
     def __init__(self, extractor_name: str, checkpoint_name: str):
         super().__init__(extractor_name, checkpoint_name)
         self.parser = XMLCheckpointParser(checkpoint_name)
+        self.base_checkpoint = "1990-01-01"
+
+    def create_next_checkpoint_end(self, next_checkpoint: str) -> str:
+        if not self.last_checkpoint:
+            self.last_checkpoint = self.base_checkpoint
+        last_date = datetime.strptime(self.last_checkpoint, "%Y-%m-%d")
+        try:
+            new_date = last_date.replace(year=last_date.year + int(next_checkpoint))
+        except ValueError:
+            new_date = last_date.replace(  # Handles February 29th for leap years
+                year=last_date.year + int(next_checkpoint), day=28
+            )
+        return new_date.strftime("%Y-%m-%d")
 
     def extract_until_next_checkpoint(self, query: str) -> None:
-
         api_key = os.getenv("API_KEY_CORDIS")
         if not api_key:
             return log_and_raise_exception("API Key not found")
 
-        task_id = self.cordis_get_extraction_task_id(api_key, query)
-        download_uri = self.cordis_get_download_uri(api_key, task_id)
+        task_id = self._cordis_get_extraction_task_id(api_key, query)
+        download_uri = self._cordis_get_download_uri(api_key, task_id)
         self.save_extracted_data(download_uri)
 
         checkpoint = self.get_new_checkpoint()
         self.save_checkpoint(checkpoint)
 
-        self.cordis_delete_extraction(api_key, task_id)
+        self._cordis_delete_extraction(api_key, task_id)
 
         logging.info(">>> Successfully finished extraction")
+
+    def non_contextual_transformation(self):
+        pass
 
     def save_extracted_data(self, data: str) -> None:
         base_url = "https://cordis.europa.eu/"
@@ -55,13 +69,12 @@ class CordisExtractor(IExtractor):
         unpack_and_remove_zip(xml_zip_path)
 
     def get_new_checkpoint(self) -> str:
-        """."""
         checkpoint = self.parser.get_largest_checkpoint(self.data_path + "/xml")
         if not checkpoint:
-            return log_and_raise_exception("Couldnt get checkpoint")
+            return log_and_raise_exception("Couldn't get checkpoint")
         return checkpoint
 
-    def cordis_get_extraction_task_id(self, key: str, query: str) -> str:
+    def _cordis_get_extraction_task_id(self, key: str, query: str) -> str:
         """
         Calls Cordis getExtraction API and returns the task ID for the job.
         """
@@ -79,10 +92,10 @@ class CordisExtractor(IExtractor):
 
         return response["payload"]["taskID"]
 
-    def cordis_get_download_uri(self, key: str, task_id: str) -> str:
+    def _cordis_get_download_uri(self, key: str, task_id: str) -> str:
         """
         Monitors the cordis getExtractionStatus API and returns the download uri
-        once available. Returns an exception of running for longer than 12 hours.
+        once available. Returns an exception to running for longer than 12 hours.
         """
         base_url = "https://cordis.europa.eu/api/dataextractions/getExtractionStatus"
         params = {"key": key, "taskId": task_id}
@@ -106,15 +119,14 @@ class CordisExtractor(IExtractor):
 
             time.sleep(60)
 
-    def cordis_delete_extraction(self, key: str, task_id: str):
+    def _cordis_delete_extraction(self, key: str, task_id: str):
         """
         Deletes the cordis extraction to make room for more.
         """
         base_url = "https://cordis.europa.eu/api/dataextractions/deleteExtraction"
         params = {"key": key, "taskId": task_id}
-        response = make_delete_request(base_url, params)
+        make_delete_request(base_url, params)
 
-        logger.error("LOG the success of deletion, i mean i did kinda with 200...")
         # if response["payload"].get("status") == "false":
         #     log_and_raise_exception(f"Response error: {response['payload']['status']}")
 
@@ -122,14 +134,19 @@ class CordisExtractor(IExtractor):
 if __name__ == "__main__":
     load_dotenv()
 
+    config = get_query_config()["cordis"]
+
     for i in range(3):
-        CHECKPOINT = "startDate"
+        CHECKPOINT = config["checkpoint"]
+        EXTRACTOR_NAME = f"cordis_{config['queries'][0].replace(' ', '')}"
         extractor = CordisExtractor(
-            extractor_name="cordis_TEST_2", checkpoint_name=CHECKPOINT
+            extractor_name=EXTRACTOR_NAME, checkpoint_name=CHECKPOINT
         )
 
         CHECKPOINT_FROM = extractor.restore_checkpoint()
-        CHECKPOINT_TO = extractor.get_max_checkpoint_for_this_run(5)
+        if not CHECKPOINT_FROM:
+            CHECKPOINT_FROM = extractor.base_checkpoint
+        CHECKPOINT_TO = extractor.create_next_checkpoint_end("5")
 
         QUERY = f"{CHECKPOINT}={CHECKPOINT_FROM}-{CHECKPOINT_TO} AND "
         QUERY += "(cultural OR heritage)"

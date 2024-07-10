@@ -1,10 +1,9 @@
-import os
 import json
 import logging
+import os
 from typing import Dict
 
 import requests
-
 
 from utils.file_handling import ensure_path
 from utils.logger import log_and_raise_exception
@@ -54,7 +53,7 @@ def make_delete_request(url: str, params: Dict) -> Dict:
 
 def download_file(url: str, save_path: str) -> str:
     """
-    Downloads a file given a url and stores it under the specified path.
+    Downloads a file given an url and stores it under the specified path.
     """
     ensure_path(save_path)
 

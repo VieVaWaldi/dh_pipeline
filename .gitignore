@@ -1,6 +1,7 @@
 ### Custom ignores ###
 
 .vscode/
+.idea/
 .env
 /logs
 /data

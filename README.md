@@ -1,8 +1,6 @@
 # DIGICHer Pipeline
 
-This is an EU funded project.
-
-The pipeline follows the EtLT pattern.
+This is an EU funded project. The pipeline follows the EtLT pattern.
 
 ## Installation
 
@@ -20,38 +18,43 @@ Installs the repo as an editable package and install all requirements:
 
 > pip install -e .
 
-Get .env from me and place in root folder for api_keys.
+Open `.env_` and follow instructions.
 
 ## Structure
 
-1. Orchestration
+**Configuration**
+
+- Under `/configs`, to configure queries and extration runs.
+- Change prod or dev in `.env`.
+
+**1. Orchestration**
 
 - ...
 
-2. Utils
+**2. Utils**
 
-- under `/src/utils`
-- Shared Reusable Code for single point of failure and logging
+- Under `/src/utils`
+- Shared reusable code for single point of failure and logging.
 
-3. Extractors
+**3. Extractors**
 
-- under `/src/extractors`
-- Extracts the data and stores it in the pile
+- Under `/src/extractors`
+- Extracts the data and loads it in the pile.
 - See more here [Link to Extractors Documentation](src/extractors/README.md)
 
-4. Transformer
+**4. Transformer**
 
 - ...
 
-5. Data Fuser
+**5. Data Fuser**
 
 - ...
 
 ## Developement Guidelines
 
-- Use Pylint (https://marketplace.visualstudio.com/items?itemName=ms-python.pylint)
-- and Black Formatter (https://marketplace.visualstudio.com/items?itemName=ms-python.black-formatter) for clean code.
-- Use type hints for function parameters and return values
-- Use load_dotenv() load api keys etc. and store them in .env
-- Use the logging module to log infos and errors
-- When a request fails: Log error, dont save the data and abort
+- Use Black Formatter for clean code `pip install black`.
+- Use utils for reusable code like request, file handling, file parsing, data validation, sanitization or others.
+- Use type hints for function parameters and return values.
+- Use load_dotenv() load api keys etc. and store them in .env.
+- Use the logging module to log info's and errors.
+- When a request fails: Log error, dont save the data and abort.
