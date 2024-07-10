@@ -1,0 +1,10 @@
+{
+  "cordis": {
+    "checkpoint": "startDate",
+    "queries": [
+      "cultural OR heritage"
+    ]
+  },
+  "core": {},
+  "arxiv": {}
+}

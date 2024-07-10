@@ -1,0 +1,12 @@
+{
+  "dev": {
+    "checkpoint_path": "./data/checkpoints/",
+    "logging_path": "./data/logs/",
+    "data_path": "./data/pile/"
+  },
+  "prod": {
+    "checkpoint_path": "---",
+    "logging_path": "---",
+    "data_path": "---"
+  }
+}
