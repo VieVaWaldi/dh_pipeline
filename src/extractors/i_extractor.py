@@ -39,6 +39,7 @@ class IExtractor(ABC):
 
         self.logging_path: str = f"{config['logging_path']}extractors/{extractor_name}/"
         ensure_path(self.logging_path)
+        
         setup_logging(self.logging_path)
         logging.info(
             ">>> Starting new data extraction run for %s from checkpoint %s.",

@@ -3,7 +3,7 @@ import os
 
 from utils.file_handling import ensure_path
 
-LOG_LEVEL = logging.ERROR
+LOG_LEVEL = logging.INFO
 
 
 class CustomFormatter(logging.Formatter):
