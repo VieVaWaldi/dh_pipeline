@@ -1,68 +1,125 @@
 import os
-import xml.etree.ElementTree as et
-from typing import List, Tuple, Optional
+import xml.etree.ElementTree as eT
+from typing import List, Dict
+from urllib.parse import urlparse
 
-from utils.logger import log_and_raise_exception
+from extractors.non_contextual_transformations import download_and_save_cordis_pdfs
+from utils.logger import log_and_raise_exception, setup_logging
 
 
-class XMLCheckpointParser:
+def get_all_elements_texts(file_path: str, element_name: str) -> List[str]:
     """
-    Parses XML files in a directory path and extracts specified checkpoints.
+    Searches all files in all subdirectories under the file_path for element_name.
+    Returns a list of the text of all found elements.
     """
+    return process_xml_files(
+        file_path, lambda fp: extract_element_text(fp, element_name)
+    )
 
-    def __init__(self, checkpoint: str):
-        self.checkpoint = checkpoint
 
-    def parse_files(self, directory_path: str) -> List[Tuple[str, Optional[str]]]:
-        """
-        Parses all XML files in the directory path and extracts the checkpoint data.
-        """
-        results = []
-        for filename in os.listdir(directory_path):
-            if filename.endswith(".xml"):
-                file_path = os.path.join(directory_path, filename)
-                result = self.parse_file(file_path)
-                if result:
-                    results.append(result)
-        return results
+# Not really used right now! BUT AMAZING FOR analysing stuff later.
+# Can use this to dict the whole file right?
+def get_all_elements_as_dict(file_path: str, element_name: str) -> List[Dict[str, str]]:
+    """
+    Searches all files in all subdirectories under the file_path for element_name.
+    Returns a list of dictionaries for each element in each file with the given element_name.
+    """
+    return process_xml_files(
+        file_path, lambda fp: extract_element_as_dict(fp, element_name)
+    )
 
-    def parse_file(self, file_path: str) -> Optional[Tuple[str, Optional[str]]]:
-        """
-        Parses a single XML file and extracts the checkpoint data.
-        """
-        try:
-            tree = et.parse(file_path)
-            root = tree.getroot()
-            checkpoints = root.findall(f".//{self.checkpoint}")
 
-            if len(checkpoints) > 2:
-                print(
-                    f"More than 2 {self.checkpoint} elements found in file: {file_path}"
-                )
-            elif len(checkpoints) == 0:
-                print(f"No {self.checkpoint} elements found in file: {file_path}")
-                return None
+def process_xml_files(file_path: str, extraction_func) -> List:
+    """
+    Walks through all XML files in the given file_path and applies the extraction_func to each.
+    """
+    all_values = []
+    for root, _, files in os.walk(file_path):
+        for file in files:
+            if file.endswith(".xml"):
+                full_file_path = os.path.join(root, file)
+                values = extraction_func(full_file_path)
+                all_values.extend(values)
+    return all_values
 
-            # Assuming we only care about the first checkpoint element if there are multiple
-            first_checkpoint = checkpoints[0].text if checkpoints else None
-            return os.path.basename(file_path), first_checkpoint
 
-        except et.ParseError as e:
-            return log_and_raise_exception(f"Error parsing XML file {file_path}: {e}")
+def extract_element_text(file_path: str, element_name: str) -> List[str]:
+    """
+    Extracts the text of the specified element from an XML file.
+    """
+    try:
+        tree = eT.parse(file_path)
+        root = tree.getroot()
+        return [
+            elem.text
+            for elem in root.iter()
+            if elem.tag == element_name and elem.text is not None
+        ]
+    except eT.ParseError:
+        log_and_raise_exception(f"Error parsing XML file: {file_path}")
+        return []
 
-    def get_largest_checkpoint(self, directory_path: str) -> str | None:
-        """
-        Returns the largest checkpoint value.
-        """
-        checkpoint_list = self.parse_files(directory_path)
-        sorted_results = sorted(checkpoint_list, key=lambda x: x[1] or "", reverse=True)
-        largest_checkpoint = sorted_results[0] if sorted_results else None
-        if not largest_checkpoint:
-            return None
-        return largest_checkpoint[1]
+
+def extract_element_as_dict(file_path: str, element_name: str) -> List[Dict[str, str]]:
+    """
+    Extracts the specified element from an XML file as a dictionary.
+    """
+    try:
+        tree = eT.parse(file_path)
+        root = tree.getroot()
+        return [
+            element_to_dict(elem) for elem in root.iter() if elem.tag == element_name
+        ]
+    except eT.ParseError:
+        log_and_raise_exception(f"Error parsing XML file: {file_path}")
+        return []
+
+
+def element_to_dict(element: eT.Element) -> Dict[str, str]:
+    """
+    Converts an XML element to a dictionary.
+    """
+    result = {
+        "tag": element.tag,
+        "text": element.text.strip() if element.text else None,
+    }
+    result.update(element.attrib)
+    for child in element:
+        child_dict = element_to_dict(child)
+        if child.tag in result:
+            if isinstance(result[child.tag], list):
+                result[child.tag].append(child_dict)
+            else:
+                result[child.tag] = [result[child.tag], child_dict]
+        else:
+            result[child.tag] = child_dict
+    return result
 
 
 if __name__ == "__main__":
-    parser = XMLCheckpointParser("startDate")
-    DIRECTORY_PATH = "/Users/wehrenberger/Code/DIGICHer/DIGICHer_Pipeline/data/pile/extractors/cordis_TEST/last_startDate_1990-01-01/xml"
-    print(parser.get_largest_checkpoint(DIRECTORY_PATH))
+
+    """
+    # Example to find all elements with the same tag in all files.
+
+    date_elements = get_all_elements_texts(
+        "/Users/wehrenberger/Code/DIGICHer/DIGICHer_Pipeline/data/pile/OLD_extractors/cordis_TEST/last_startDate_2020-01-01",
+        "startDate",
+    )
+    print(date_elements)
+    """
+
+    # Example to find all elements with the same tag in all files and turn them to dicts.
+    linkpath = "/Users/wehrenberger/Code/DIGICHer/DIGICHer_Pipeline/data/pile/OLD_extractors/cordis_TEST/"
+    link_elements = get_all_elements_as_dict(
+        linkpath,
+        "webLink",
+    )
+    download_path = "/Users/wehrenberger/Code/DIGICHer/DIGICHer_Pipeline/data/pile/rmme"
+
+    for dic in link_elements:
+        url = dic["physUrl"]["text"]
+        print(url)
+        download_and_save_cordis_pdfs(
+            url,
+            download_path,
+        )
