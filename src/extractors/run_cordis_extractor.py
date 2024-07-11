@@ -42,7 +42,7 @@ class CordisExtractor(IExtractor):
         if not api_key:
             return log_and_raise_exception("API Key not found")
 
-        self._cordis_get_extraction_task_id(api_key, query)
+        task_id = self._cordis_get_extraction_task_id(api_key, query)
         download_uri = self._cordis_get_download_uri(api_key, task_id)
 
         data_path = self.save_extracted_data(download_uri)
