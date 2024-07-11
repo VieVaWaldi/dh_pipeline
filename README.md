@@ -54,7 +54,7 @@ Open `.env_` and follow instructions.
 
 - Use Black Formatter for clean code `pip install black`.
 - Use utils for reusable code like request, file handling, file parsing, data validation, sanitization or others.
-- Use type hints for function parameters and return values.
+- Use type hints for function parameters, return values and all member variables.
 - Use load_dotenv() load api keys etc. and store them in .env.
 - Use the logging module to log info's and errors.
 - When a request fails: Log error, dont save the data and abort.

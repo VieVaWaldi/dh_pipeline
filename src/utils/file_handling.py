@@ -41,7 +41,6 @@ def load_json_file(path: str) -> Dict[str, Any] | None:
 
 def write_file(path: str, content: str) -> None:
     """Writes content to file."""
-    # ensure_path(path)
     with open(path, "w+", encoding=ENCODING) as file:
         file.write(content)
 
