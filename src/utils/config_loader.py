@@ -4,7 +4,7 @@ from typing import Any, Dict
 
 from dotenv import load_dotenv
 
-from utils.file_handling import load_json_file
+from utils.file_handling import load_json_file, get_root_path
 
 load_dotenv()
 
@@ -21,13 +21,9 @@ def get_query_config() -> Dict[str, Any]:
 
 def _get_config(config_name: str) -> Dict[str, Any]:
     """Prepares and returns the given config as json"""
-    config_file_path = (
-        Path(__file__).resolve().parent.parent.parent
-        / "configs"
-        / f"{config_name}.json"
-    )
+    config_file_path = get_root_path() / "configs" / f"{config_name}.json"
 
-    config = load_json_file(str(config_file_path))
+    config = load_json_file(config_file_path)
     if not config:
         raise Exception("Error reading the logging file.")
 

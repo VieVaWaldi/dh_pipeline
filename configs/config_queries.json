@@ -2,9 +2,15 @@
   "cordis": {
     "checkpoint": "startDate",
     "queries": [
+      "test",
       "cultural OR heritage"
     ]
   },
-  "core": {},
+  "core": {
+    "checkpoint": "offset",
+    "queries": [
+      "cultural AND heritage"
+    ]
+  },
   "arxiv": {}
 }

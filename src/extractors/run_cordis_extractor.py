@@ -11,10 +11,15 @@ import utils.xml_parser as xml
 from extractors.i_extractor import IExtractor
 from extractors.non_contextual_transformations import (
     trim_excessive_whitespace,
-    download_and_save_cordis_pdfs,
+    CordisPDFDownloader,
 )
 from utils.config_loader import get_query_config
-from utils.file_handling import unpack_and_remove_zip, load_file, write_file
+from utils.file_handling import (
+    unpack_and_remove_zip,
+    load_file,
+    write_file,
+    ensure_path_exists,
+)
 from utils.logger import log_and_raise_exception
 from utils.web_requests import (
     make_delete_request,
@@ -30,8 +35,7 @@ class CordisExtractor(IExtractor):
     1. Call getExtraction
     2. Monitor getExtractionStatus until data is ready to be downloaded
     3. Download the data
-    4. Store the checkpoint
-    5. Call deleteExtraction
+    4. Call deleteExtraction
     """
 
     def __init__(self, extractor_name: str, checkpoint_name: str):
@@ -42,7 +46,8 @@ class CordisExtractor(IExtractor):
         if not api_key:
             return log_and_raise_exception("API Key not found")
 
-        task_id = self._cordis_get_extraction_task_id(api_key, query)
+        # task_id = self._cordis_get_extraction_task_id(api_key, query)
+        task_id = "150875962"
         download_uri = self._cordis_get_download_uri(api_key, task_id)
 
         data_path = self.save_extracted_data(download_uri)
@@ -55,7 +60,7 @@ class CordisExtractor(IExtractor):
         logging.info(">>> Successfully finished extraction")
 
     def restore_checkpoint(self) -> str:
-        checkpoint = load_file(self.checkpoint_path + self.checkpoint_file)
+        checkpoint = load_file(self.checkpoint_path)
         return checkpoint if checkpoint is not None else "1990-01-01"
 
     def create_next_checkpoint_end(self, next_checkpoint: str) -> str:
@@ -68,57 +73,30 @@ class CordisExtractor(IExtractor):
             )
         return new_date.strftime("%Y-%m-%d")
 
-    def save_extracted_data(self, data: str) -> str:
+    def save_extracted_data(self, data: str) -> Path:
         base_url = "https://cordis.europa.eu/"
         zip_path = download_file(base_url + data, self.data_path)
         unpack_and_remove_zip(zip_path)
 
         # Cordis returns a zip in a fucking zip
-        xml_zip_path = os.path.dirname(zip_path) + "/xml.zip"
+        xml_zip_path = zip_path.parent / "xml.zip"
         unpack_and_remove_zip(xml_zip_path)
-        return self.data_path + "xml"
+        return self.data_path / "xml"
 
-    def non_contextual_transformation(self, data_path: str):
-        # Give each record its own directory
+    def non_contextual_transformation(self, data_path: Path):
         for file_path in Path(data_path).iterdir():
-            if not file_path.is_file() and not (file_path.suffix == ".xml"):
+            if not file_path.is_file() or not (file_path.suffix == ".xml"):
                 log_and_raise_exception("We got a cordis record that is not an XML.")
 
-            # New directory for record dataset
-            record_dataset_dir = Path(self.data_path) / file_path.stem
-            record_dataset_dir.mkdir(parents=True, exist_ok=True)
+            record_dataset_path = self.data_path / file_path.stem
+            ensure_path_exists(record_dataset_path)
 
-            # save transformed file in name dir with same name and delete original
-            xml_content = load_file(str(file_path))
-            xml_content_transformed = trim_excessive_whitespace(xml_content)
-            write_file(
-                str(record_dataset_dir / file_path.name), xml_content_transformed
-            )
+            xml_content_transformed = trim_excessive_whitespace(load_file(file_path))
+            write_file(record_dataset_path / file_path.name, xml_content_transformed)
 
-            # Get links
-            link_dict_list = xml.extract_element_as_dict(str(file_path), "webLink")
-            eu_links = [
-                dic["physUrl"]["text"]
-                for dic in link_dict_list
-                if get_base_url(dic["physUrl"]["text"]) == "europa.eu"
-            ]
-
-            # if links, download all and save under /dir/attachment
-            if eu_links:
-                # New directory attachments
-                attachment_dir = Path(self.data_path) / file_path.stem / "attachments"
-                attachment_dir.mkdir(parents=True, exist_ok=True)
-
-                for url in eu_links:
-                    download_and_save_cordis_pdfs(
-                        url,
-                        str(attachment_dir),
-                    )
-
-            # remove file
+            self.download_and_save_attachments(file_path, record_dataset_path)
             os.remove(file_path)
 
-        # Remove xml directory
         shutil.rmtree(data_path)
 
     def get_new_checkpoint(self) -> str:
@@ -200,6 +178,29 @@ class CordisExtractor(IExtractor):
         # if response["payload"].get("status") == "false":
         #     log_and_raise_exception(f"Response error: {response['payload']['status']}")
 
+    def download_and_save_attachments(self, file_path: Path, record_path: Path) -> None:
+        link_dicts = xml.extract_element_as_dict(file_path, "webLink")
+        eu_links = [
+            dic["physUrl"]["text"]
+            for dic in link_dicts
+            if get_base_url(dic["physUrl"]["text"]) == "europa.eu"
+        ]
+        if not eu_links:
+            return
+
+        attachment_dir = record_path / "attachments"
+        ensure_path_exists(attachment_dir)
+
+        was_downloaded = []
+        downloader = CordisPDFDownloader(attachment_dir)
+        for url in eu_links:
+            was_downloaded.append(downloader.download_pdf(url))
+        logging.info(
+            f"Downloaded {len([d for d in was_downloaded if d])} files successfully and "
+            f"{len([d for d in was_downloaded if not d])} files not successfully "
+            f"for record dataset {record_path.stem}"
+        )
+
 
 def start_extraction(query: str, extractor_name: str, checkpoint_name: str):
     extractor = CordisExtractor(
@@ -223,8 +224,14 @@ def main():
     extractor_name = f"cordis_{query.replace(' ', '')}"
     checkpoint_name = config["checkpoint"]
 
+    # IF NO (or base) CHECKPOINT RUN IN THIS LOOP TO CATCH UP till today
     for i in range(1):
         start_extraction(query, extractor_name, checkpoint_name)
+
+    # IF HAS CHECKPOINT JUST RUN ONCE FROM IT TO GET NEW DATA SINCE THEN
+
+    # one bug is that we gather till checkpoint_day, and from checkpoint_day
+    # so we get the data twice for the same day
 
 
 if __name__ == "__main__":

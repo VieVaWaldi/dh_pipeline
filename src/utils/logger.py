@@ -1,7 +1,7 @@
 import logging
-import os
+from pathlib import Path
 
-from utils.file_handling import ensure_path
+from utils.file_handling import ensure_path_exists
 
 LOG_LEVEL = logging.INFO
 
@@ -18,12 +18,12 @@ class CustomFormatter(logging.Formatter):
         return super().format(record)
 
 
-def setup_logging(log_dir: str) -> None:
+def setup_logging(log_path: Path) -> None:
     """
     Sets up and configures the logging module.
     Call once at the beginning of each run.
     """
-    ensure_path(log_dir)
+    ensure_path_exists(log_path)
 
     logger = logging.getLogger()
 
@@ -32,7 +32,7 @@ def setup_logging(log_dir: str) -> None:
 
     logger.setLevel(LOG_LEVEL)
 
-    file_handler = logging.FileHandler(os.path.join(log_dir, "log_source.log"))
+    file_handler = logging.FileHandler(log_path / "log_source.log")
     console_handler = logging.StreamHandler()
 
     file_handler.setLevel(LOG_LEVEL)
