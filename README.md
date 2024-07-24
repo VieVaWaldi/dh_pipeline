@@ -33,13 +33,18 @@ Open `.env_` and follow instructions.
 
 **2. Utils**
 
-- Under `/src/utils`
 - Shared reusable code for single point of failure and logging.
+- Under `/src/utils`
+- Use `config_loader` to load the configuration files.
+- Use `file_handling` and the `pathlib` for file operations.
+- Use `web_requests` for all web requests including downloads.
+- Use the various parsers to parse specific file types.
 
 **3. Extractors**
 
 - Under `/src/extractors`
 - Extracts the data and loads it in the pile.
+- Simply run the file from the top level directory.
 - See more here [Link to Extractors Documentation](src/extractors/README.md)
 
 **4. Transformer**
