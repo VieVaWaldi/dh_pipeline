@@ -20,7 +20,8 @@ def print_total_number_weblinks(path: str):
 
 def main():
     config = get_config()
-    pile_dir = f"{config['data_path']}OLD_extractors/cordis_TEST/"
+    # pile_dir = f"{config['data_path']}OLD_extractors/cordis_TEST/"
+    pile_dir = "/Users/wehrenberger/Code/DIGICHer/DIGICHer_Pipeline/data/pile/extractors/cordis_culturalORheritage/last_startDate_2010-01-01"
 
     print_total_number_weblinks(pile_dir)
 

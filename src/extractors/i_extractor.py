@@ -1,8 +1,10 @@
 import logging
 from abc import ABC, abstractmethod
+from pathlib import Path
+from typing import Dict, Any, Union
 
 from utils.config_loader import get_config
-from utils.file_handling import ensure_path, write_file
+from utils.file_handling import ensure_path_exists, write_file, get_root_path
 from utils.logger import setup_logging
 
 
@@ -23,35 +25,42 @@ class IExtractor(ABC):
         config = get_config()
 
         self.checkpoint_name = checkpoint_name
-        self.checkpoint_path: str = (
-            f"{config['checkpoint_path']}extractors/{extractor_name}/"
+        self.checkpoint_path: Path = (
+            get_root_path()
+            / config["checkpoint_path"]
+            / "extractors"
+            / extractor_name
+            / f"{checkpoint_name}.cp"
         )
-        self.checkpoint_file: str = f"CP_{checkpoint_name}"
-        ensure_path(self.checkpoint_path)
-
+        ensure_path_exists(self.checkpoint_path)
         self.last_checkpoint: str = self.restore_checkpoint()
 
-        self.data_path: str = (
-            f"{config['data_path']}extractors/{extractor_name}/"
-            f"last_{checkpoint_name}_{self.last_checkpoint}/"
+        self.data_path: Path = (
+            get_root_path()
+            / config["data_path"]
+            / "extractors"
+            / extractor_name
+            / f"last_{checkpoint_name}_{self.last_checkpoint}/"
         )
-        ensure_path(self.data_path)
+        ensure_path_exists(self.data_path)
 
-        self.logging_path: str = f"{config['logging_path']}extractors/{extractor_name}/"
-        ensure_path(self.logging_path)
-        
+        self.logging_path: Path = (
+            get_root_path() / config["logging_path"] / "extractors" / extractor_name
+        )
+        ensure_path_exists(self.logging_path)
+
         setup_logging(self.logging_path)
         logging.info(
             ">>> Starting new data extraction run for %s from checkpoint %s.",
             extractor_name,
-            (self.last_checkpoint if not self.last_checkpoint else "No Checkpoint"),
+            (self.last_checkpoint if self.last_checkpoint else "No Checkpoint"),
         )
 
     def save_checkpoint(self, new_checkpoint: str) -> None:
         """
         Overwrites the checkpoint file with the latest checkpoint.
         """
-        return write_file(self.checkpoint_path + self.checkpoint_file, new_checkpoint)
+        return write_file(self.checkpoint_path, new_checkpoint)
 
     @abstractmethod
     def restore_checkpoint(self) -> str | None:
@@ -74,22 +83,25 @@ class IExtractor(ABC):
         """
 
     @abstractmethod
-    def save_extracted_data(self, data: str) -> None:
+    def save_extracted_data(self, data: Union[str, Dict[str, Any]]) -> Path:
         """
         Once the extraction is done, save all the data.
+        Returns path to saved data.
         """
 
     @abstractmethod
-    def non_contextual_transformation(self, data_path: str) -> None:
+    def non_contextual_transformation(self, data_path: Path) -> None:
         """
-        1. Find and download all attached links and save them
+        1. Create a directory for each record dataset
         2. Whitespace trimming
         3. Character encoding normalization
+        4. Find, download and save all attached links
         """
 
     @abstractmethod
     def get_new_checkpoint(self) -> str:
         """
         Once the extraction is done, retrieve the checkpoint and save it using
-        :func:`save_checkpoint`. Returns the extracted checkpoint.
+        :func:`save_checkpoint`.
+        Returns the extracted checkpoint.
         """

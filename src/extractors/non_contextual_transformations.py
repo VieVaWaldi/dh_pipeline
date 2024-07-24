@@ -2,10 +2,12 @@ import logging
 import os
 import re
 import time
+from pathlib import Path
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
+from utils.file_handling import ensure_path_exists
 from utils.logger import log_and_raise_exception
 from utils.web_requests import get_base_url
 
@@ -22,86 +24,84 @@ def trim_excessive_whitespace(file_content: str) -> str:
     return trimmed_content
 
 
-def download_and_save_cordis_pdfs(url: str, save_path: str) -> None:
-    """
-    Specifically downloads files from europa.eu, which forces a redirect to the download and just sucks in general.
-    So we use selenium and monitor the download directory.
-    """
+class CordisPDFDownloader:
+    def __init__(self, download_path: Path):
+        self.download_path = download_path
+        self.driver = self._setup_driver()
+        logging.info(f"Setup CordisPDFDownloader for path {self.download_path}.")
 
-    if get_base_url(url) != "europa.eu":
-        log_and_raise_exception("Trying to download a non europa.eu cordis pdf file.")
+    def _setup_driver(self):
+        chrome_options = Options()
+        chrome_options.add_argument("--headless=new")
+        chrome_options.add_experimental_option(
+            "prefs",
+            {
+                "download.default_directory": str(self.download_path),
+                "download.prompt_for_download": False,
+                "download.directory_upgrade": True,
+                "safebrowsing.enabled": True,
+                "plugins.always_open_pdf_externally": True,
+            },
+        )
+        return webdriver.Chrome(options=chrome_options)
 
-    CHROME_OPTIONS = Options()
-    CHROME_OPTIONS.add_argument("--headless=new")
-    CHROME_OPTIONS.add_experimental_option(
-        "prefs",
-        {
-            "download.default_directory": save_path,
-            "download.prompt_for_download": False,
-            "download.directory_upgrade": True,
-            "safebrowsing.enabled": True,
-            "plugins.always_open_pdf_externally": True,
-        },
-    )
-    DRIVER = webdriver.Chrome(options=CHROME_OPTIONS)
+    def download_pdf(self, url: str) -> bool:
+        if get_base_url(url) != "europa.eu":
+            log_and_raise_exception(
+                "Trying to download a non europa.eu cordis pdf file."
+            )
+        try:
+            self.driver.get(url)
+            return self._wait_for_download()
+        except Exception as e:
+            print(f"Error downloading PDF from {url}: {str(e)}")
+            return False
 
-    try:
-        DRIVER.get(url)
-        if not wait_for_download(save_path):
-            logging.info("Cordis file couldn't be downloaded.")
-    except:
-        logging.info("Cordis file couldn't be downloaded.")
-
-
-def wait_for_download(directory: str, timeout: int = 90) -> bool:
-    """
-    Waits until .crdownload, .tmp or .com files are not in the directory anymore.
-    Deletes these files on timeout.
-    """
-    initial_files = set(os.listdir(directory))
-    start_time = time.time()
-    while time.time() - start_time < timeout:
-        downloading_files = [
-            f
-            for f in os.listdir(directory)
-            if f.endswith(".crdownload")
-            or f.endswith(".tmp")
-            or f.startswith(".com.google.Chrome")
-        ]
-        if downloading_files:
+    def _wait_for_download(self, timeout: int = 90) -> bool:
+        start_time = time.time()
+        while time.time() - start_time < timeout:
+            downloading_files = [
+                f
+                for f in os.listdir(self.download_path)
+                if f.endswith(".crdownload")
+                or f.endswith(".tmp")
+                or f.startswith(".com.google.Chrome")
+            ]
+            if not downloading_files:
+                return True
             time.sleep(1)
-            continue
+        self._cleanup_incomplete_files()
+        return False
 
-        new_files = set(os.listdir(directory)) - initial_files
-        if new_files:
-            logging.info(f"Cordis Download completed: {list(new_files)[-1]}")
-            return True
+    def _cleanup_incomplete_files(self) -> None:
+        for filename in os.listdir(self.download_path):
+            if (
+                filename.endswith(".crdownload")
+                or filename.endswith(".tmp")
+                or filename.startswith(".com.google.Chrome")
+            ):
+                file_path = os.path.join(self.download_path, filename)
+                try:
+                    os.remove(file_path)
+                except Exception as e:
+                    print(f"Error deleting {filename}: {str(e)}")
 
-        time.sleep(1)
-
-    cleanup_incomplete_files(directory)
-    return False
-
-
-def cleanup_incomplete_files(directory: str) -> None:
-    """
-    Deletes .crdownload, .tmp, and .com.google.Chrome files in the specified directory.
-    """
-    for filename in os.listdir(directory):
-        if (
-            filename.endswith(".crdownload")
-            or filename.endswith(".tmp")
-            or filename.startswith(".com.google.Chrome")
-        ):
-            file_path = os.path.join(directory, filename)
-            try:
-                os.remove(file_path)
-            except Exception as e:
-                print(f"Error deleting {filename}: {str(e)}")
+    def close(self):
+        if self.driver:
+            self.driver.quit()
 
 
 if __name__ == "__main__":
-    download_and_save_cordis_pdfs(
-        "https://ec.europa.eu/research/participants/documents/downloadPublic?documentIds=080166e5e9e8c93d&appId=PPGMS",
-        "/Users/wehrenberger/Code/DIGICHer/DIGICHer_Pipeline/data/pile/rmme",
+    save_path = Path(
+        "/Users/wehrenberger/Code/DIGICHer/DIGICHer_Pipeline/data/pile/rmme"
     )
+    ensure_path_exists(save_path)
+    downloader = CordisPDFDownloader(save_path)
+
+    try:
+        result = downloader.download_pdf(
+            "https://ec.europa.eu/research/participants/documents/downloadPublic?documentIds=080166e5e9e8c93d&appId=PPGMS"
+        )
+        print(f"Download successful: {result}")
+    finally:
+        downloader.close()
