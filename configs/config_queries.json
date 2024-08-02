@@ -4,11 +4,13 @@
     "runs": [
       {
         "query": "cultural OR heritage",
-        "download_attachments": true
+        "download_attachments": true,
+        "checkpoint_to_range": "5"
       },
       {
         "query": "contenttype='project' AND '*'",
-        "download_attachments": false
+        "download_attachments": false,
+        "checkpoint_to_range": "1"
       }
     ]
   },

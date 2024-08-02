@@ -38,13 +38,17 @@ class IExtractor(ABC):
         ensure_path_exists(self.checkpoint_path)
         self.last_checkpoint: str = self.restore_checkpoint()
 
-        self.data_path: Path = (
-            get_root_path()
-            / config["data_path"]
+        if config["data_path"].startswith("/"):
+            base_data_path = Path(config["data_path"])
+        else:
+            base_data_path = get_root_path() / config["data_path"]
+
+        self.data_path = (
+            base_data_path
             / "extractors"
             / extractor_name
             / f"last_{checkpoint_name}_{self.last_checkpoint}/"
-        )
+        )        
         ensure_path_exists(self.data_path)
 
         self.logging_path: Path = (
@@ -79,10 +83,11 @@ class IExtractor(ABC):
         """
 
     @abstractmethod
-    def extract_until_next_checkpoint(self, query: str) -> None:
+    def extract_until_next_checkpoint(self, query: str) -> bool:
         """
         Is responsible for extracting, downloading, non-contextual transforming,
-        saving the data and cleaning up.
+        saving the data and cleaning up. 
+        Returns true, when the run should continue, and false when there is no more data.
         """
 
     @abstractmethod
