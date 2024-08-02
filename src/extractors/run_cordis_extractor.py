@@ -1,3 +1,4 @@
+import argparse
 import logging
 import os
 import shutil
@@ -14,13 +15,13 @@ from extractors.non_contextual_transformations import (
     CordisPDFDownloader,
 )
 from utils.config_loader import get_query_config
+from utils.error_handling import log_and_raise_exception
 from utils.file_handling import (
     unpack_and_remove_zip,
     load_file,
     write_file,
     ensure_path_exists,
 )
-from utils.error_handling import log_and_raise_exception
 from utils.web_requests import (
     make_delete_request,
     make_get_request,
@@ -44,13 +45,13 @@ class CordisExtractor(IExtractor):
         super().__init__(extractor_name, checkpoint_name)
         self.download_attachments = download_attachments
 
-    def extract_until_next_checkpoint(self, query: str) -> None:
+    def extract_until_next_checkpoint(self, query: str) -> bool:
         api_key = os.getenv("API_KEY_CORDIS")
         if not api_key:
             return log_and_raise_exception("API Key not found")
 
         task_id = self._cordis_get_extraction_task_id(api_key, query)
-        download_uri = self._cordis_get_download_uri(api_key, task_id)
+        download_uri, number_of_records = self._cordis_get_download_uri(api_key, task_id)
 
         data_path = self.save_extracted_data(download_uri)
         self.non_contextual_transformation(data_path)
@@ -60,6 +61,8 @@ class CordisExtractor(IExtractor):
 
         self._cordis_delete_extraction(api_key, task_id)
         logging.info(">>> Successfully finished extraction")
+
+        return number_of_records != 0
 
     def restore_checkpoint(self) -> str:
         checkpoint = load_file(self.checkpoint_path)
@@ -102,6 +105,9 @@ class CordisExtractor(IExtractor):
         shutil.rmtree(data_path)
 
     def get_new_checkpoint(self) -> str:
+        """
+        RENAME THIS TO SOMETHING LIKE find new checkpoint, or find data with latest checkpoint
+        """
         date_elements = xml.get_all_elements_texts(self.data_path, self.checkpoint_name)
         date_objects = []
         for date_str in date_elements:
@@ -126,7 +132,7 @@ class CordisExtractor(IExtractor):
 
     def _cordis_get_extraction_task_id(self, key: str, query: str) -> str:
         """
-        Calls Cordis getExtraction API and returns the task ID for the job.
+        Calls Cordis getExtraction API and returns the task ID for the job and the number of records.
         """
         base_url = "https://cordis.europa.eu/api/dataextractions/getExtraction"
         params = {
@@ -142,7 +148,7 @@ class CordisExtractor(IExtractor):
 
         return response["payload"]["taskID"]
 
-    def _cordis_get_download_uri(self, key: str, task_id: str) -> str:
+    def _cordis_get_download_uri(self, key: str, task_id: str) -> (str, int):
         """
         Monitors the cordis getExtractionStatus API and returns the download uri
         once available. Returns an exception to running for longer than 12 hours.
@@ -155,7 +161,9 @@ class CordisExtractor(IExtractor):
 
             response = make_get_request(base_url, params)
             if response["payload"]["progress"] == "Finished":
-                return response["payload"]["destinationFileUri"]
+                return response["payload"]["destinationFileUri"], int(
+                    response["payload"]["numberOfRecords"]
+                )
 
             if response["payload"].get("error"):
                 log_and_raise_exception(
@@ -163,7 +171,7 @@ class CordisExtractor(IExtractor):
                 )
 
             if datetime.now() - start_time >= timedelta(hours=12):
-                return log_and_raise_exception(
+                log_and_raise_exception(
                     "Error: Aborted because 12 hours passed since request start."
                 )
 
@@ -213,7 +221,7 @@ def start_extraction(
     checkpoint_name: str,
     checkpoint_to_range: str,
     download_attachments: bool,
-):
+) -> bool:
     extractor = CordisExtractor(
         extractor_name=extractor_name,
         checkpoint_name=checkpoint_name,
@@ -226,24 +234,30 @@ def start_extraction(
     base_query = f"{checkpoint_name}={checkpoint_from}-{checkpoint_to} AND "
     base_query += query
 
-    extractor.extract_until_next_checkpoint(base_query)
+    return extractor.extract_until_next_checkpoint(base_query)
 
 
 def main():
+    parser = argparse.ArgumentParser(description='Run Cordis extractor')
+    parser.add_argument('-r', '--run_id', type=int, default=0,
+                        help='Run ID to use from the config (default: 0)')
+    args = parser.parse_args()
+
     load_dotenv()
     config = get_query_config()["cordis"]
 
-    run = config["runs"][1]
+    run = config["runs"][args.run_id]
+
     query = run["query"]
+    checkpoint_to_range = run["checkpoint_to_range"]
     download_attachments = run["download_attachments"]
-    checkpoint_to_range = "1"
 
     extractor_name = f"cordis_{query}"
     checkpoint_name = config["checkpoint"]
 
-    # IF NO (or base) CHECKPOINT RUN IN THIS LOOP TO CATCH UP till today
-    for i in range(1):
-        start_extraction(
+    continue_running = True
+    while continue_running:
+        continue_running = start_extraction(
             query,
             extractor_name,
             checkpoint_name,
@@ -251,10 +265,17 @@ def main():
             download_attachments,
         )
 
-    # IF HAS CHECKPOINT JUST RUN ONCE FROM IT TO GET NEW DATA SINCE THEN
+    # ONE bug is that we gather till checkpoint_day, and from checkpoint_day
+    # so we get the data twice for the same day -> DOESNT MATTER, check duplicates
 
-    # one bug is that we gather till checkpoint_day, and from checkpoint_day
-    # so we get the data twice for the same day
+    # TWO bug is that when the last checkpoint got new data we dont get it because
+    # we always save the next cp. We need to save the cp conditionally when ... ? 
+    # ---> DUDE We look for the latest checkpoint in the data itself. no issues here
+
+    # THREE assumpotion for the bool from extract_until_next_checkpoint is that we have no data holes
+    # within a given checkpoint range. 
+
+    # FOUR add backup by copying from vast to ceph
 
 
 if __name__ == "__main__":
