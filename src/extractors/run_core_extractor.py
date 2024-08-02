@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+from datetime import datetime
 from pathlib import Path
 from typing import List, Dict, Any
 
@@ -61,7 +62,21 @@ class CoreExtractor(IExtractor):
 
     def save_extracted_data(self, data: List[Dict[str, Any]]) -> Path:
         for index, entry in enumerate(data):
-            filename = f"entry_{index}.json"
+            title = (
+                entry["title"]
+                .replace(" ", "")
+                .replace("/", "")
+                .replace(".", "")
+                .lower()[:30]
+                if entry.get("title")
+                else f"NO-TITLE_{index}"
+            )
+            date = (
+                self.parse_to_yyyy_mm_dd(entry["publishedDate"])
+                if entry.get("publishedDate")
+                else f"NO-DATE"
+            )
+            filename = f"{date}_{title}.json"
             file_path = os.path.join(self.data_path, filename)
             with open(file_path, "w", encoding="utf-8") as f:
                 json_string = json.dumps(entry, indent=4, ensure_ascii=False)
@@ -79,13 +94,15 @@ class CoreExtractor(IExtractor):
         # return "1995-01-01"
         pass
 
-    def _search_core(self, query: str, limit: int = 2) -> (List[Dict[str, Any]], bool):
-        current_offset = self.restore_checkpoint()
+    def _search_core(
+        self, query: str, limit: int = 100
+    ) -> List[Dict[str, Any]]:  # (List[Dict[str, Any]], bool):
+        current_offset = 0  # self.restore_checkpoint()
         params = {
             "q": query,
-            "sort": "acceptedDate",
+            "sort": "publishedDate",
             "limit": limit,
-            "offset": current_offset,
+            "offset": current_offset
         }
         response = make_get_request(
             f"{self.base_url}/search/works", params, self.headers
@@ -95,10 +112,25 @@ class CoreExtractor(IExtractor):
         # 'limit' = {int} 2
         # 'offset' = {int} 0
 
-        idk = (current_offset + 1) * limit
-        b = idk >= int(response["totalHits"])
+        # idk = (current_offset + 1) * limit
+        # b = idk >= int(response["totalHits"])
 
-        return response["results"], b
+        return response["results"]  # , b
+
+    def parse_to_yyyy_mm_dd(self, date_string: str) -> datetime:
+        try:
+            # Try parsing with time component
+            date_obj = datetime.strptime(date_string, "%Y-%m-%dT%H:%M:%S")
+        except ValueError:
+            try:
+                # If that fails, try parsing without time component
+                date_obj = datetime.strptime(date_string, "%Y-%m-%d")
+            except ValueError:
+                # If both fail, raise an error
+                raise ValueError(f"Unable to parse date string: {date_string}")
+
+        # Return the date in yyyy-mm-dd format
+        return date_obj.strftime("%Y-%m-%d")
 
 
 def start_extraction(query: str, extractor_name: str, checkpoint_name: str):
@@ -119,12 +151,14 @@ def main():
     # Simply update the existing data for same offset on next run
 
     query = config["queries"][0]
+    base_query = f"(publishedDate>2020-01-01 AND publishedDate<2021-01-01) AND ({query})"
+
     extractor_name = f"core_{query.replace(' ', '')}"
     checkpoint_name = config["checkpoint"]
 
     # IF NO (or base) CHECKPOINT RUN IN THIS LOOP TO CATCH UP till today
     for i in range(1):
-        start_extraction(query, extractor_name, checkpoint_name)
+        start_extraction(base_query, extractor_name, checkpoint_name)
 
     # IF HAS CHECKPOINT JUST RUN ONCE FROM IT TO GET NEW DATA SINCE THEN
 

@@ -38,16 +38,18 @@ class CordisExtractor(IExtractor):
     4. Call deleteExtraction
     """
 
-    def __init__(self, extractor_name: str, checkpoint_name: str):
+    def __init__(
+        self, extractor_name: str, checkpoint_name: str, download_attachments: bool
+    ):
         super().__init__(extractor_name, checkpoint_name)
+        self.download_attachments = download_attachments
 
     def extract_until_next_checkpoint(self, query: str) -> None:
         api_key = os.getenv("API_KEY_CORDIS")
         if not api_key:
             return log_and_raise_exception("API Key not found")
 
-        # task_id = self._cordis_get_extraction_task_id(api_key, query)
-        task_id = "150875962"
+        task_id = self._cordis_get_extraction_task_id(api_key, query)
         download_uri = self._cordis_get_download_uri(api_key, task_id)
 
         data_path = self.save_extracted_data(download_uri)
@@ -179,6 +181,9 @@ class CordisExtractor(IExtractor):
         #     log_and_raise_exception(f"Response error: {response['payload']['status']}")
 
     def download_and_save_attachments(self, file_path: Path, record_path: Path) -> None:
+        if not self.download_attachments:
+            return
+
         link_dicts = xml.extract_element_as_dict(file_path, "webLink")
         eu_links = [
             dic["physUrl"]["text"]
@@ -202,13 +207,21 @@ class CordisExtractor(IExtractor):
         )
 
 
-def start_extraction(query: str, extractor_name: str, checkpoint_name: str):
+def start_extraction(
+    query: str,
+    extractor_name: str,
+    checkpoint_name: str,
+    checkpoint_to_range: str,
+    download_attachments: bool,
+):
     extractor = CordisExtractor(
-        extractor_name=extractor_name, checkpoint_name=checkpoint_name
+        extractor_name=extractor_name,
+        checkpoint_name=checkpoint_name,
+        download_attachments=download_attachments,
     )
 
     checkpoint_from = extractor.restore_checkpoint()
-    checkpoint_to = extractor.create_next_checkpoint_end("5")
+    checkpoint_to = extractor.create_next_checkpoint_end(checkpoint_to_range)
 
     base_query = f"{checkpoint_name}={checkpoint_from}-{checkpoint_to} AND "
     base_query += query
@@ -220,13 +233,23 @@ def main():
     load_dotenv()
     config = get_query_config()["cordis"]
 
-    query = config["queries"][0]
-    extractor_name = f"cordis_{query.replace(' ', '')}"
+    run = config["runs"][1]
+    query = run["query"]
+    download_attachments = run["download_attachments"]
+    checkpoint_to_range = "1"
+
+    extractor_name = f"cordis_{query}"
     checkpoint_name = config["checkpoint"]
 
     # IF NO (or base) CHECKPOINT RUN IN THIS LOOP TO CATCH UP till today
     for i in range(1):
-        start_extraction(query, extractor_name, checkpoint_name)
+        start_extraction(
+            query,
+            extractor_name,
+            checkpoint_name,
+            checkpoint_to_range,
+            download_attachments,
+        )
 
     # IF HAS CHECKPOINT JUST RUN ONCE FROM IT TO GET NEW DATA SINCE THEN
 

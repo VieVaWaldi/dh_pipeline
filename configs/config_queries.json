@@ -1,9 +1,15 @@
 {
   "cordis": {
     "checkpoint": "startDate",
-    "queries": [
-      "test",
-      "cultural OR heritage"
+    "runs": [
+      {
+        "query": "cultural OR heritage",
+        "download_attachments": true
+      },
+      {
+        "query": "contenttype='project' AND '*'",
+        "download_attachments": false
+      }
     ]
   },
   "core": {
