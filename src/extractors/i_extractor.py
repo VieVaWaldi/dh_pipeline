@@ -24,7 +24,9 @@ class IExtractor(ABC):
     def __init__(self, extractor_name: str, checkpoint_name: str):
         config = get_config()
 
-        extractor_name = extractor_name.replace(" ", "").replace("'", "")
+        extractor_name = (
+            extractor_name.replace(" ", "").replace("'", "").replace("*", "STAR")
+        )
         self.checkpoint_name = checkpoint_name
         self.checkpoint_path: Path = (
             get_root_path()
@@ -52,7 +54,7 @@ class IExtractor(ABC):
 
         setup_logging(self.logging_path)
         logging.info(
-            ">>> Starting new data extraction run for %s from checkpoint %s.",
+            "\n>>> Starting new data extraction run for %s from checkpoint %s.",
             extractor_name,
             (self.last_checkpoint if self.last_checkpoint else "No Checkpoint"),
         )

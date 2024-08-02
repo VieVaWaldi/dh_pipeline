@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 
 from extractors.i_extractor import IExtractor
 from utils.config_loader import get_query_config
-from utils.logger import log_and_raise_exception
+from utils.error_handling import log_and_raise_exception
 from utils.web_requests import make_get_request
 
 

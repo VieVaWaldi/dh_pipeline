@@ -3,7 +3,7 @@ import xml.etree.ElementTree as eT
 from pathlib import Path
 from typing import List, Dict
 
-from utils.logger import log_and_raise_exception
+from utils.error_handling import log_and_raise_exception
 
 
 def get_all_elements_texts(file_path: Path, element_name: str) -> List[str]:

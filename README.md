@@ -12,7 +12,7 @@ Create a venv:
 
 Activate venv:
 
-> source source venv/bin/activate (Mac or Linux)
+> source venv/bin/activate (Mac or Linux)
 
 Installs the repo as an editable package and install all requirements:
 

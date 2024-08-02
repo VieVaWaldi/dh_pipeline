@@ -5,6 +5,8 @@ import zipfile
 from pathlib import Path
 from typing import Any, Dict
 
+from utils.error_handling import log_and_raise_exception
+
 ENCODING = "utf-8"
 
 
@@ -30,9 +32,12 @@ def load_file(path: Path) -> str | None:
     if not path.exists():
         return None
 
-    with open(path, "r+", encoding=ENCODING) as file:
-        data = file.read().strip()
-    return data
+    try:
+        with open(path, "r+", encoding=ENCODING) as file:
+            data = file.read().strip()
+        return data
+    except Exception as e:
+        log_and_raise_exception("ERROR loading file:  ", e)
 
 
 def load_json_file(path: Path) -> Dict[str, Any] | None:
@@ -43,15 +48,21 @@ def load_json_file(path: Path) -> Dict[str, Any] | None:
     if not path.exists():
         return None
 
-    with open(path, "r", encoding=ENCODING) as file:
-        data = json.load(file)
-    return data
+    try:
+        with open(path, "r", encoding=ENCODING) as file:
+            data = json.load(file)
+        return data
+    except Exception as e:
+        log_and_raise_exception("ERROR loading json:  ", e)
 
 
 def write_file(path: Path, content: str) -> None:
     """Writes content to file."""
-    with open(path, "w+", encoding=ENCODING) as file:
-        file.write(content)
+    try:
+        with open(path, "w+", encoding=ENCODING) as file:
+            file.write(content)
+    except Exception as e:
+        log_and_raise_exception("ERROR writing file:  ", e)
 
 
 def unpack_and_remove_zip(zip_path: Path) -> None:
@@ -59,13 +70,16 @@ def unpack_and_remove_zip(zip_path: Path) -> None:
     Unpacks a zip file given a path and places all contents in the same directory.
     Deletes the original zip file.
     """
-    save_directory = os.path.dirname(zip_path)
-    with zipfile.ZipFile(zip_path, "r") as zip_ref:
-        zip_ref.extractall(save_directory)
-        logging.info(f"Extracted all files to: {save_directory}")
+    try:
+        save_directory = os.path.dirname(zip_path)
+        with zipfile.ZipFile(zip_path, "r") as zip_ref:
+            zip_ref.extractall(save_directory)
+            logging.info(f"Extracted all files to: {save_directory}")
 
-    os.remove(zip_path)
-    logging.info(f"Removed the zip file: {zip_path}")
+        os.remove(zip_path)
+        logging.info(f"Removed the zip file: {zip_path}")
+    except Exception as e:
+        log_and_raise_exception("ERROR on handling the zip:  ", e)
 
 
 if __name__ == "__main__":

@@ -47,11 +47,3 @@ def setup_logging(log_path: Path) -> None:
 
     logger.addHandler(file_handler)
     logger.addHandler(console_handler)
-
-
-def log_and_raise_exception(err_msg: str):
-    """
-    Logs the message and raises a standard exception.
-    """
-    logging.exception(err_msg)
-    raise Exception(err_msg)
