@@ -24,6 +24,7 @@ class IExtractor(ABC):
     def __init__(self, extractor_name: str, checkpoint_name: str):
         config = get_config()
 
+        extractor_name = extractor_name.replace(" ", "").replace("'", "")
         self.checkpoint_name = checkpoint_name
         self.checkpoint_path: Path = (
             get_root_path()
