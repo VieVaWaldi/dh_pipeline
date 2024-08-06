@@ -3,7 +3,8 @@
     "analysis_path": "data/analysis/",
     "checkpoint_path": "data/checkpoints/",
     "logging_path": "data/logs/",
-    "data_path": "data/pile/"
+    "data_path": "data/pile/",
+    "analysis_path": "data/analysis/"
   },
   "prod": {
     "analysis_path": "data/analysis/",

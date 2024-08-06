@@ -3,9 +3,22 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Dict, Any, Union
 
-from utils.config_loader import get_config
-from utils.file_handling import ensure_path_exists, write_file, get_root_path
-from utils.logger import setup_logging
+from utils.config.config_loader import get_config
+from utils.file_handling.file_handling import (
+    ensure_path_exists,
+    write_file,
+    get_root_path,
+)
+from utils.logging.logger import setup_logging
+
+
+def clean_extractor_name(extractor_name: str):
+    return (
+        extractor_name.replace(" ", "")
+        .replace("'", "")
+        .replace("*", "STAR")
+        .replace("=", "IS")
+    )
 
 
 class IExtractor(ABC):
@@ -24,9 +37,7 @@ class IExtractor(ABC):
     def __init__(self, extractor_name: str, checkpoint_name: str):
         config = get_config()
 
-        extractor_name = (
-            extractor_name.replace(" ", "").replace("'", "").replace("*", "STAR")
-        )
+        extractor_name = clean_extractor_name(extractor_name)
         self.checkpoint_name = checkpoint_name
         self.checkpoint_path: Path = (
             get_root_path()
@@ -48,7 +59,7 @@ class IExtractor(ABC):
             / "extractors"
             / extractor_name
             / f"last_{checkpoint_name}_{self.last_checkpoint}/"
-        )        
+        )
         ensure_path_exists(self.data_path)
 
         self.logging_path: Path = (
@@ -86,7 +97,7 @@ class IExtractor(ABC):
     def extract_until_next_checkpoint(self, query: str) -> bool:
         """
         Is responsible for extracting, downloading, non-contextual transforming,
-        saving the data and cleaning up. 
+        saving the data and cleaning up.
         Returns true, when the run should continue, and false when there is no more data.
         """
 
@@ -103,7 +114,7 @@ class IExtractor(ABC):
         1. Create a directory for each record dataset
         2. Whitespace trimming
         3. Character encoding normalization
-        4. Find, download and save all attached links
+        4. Optionally find, download and save all attached links
         """
 
     @abstractmethod

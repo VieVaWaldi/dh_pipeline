@@ -8,21 +8,19 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-import utils.xml_parser as xml
-from extractors.i_extractor import IExtractor
-from extractors.non_contextual_transformations import (
-    trim_excessive_whitespace,
-    CordisPDFDownloader,
-)
-from utils.config_loader import get_query_config
-from utils.error_handling import log_and_raise_exception
-from utils.file_handling import (
+import utils.file_handling.file_parser.xml_parser as xml
+from extractors.extractor_interface import IExtractor
+from utils.config.config_loader import get_query_config
+from utils.error_handling.error_handling import log_and_raise_exception
+from utils.file_handling.file_handling import (
     unpack_and_remove_zip,
     load_file,
     write_file,
     ensure_path_exists,
 )
-from utils.web_requests import (
+from utils.file_handling.file_processing.file_cleanup import trim_excessive_whitespace
+from utils.web_requests.selenium_file_downloader import SeleniumFileDownloader
+from utils.web_requests.web_requests import (
     make_delete_request,
     make_get_request,
     download_file,
@@ -48,10 +46,12 @@ class CordisExtractor(IExtractor):
     def extract_until_next_checkpoint(self, query: str) -> bool:
         api_key = os.getenv("API_KEY_CORDIS")
         if not api_key:
-            return log_and_raise_exception("API Key not found")
+            log_and_raise_exception("API Key not found")
 
         task_id = self._cordis_get_extraction_task_id(api_key, query)
-        download_uri, number_of_records = self._cordis_get_download_uri(api_key, task_id)
+        download_uri, number_of_records = self._cordis_get_download_uri(
+            api_key, task_id
+        )
 
         data_path = self.save_extracted_data(download_uri)
         self.non_contextual_transformation(data_path)
@@ -208,9 +208,11 @@ class CordisExtractor(IExtractor):
         ensure_path_exists(attachment_dir)
 
         was_downloaded = []
-        downloader = CordisPDFDownloader(attachment_dir)
+        downloader = SeleniumFileDownloader(attachment_dir)
         for url in eu_links:
-            was_downloaded.append(downloader.download_pdf(url))
+            was_downloaded.append(
+                downloader.download_pdf(url, only_from_url="europa.eu")
+            )
         logging.info(
             f"Downloaded {len([d for d in was_downloaded if d])} files successfully and "
             f"{len([d for d in was_downloaded if not d])} files not successfully "
@@ -241,9 +243,14 @@ def start_extraction(
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Run Cordis extractor')
-    parser.add_argument('-r', '--run_id', type=int, default=0,
-                        help='Run ID to use from the config (default: 0)')
+    parser = argparse.ArgumentParser(description="Run Cordis extractor")
+    parser.add_argument(
+        "-r",
+        "--run_id",
+        type=int,
+        default=0,
+        help="Run ID to use from the config (default: 0)",
+    )
     args = parser.parse_args()
 
     load_dotenv()
@@ -272,11 +279,11 @@ def main():
     # so we get the data twice for the same day -> DOESNT MATTER, check duplicates
 
     # TWO bug is that when the last checkpoint got new data we dont get it because
-    # we always save the next cp. We need to save the cp conditionally when ... ? 
+    # we always save the next cp. We need to save the cp conditionally when ... ?
     # ---> DUDE We look for the latest checkpoint in the data itself. no issues here
 
-    # THREE assumpotion for the bool from extract_until_next_checkpoint is that we have no data holes
-    # within a given checkpoint range. 
+    # THREE assumption for the bool from extract_until_next_checkpoint is that we have no data holes
+    # within a given checkpoint range.
 
     # FOUR add backup by copying from vast to ceph
 

@@ -7,7 +7,7 @@ from urllib.parse import urlparse
 
 import requests
 
-from utils.error_handling import log_and_raise_exception
+from utils.error_handling.error_handling import log_and_raise_exception
 
 MAX_RESPONSE_LOG_LENGTH = 512
 
@@ -31,11 +31,11 @@ def make_get_request(url: str, params: Dict, header: Dict = None) -> Dict:
             )
             return response.json()
         else:
-            return log_and_raise_exception(
+            log_and_raise_exception(
                 f"Error fetching data: {response.status_code}, {response.text[:MAX_RESPONSE_LOG_LENGTH]}"
             )
     except Exception as e:
-        return log_and_raise_exception(f"Error fetching data: {e}")
+        log_and_raise_exception(f"Error fetching data: {e}")
 
 
 def make_delete_request(url: str, params: Dict) -> Dict:
@@ -54,11 +54,11 @@ def make_delete_request(url: str, params: Dict) -> Dict:
             )
             return response.json()
         else:
-            return log_and_raise_exception(
+            log_and_raise_exception(
                 f"Error fetching data: {response.status_code}, {response.text[:MAX_RESPONSE_LOG_LENGTH]}"
             )
     except Exception as e:
-        return log_and_raise_exception(f"Error fetching data: {e}")
+        log_and_raise_exception(f"Error fetching data: {e}")
 
 
 def download_file(url: str, save_path: Path) -> Path:
@@ -79,7 +79,7 @@ def download_file(url: str, save_path: Path) -> Path:
             logging.info(f"File downloaded successfully to {file_path}")
         return file_path
     except Exception as e:
-        return log_and_raise_exception(f"Error fetching data: {e}")
+        log_and_raise_exception(f"Error fetching data: {e}")
 
 
 def get_base_url(url: str):
