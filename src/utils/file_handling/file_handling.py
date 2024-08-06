@@ -5,14 +5,14 @@ import zipfile
 from pathlib import Path
 from typing import Any, Dict
 
-from utils.error_handling import log_and_raise_exception
+from utils.error_handling.error_handling import log_and_raise_exception
 
 ENCODING = "utf-8"
 
 
 def get_root_path() -> Path:
     """Return the absolute path to the project root directory ending with /."""
-    return Path(__file__).parent.parent.parent.absolute()
+    return Path(__file__).parent.parent.parent.parent.absolute()
 
 
 def ensure_path_exists(path: Path) -> None:

@@ -2,9 +2,9 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Dict, Any
 
-from utils.config_loader import get_config
-from utils.web_requests import get_base_url
-from utils.xml_parser import get_all_elements_as_dict
+from utils.config.config_loader import get_config
+from utils.file_handling.file_parser.xml_parser import get_all_elements_as_dict
+from utils.web_requests.web_requests import get_base_url
 
 
 def print_total_number_weblinks(path: str):

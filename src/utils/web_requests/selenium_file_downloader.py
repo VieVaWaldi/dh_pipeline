@@ -1,34 +1,26 @@
 import logging
 import os
-import re
 import time
 from pathlib import Path
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
-from utils.file_handling import ensure_path_exists
-from utils.error_handling import log_and_raise_exception
-from utils.web_requests import get_base_url
+from utils.error_handling.error_handling import log_and_raise_exception
+from utils.file_handling.file_handling import ensure_path_exists
+from utils.web_requests.web_requests import get_base_url
 
 
-def trim_excessive_whitespace(file_content: str) -> str:
+class SeleniumFileDownloader:
     """
-    1. Replaces multiple newlines with a single newline
-    2. Replace multiple spaces with a single space, but not newlines
-    3. Ensure there is a newline after each tag for readability
+    Use this for urls that redirect you to the actual downloadable file.
+    This uses selenium and creates a headless browser to download the file.
     """
-    trimmed_content = re.sub(r"\n\s*\n", "\n", file_content)
-    trimmed_content = re.sub(r"[ \t]+", " ", trimmed_content)
-    trimmed_content = re.sub(r"(>)(<)", r"\1\n\2", trimmed_content)
-    return trimmed_content
 
-
-class CordisPDFDownloader:
     def __init__(self, download_path: Path):
         self.download_path = download_path
         self.driver = self._setup_driver()
-        logging.info(f"Setup CordisPDFDownloader for path {self.download_path}.")
+        logging.info(f"Setup PDFDownloader for path {self.download_path}.")
 
     def _setup_driver(self):
         chrome_options = Options()
@@ -45,17 +37,19 @@ class CordisPDFDownloader:
         )
         return webdriver.Chrome(options=chrome_options)
 
-    def download_pdf(self, url: str) -> bool:
-        if get_base_url(url) != "europa.eu":
+    def download_pdf(self, url: str, only_from_url: str) -> bool:
+        if get_base_url(url) != only_from_url:
             log_and_raise_exception(
-                "Trying to download a non europa.eu cordis pdf file."
+                f"Trying to download a non {only_from_url} cordis pdf file."
             )
         try:
             self.driver.get(url)
             return self._wait_for_download()
         except Exception as e:
-            print(f"Error downloading PDF from {url}: {str(e)}")
+            print(f"Error downloading file from {url}: {str(e)}")
             return False
+        finally:
+            self.close()
 
     def _wait_for_download(self, timeout: int = 90) -> bool:
         start_time = time.time()
@@ -96,12 +90,10 @@ if __name__ == "__main__":
         "/Users/wehrenberger/Code/DIGICHer/DIGICHer_Pipeline/data/pile/rmme"
     )
     ensure_path_exists(save_path)
-    downloader = CordisPDFDownloader(save_path)
+    downloader = SeleniumFileDownloader(save_path)
 
-    try:
-        result = downloader.download_pdf(
-            "https://ec.europa.eu/research/participants/documents/downloadPublic?documentIds=080166e5e9e8c93d&appId=PPGMS"
-        )
-        print(f"Download successful: {result}")
-    finally:
-        downloader.close()
+    result = downloader.download_pdf(
+        "https://ec.europa.eu/research/participants/documents/downloadPublic?documentIds=080166e5e9e8c93d&appId=PPGMS",
+        "europa.eu",
+    )
+    print(f"Download successful: {result}")

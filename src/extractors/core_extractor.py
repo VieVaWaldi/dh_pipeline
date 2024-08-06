@@ -7,10 +7,10 @@ from typing import List, Dict, Any
 
 from dotenv import load_dotenv
 
-from extractors.i_extractor import IExtractor
-from utils.config_loader import get_query_config
-from utils.error_handling import log_and_raise_exception
-from utils.web_requests import make_get_request
+from extractors.extractor_interface import IExtractor
+from utils.config.config_loader import get_query_config
+from utils.error_handling.error_handling import log_and_raise_exception
+from utils.web_requests.web_requests import make_get_request
 
 
 class CoreExtractor(IExtractor):
@@ -30,7 +30,7 @@ class CoreExtractor(IExtractor):
 
     def extract_until_next_checkpoint(self, query: str) -> None:
         if not self.api_key:
-            return log_and_raise_exception("API Key not found")
+            log_and_raise_exception("API Key not found")
 
         core_data = self._search_core(query)
 
@@ -102,7 +102,7 @@ class CoreExtractor(IExtractor):
             "q": query,
             "sort": "publishedDate",
             "limit": limit,
-            "offset": current_offset
+            "offset": current_offset,
         }
         response = make_get_request(
             f"{self.base_url}/search/works", params, self.headers
@@ -151,7 +151,9 @@ def main():
     # Simply update the existing data for same offset on next run
 
     query = config["queries"][0]
-    base_query = f"(publishedDate>2020-01-01 AND publishedDate<2021-01-01) AND ({query})"
+    base_query = (
+        f"(publishedDate>2020-01-01 AND publishedDate<2021-01-01) AND ({query})"
+    )
 
     extractor_name = f"core_{query.replace(' ', '')}"
     checkpoint_name = config["checkpoint"]
