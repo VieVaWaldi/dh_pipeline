@@ -3,6 +3,7 @@ from typing import Any, Dict
 
 from dotenv import load_dotenv
 
+from utils.error_handling import log_and_raise_exception
 from utils.file_handling import load_json_file, get_root_path
 
 load_dotenv()
@@ -28,5 +29,5 @@ def _get_config(config_name: str) -> Dict[str, Any]:
 
     env = os.getenv("ENV")
     if env not in config:
-        return config
+        log_and_raise_exception("Env key was not found in config.")
     return config[env]

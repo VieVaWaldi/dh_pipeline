@@ -280,6 +280,8 @@ def main():
 
     # FOUR add backup by copying from vast to ceph
 
+    # QUIT on progress":"Failed or ?Cancelled?
+
 
 if __name__ == "__main__":
     main()
