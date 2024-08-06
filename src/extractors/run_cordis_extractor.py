@@ -202,6 +202,9 @@ class CordisExtractor(IExtractor):
             return
 
         attachment_dir = record_path / "attachments"
+        if attachment_dir.exists():
+            # logging.info(f"Attachment directory already exists for {record_path.stem}. Skipping download. ")
+            return
         ensure_path_exists(attachment_dir)
 
         was_downloaded = []

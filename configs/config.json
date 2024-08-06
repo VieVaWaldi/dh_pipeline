@@ -1,10 +1,12 @@
 {
   "dev": {
+    "analysis_path": "data/analysis/",
     "checkpoint_path": "data/checkpoints/",
     "logging_path": "data/logs/",
     "data_path": "data/pile/"
   },
   "prod": {
+    "analysis_path": "data/analysis/",
     "checkpoint_path": "data/checkpoints/",
     "logging_path": "data/logs/",
     "data_path": "/vast/lu72hip/data/pile/"
