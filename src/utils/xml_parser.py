@@ -16,8 +16,6 @@ def get_all_elements_texts(file_path: Path, element_name: str) -> List[str]:
     )
 
 
-# Not really used right now! BUT AMAZING FOR analysing stuff later.
-# Can use this to dict the whole file right?
 def get_all_elements_as_dict(
     file_path: Path, element_name: str
 ) -> List[Dict[str, str]]:
