@@ -7,6 +7,7 @@
   "prod": {
     "checkpoint_path": "data/checkpoints/",
     "logging_path": "data/logs/",
-    "data_path": "/vast/lu72hip/data/pile/"
+    "data_path": "/vast/lu72hip/data/pile/",
+    "analysis_path": "data/analysis/"
   }
 }
