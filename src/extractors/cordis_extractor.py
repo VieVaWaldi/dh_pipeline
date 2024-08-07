@@ -3,6 +3,7 @@ import logging
 import os
 import shutil
 import time
+import traceback
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -17,6 +18,7 @@ from utils.file_handling.file_handling import (
     load_file,
     write_file,
     ensure_path_exists,
+    delete_if_empty,
 )
 from utils.file_handling.file_processing.file_cleanup import trim_excessive_whitespace
 from utils.web_requests.selenium_file_downloader import SeleniumFileDownloader
@@ -56,7 +58,7 @@ class CordisExtractor(IExtractor):
         data_path = self.save_extracted_data(download_uri)
         self.non_contextual_transformation(data_path)
 
-        checkpoint = self.get_new_checkpoint()
+        checkpoint = self.get_new_checkpoint_from_data()
         self.save_checkpoint(checkpoint)
 
         self._cordis_delete_extraction(api_key, task_id)
@@ -68,7 +70,7 @@ class CordisExtractor(IExtractor):
         checkpoint = load_file(self.checkpoint_path)
         return checkpoint if checkpoint is not None else "1990-01-01"
 
-    def create_next_checkpoint_end(self, next_checkpoint: str) -> str:
+    def create_checkpoint_end_for_this_run(self, next_checkpoint: str) -> str:
         last_date = datetime.strptime(self.last_checkpoint, "%Y-%m-%d")
         try:
             new_date = last_date.replace(year=last_date.year + int(next_checkpoint))
@@ -90,6 +92,7 @@ class CordisExtractor(IExtractor):
 
     def non_contextual_transformation(self, data_path: Path):
         for file_path in Path(data_path).iterdir():
+
             if not file_path.is_file() or not (file_path.suffix == ".xml"):
                 log_and_raise_exception("We got a cordis record that is not an XML.")
 
@@ -104,11 +107,10 @@ class CordisExtractor(IExtractor):
 
         shutil.rmtree(data_path)
 
-    def get_new_checkpoint(self) -> str:
-        """
-        RENAME THIS TO SOMETHING LIKE find new checkpoint, or find data with latest checkpoint
-        """
-        date_elements = xml.get_all_elements_texts(self.data_path, self.checkpoint_name)
+    def get_new_checkpoint_from_data(self) -> str:
+        date_elements = xml.get_all_elements_text_recursively(
+            self.data_path, self.checkpoint_name
+        )
         date_objects = []
         for date_str in date_elements:
             try:
@@ -194,9 +196,9 @@ class CordisExtractor(IExtractor):
 
         link_dicts = xml.extract_element_as_dict(file_path, "webLink")
         eu_links = [
-            dic["physUrl"]["text"]
+            dic["webLink"]["physUrl"]
             for dic in link_dicts
-            if get_base_url(dic["physUrl"]["text"]) == "europa.eu"
+            if get_base_url(dic["webLink"]["physUrl"]) == "europa.eu"
         ]
         if not eu_links:
             return
@@ -211,8 +213,10 @@ class CordisExtractor(IExtractor):
         downloader = SeleniumFileDownloader(attachment_dir)
         for url in eu_links:
             was_downloaded.append(
-                downloader.download_pdf(url, only_from_url="europa.eu")
+                downloader.download_file(url, only_from_url="europa.eu")
             )
+        downloader.close()
+        delete_if_empty(attachment_dir)
         logging.info(
             f"Downloaded {len([d for d in was_downloaded if d])} files successfully and "
             f"{len([d for d in was_downloaded if not d])} files not successfully "
@@ -234,7 +238,7 @@ def start_extraction(
     )
 
     checkpoint_from = extractor.restore_checkpoint()
-    checkpoint_to = extractor.create_next_checkpoint_end(checkpoint_to_range)
+    checkpoint_to = extractor.create_checkpoint_end_for_this_run(checkpoint_to_range)
 
     base_query = f"{checkpoint_name}={checkpoint_from}-{checkpoint_to} AND "
     base_query += query
@@ -291,4 +295,7 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as e:
+        logging.critical(f"Critical error: {e}\n{traceback.format_exc()}")

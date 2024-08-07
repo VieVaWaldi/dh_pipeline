@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import shutil
 import zipfile
 from pathlib import Path
 from typing import Any, Dict
@@ -16,12 +17,31 @@ def get_root_path() -> Path:
 
 
 def ensure_path_exists(path: Path) -> None:
-    """Create the directory if it doesn't exist."""
+    """Create the directory if it doesn't exist. If given a file picks the parent directory."""
     if path.is_file() or path.suffix:
         directory = path.parent
     else:
         directory = path
     directory.mkdir(parents=True, exist_ok=True)
+
+
+def delete_if_empty(folder_path: Path) -> None:
+    """
+    Delete the given folder if it's empty.
+    """
+    if folder_path.is_dir() and not any(folder_path.iterdir()):
+        try:
+            shutil.rmtree(folder_path)
+        except OSError as e:
+            log_and_raise_exception(f"Error deleting folder {folder_path}: {e}")
+
+
+def raise_error_if_directory_does_not_exists(directory_path: Path) -> None:
+    """
+    Check if a directory exists and raise an error if it doesn't.
+    """
+    if not directory_path.is_dir():
+        log_and_raise_exception(f"The directory does not exist: {directory_path}")
 
 
 def load_file(path: Path) -> str | None:
@@ -80,6 +100,22 @@ def unpack_and_remove_zip(zip_path: Path) -> None:
         logging.info(f"Removed the zip file: {zip_path}")
     except Exception as e:
         log_and_raise_exception("ERROR on handling the zip:  ", e)
+
+
+def get_file_size(file_path: Path) -> int:
+    """
+    Get the size of a file in bytes.
+    """
+    try:
+        return os.path.getsize(file_path)
+    except FileNotFoundError:
+        raise FileNotFoundError(f"The file at {file_path} does not exist.")
+    except PermissionError:
+        raise PermissionError(f"Permission denied when trying to access {file_path}.")
+    except Exception as e:
+        raise Exception(
+            f"An error occurred when getting the size of {file_path}: {str(e)}"
+        )
 
 
 if __name__ == "__main__":

@@ -26,11 +26,11 @@ class IExtractor(ABC):
     Abstract Class all extractors have to inherit from.
     Sets up all paths and logging.
     All extractors must follow this pattern:
-    1. Create the end for the next checkpoint.
+    1. Create the end checkpoint for this run.
     2. Extract data until next checkpoint.
     3. Save the data.
-    4. Non contextually transform the data.
-    5. Get the checkpoint.
+    4. Non contextually transform the data @see docs for more info.
+    5. Get the new checkpoint from the latest data point.
     6. Save the checkpoint.
     """
 
@@ -67,7 +67,7 @@ class IExtractor(ABC):
         )
         ensure_path_exists(self.logging_path)
 
-        setup_logging(self.logging_path)
+        setup_logging(self.logging_path, "extractor")
         logging.info(
             "\n>>> Starting new data extraction run for %s from checkpoint %s.",
             extractor_name,
@@ -88,7 +88,7 @@ class IExtractor(ABC):
         """
 
     @abstractmethod
-    def create_next_checkpoint_end(self, next_checkpoint: str) -> str:
+    def create_checkpoint_end_for_this_run(self, next_checkpoint: str) -> str:
         """
         Returns the maximum check point until this extraction should run.
         """
@@ -118,7 +118,7 @@ class IExtractor(ABC):
         """
 
     @abstractmethod
-    def get_new_checkpoint(self) -> str:
+    def get_new_checkpoint_from_data(self) -> str:
         """
         Once the extraction is done, retrieve the checkpoint and save it using
         :func:`save_checkpoint`.
