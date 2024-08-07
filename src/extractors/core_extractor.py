@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import traceback
 from datetime import datetime
 from pathlib import Path
 from typing import List, Dict, Any
@@ -47,7 +48,7 @@ class CoreExtractor(IExtractor):
         # return checkpoint if checkpoint is not None else "1990-01-01"
         pass
 
-    def create_next_checkpoint_end(self, next_checkpoint: str) -> str:
+    def create_checkpoint_end_for_this_run(self, next_checkpoint: str) -> str:
         # 2016-06-16T12:26:00
 
         # last_date = datetime.strptime(self.last_checkpoint, "%Y-%m-%d")
@@ -90,7 +91,7 @@ class CoreExtractor(IExtractor):
     def non_contextual_transformation(self, data_path: str):
         pass
 
-    def get_new_checkpoint(self) -> str:
+    def get_new_checkpoint_from_data(self) -> str:
         # return "1995-01-01"
         pass
 
@@ -166,4 +167,7 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as e:
+        logging.critical(f"Critical error: {e}\n{traceback.format_exc()}")

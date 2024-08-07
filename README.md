@@ -18,7 +18,7 @@ Installs the repo as an editable package and install all requirements:
 
 > pip install -e .
 
-Open `.env_` and follow instructions.
+Open `.env_`, add keys and rename it to `.env`. Comments after keys create errors.
 
 ## Structure
 
@@ -27,7 +27,7 @@ Open `.env_` and follow instructions.
 - Under `/configs`, to configure queries and extration runs.
 - Change prod or dev in `.env`.
 
-**1. Orchestration**
+**1. Orchestration and Clusters**
 
 - ...
 
@@ -47,13 +47,23 @@ Open `.env_` and follow instructions.
 - Simply run the file from the top level directory.
 - See more here [Link to Extractors Documentation](src/extractors/README.md)
 
-**4. Transformer**
+**4. Analysis**
 
 - ...
 
-**5. Data Fuser**
+**5. Transformer**
 
 - ...
+
+**6. Data Fuser**
+
+- ...
+
+**Tests**
+
+- The directory `tests` mirrors the `src` directory
+- Run all tests like this: `python -m unittest discover tests`
+
 
 ## Developement Guidelines
 

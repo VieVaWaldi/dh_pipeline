@@ -18,7 +18,7 @@ class CustomFormatter(logging.Formatter):
         return super().format(record)
 
 
-def setup_logging(log_path: Path) -> None:
+def setup_logging(log_path: Path, log_name: str) -> None:
     """
     Sets up and configures the logging module.
     Call once at the beginning of each run.
@@ -32,7 +32,7 @@ def setup_logging(log_path: Path) -> None:
 
     logger.setLevel(LOG_LEVEL)
 
-    file_handler = logging.FileHandler(log_path / "log_source.log")
+    file_handler = logging.FileHandler(log_path / f"{log_name}.log")
     console_handler = logging.StreamHandler()
 
     file_handler.setLevel(LOG_LEVEL)
