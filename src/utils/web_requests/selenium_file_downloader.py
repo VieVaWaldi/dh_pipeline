@@ -37,7 +37,7 @@ class SeleniumFileDownloader:
         )
         return webdriver.Chrome(options=chrome_options)
 
-    def download_pdf(self, url: str, only_from_url: str) -> bool:
+    def download_file(self, url: str, only_from_url: str) -> bool:
         if get_base_url(url) != only_from_url:
             log_and_raise_exception(
                 f"Trying to download a non {only_from_url} cordis pdf file."
@@ -48,8 +48,6 @@ class SeleniumFileDownloader:
         except Exception as e:
             print(f"Error downloading file from {url}: {str(e)}")
             return False
-        finally:
-            self.close()
 
     def _wait_for_download(self, timeout: int = 90) -> bool:
         start_time = time.time()
@@ -92,7 +90,7 @@ if __name__ == "__main__":
     ensure_path_exists(save_path)
     downloader = SeleniumFileDownloader(save_path)
 
-    result = downloader.download_pdf(
+    result = downloader.download_file(
         "https://ec.europa.eu/research/participants/documents/downloadPublic?documentIds=080166e5e9e8c93d&appId=PPGMS",
         "europa.eu",
     )
