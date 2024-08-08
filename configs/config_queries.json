@@ -20,7 +20,7 @@
       {
         "query": "((computing AND cultural) OR (computing AND heritage))",
         "download_attachments": false,
-        "checkpoint_to_range": "6"
+        "checkpoint_to_range": "10"
       }
     ]
   },

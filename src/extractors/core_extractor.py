@@ -59,9 +59,10 @@ class CoreExtractor(IExtractor):
         return checkpoint if checkpoint is not None else "1990-01-01"
 
     def create_checkpoint_end_for_this_run(self, next_checkpoint: str) -> str:
-        months_to_add = int(next_checkpoint)
+        # Adds next_checkpoint as days
+        days_to_add = int(next_checkpoint)
         last_checkpoint_date = datetime.strptime(self.last_checkpoint, "%Y-%m-%d")
-        new_checkpoint_date = last_checkpoint_date + relativedelta(months=months_to_add)
+        new_checkpoint_date = last_checkpoint_date + relativedelta(days=days_to_add)
         return new_checkpoint_date.strftime("%Y-%m-%d")
 
     def save_extracted_data(self, data: List[Dict[str, Any]]) -> Path:
@@ -115,13 +116,6 @@ class CoreExtractor(IExtractor):
             f"{self.base_url}/search/works", params, self.headers
         )
         return response["results"], response["totalHits"]
-
-        # 'totalHits' = {int} 740089
-        # 'limit' = {int} 2
-        # 'offset' = {int} 0
-
-        # idk = (current_offset + 1) * limit
-        # b = idk >= int(response["totalHits"])
 
     def clean_title(self, param, entry, index):
         return (
