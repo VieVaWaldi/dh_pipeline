@@ -1,3 +1,4 @@
+import argparse
 import csv
 import logging
 import os
@@ -86,8 +87,15 @@ class BasicStatsJob(IAnalysisJob):
 
 
 if __name__ == "__main__":
-    job = BasicStatsJob(
-        "core_((computingANDcultural)OR(computingANDheritage))"
-    )  # cordis_culturalORheritage")
+    parser = argparse.ArgumentParser(description="Run Basic Stats Analysis")
+    parser.add_argument(
+        "-q",
+        "--query",
+        type=str,
+        help="Choose query to run analysis on",
+    )
+    args = parser.parse_args()
+
+    job = BasicStatsJob(args.query)
     job.run()
     job.save_output()

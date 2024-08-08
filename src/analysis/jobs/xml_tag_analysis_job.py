@@ -1,3 +1,4 @@
+import argparse
 import csv
 from collections import defaultdict
 from typing import Dict, Any
@@ -80,7 +81,15 @@ class XMLTagAnalysisJob(IAnalysisJob):
 
 
 if __name__ == "__main__":
-    query_name = "cordis_culturalORheritage"
-    job = XMLTagAnalysisJob(query_name)
+    parser = argparse.ArgumentParser(description="Run XML Tag Analysis")
+    parser.add_argument(
+        "-q",
+        "--query",
+        type=str,
+        help="Choose query to run analysis on",
+    )
+    args = parser.parse_args()
+
+    job = XMLTagAnalysisJob(args.query)
     job.run()
     job.save_output()
