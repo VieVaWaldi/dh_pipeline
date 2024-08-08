@@ -87,7 +87,7 @@ class BasicStatsJob(IAnalysisJob):
 
 if __name__ == "__main__":
     job = BasicStatsJob(
-        "cordis_contenttypeISprojectANDSTAR"
+        "core_((computingANDcultural)OR(computingANDheritage))"
     )  # cordis_culturalORheritage")
     job.run()
     job.save_output()

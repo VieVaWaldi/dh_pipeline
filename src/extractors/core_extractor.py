@@ -1,3 +1,4 @@
+import argparse
 import json
 import logging
 import os
@@ -6,11 +7,14 @@ from datetime import datetime
 from pathlib import Path
 from typing import List, Dict, Any
 
+from dateutil.relativedelta import relativedelta
 from dotenv import load_dotenv
 
 from extractors.extractor_interface import IExtractor
 from utils.config.config_loader import get_query_config
 from utils.error_handling.error_handling import log_and_raise_exception
+from utils.file_handling.file_handling import load_file
+from utils.file_handling.file_parser.json_parser import get_all_keys_value_recursively
 from utils.web_requests.web_requests import make_get_request
 
 
@@ -23,55 +27,46 @@ class CoreExtractor(IExtractor):
     sorted from there.
     """
 
-    def __init__(self, extractor_name: str, checkpoint_name: str):
+    def __init__(
+        self, extractor_name: str, checkpoint_name: str, download_attachments: bool
+    ):
         super().__init__(extractor_name, checkpoint_name)
         self.api_key = os.getenv("API_KEY_CORE")
         self.base_url = "https://api.core.ac.uk/v3"
         self.headers = {"Authorization": f"Bearer {self.api_key}"}
+        self.download_attachments = download_attachments
 
-    def extract_until_next_checkpoint(self, query: str) -> None:
+    def extract_until_next_checkpoint(self, query: str) -> bool:
         if not self.api_key:
             log_and_raise_exception("API Key not found")
 
-        core_data = self._search_core(query)
+        core_data, total_hits = self._search_core(query)
+
+        if total_hits > 10_000:
+            log_and_raise_exception("More data than the limit allows")
 
         data_path = self.save_extracted_data(core_data)
         # self.non_contextual_transformation(data_path)
 
-        # checkpoint = self.get_new_checkpoint()
-        # self.save_checkpoint(checkpoint)
+        checkpoint = self.get_new_checkpoint_from_data()
+        self.save_checkpoint(checkpoint)
 
         logging.info(">>> Successfully finished extraction")
+        return total_hits != 0
 
     def restore_checkpoint(self) -> str:
-        # checkpoint = load_file(self.checkpoint_path)
-        # return checkpoint if checkpoint is not None else "1990-01-01"
-        pass
+        checkpoint = load_file(self.checkpoint_path)
+        return checkpoint if checkpoint is not None else "1990-01-01"
 
     def create_checkpoint_end_for_this_run(self, next_checkpoint: str) -> str:
-        # 2016-06-16T12:26:00
-
-        # last_date = datetime.strptime(self.last_checkpoint, "%Y-%m-%d")
-        # try:
-        #     new_date = last_date.replace(year=last_date.year + int(next_checkpoint))
-        # except ValueError:
-        #     new_date = last_date.replace(  # Handles February 29th for leap years
-        #         year=last_date.year + int(next_checkpoint), day=28
-        #     )
-        # return new_date.strftime("%Y-%m-%d")
-        return "1995-01-01"
+        months_to_add = int(next_checkpoint)
+        last_checkpoint_date = datetime.strptime(self.last_checkpoint, "%Y-%m-%d")
+        new_checkpoint_date = last_checkpoint_date + relativedelta(months=months_to_add)
+        return new_checkpoint_date.strftime("%Y-%m-%d")
 
     def save_extracted_data(self, data: List[Dict[str, Any]]) -> Path:
         for index, entry in enumerate(data):
-            title = (
-                entry["title"]
-                .replace(" ", "")
-                .replace("/", "")
-                .replace(".", "")
-                .lower()[:30]
-                if entry.get("title")
-                else f"NO-TITLE_{index}"
-            )
+            title = self.clean_title(entry["title"], entry, index)
             date = (
                 self.parse_to_yyyy_mm_dd(entry["publishedDate"])
                 if entry.get("publishedDate")
@@ -92,22 +87,34 @@ class CoreExtractor(IExtractor):
         pass
 
     def get_new_checkpoint_from_data(self) -> str:
-        # return "1995-01-01"
-        pass
+        date_elements = get_all_keys_value_recursively(
+            self.data_path, self.checkpoint_name
+        )
+        date_objects = []
+        for date_str in date_elements:
+            date_obj = self.parse_to_yyyy_mm_dd(date_str)
+            date_objects.append(datetime.strptime(date_obj, "%Y-%m-%d"))
+
+        if len(date_objects) != len(date_elements):
+            log_and_raise_exception("Lost json elements when converting to datatime.")
+
+        if not date_objects:
+            log_and_raise_exception("Lost json elements when converting to datatime.")
+
+        return max(date_objects).strftime("%Y-%m-%d")
 
     def _search_core(
-        self, query: str, limit: int = 100
-    ) -> List[Dict[str, Any]]:  # (List[Dict[str, Any]], bool):
-        current_offset = 0  # self.restore_checkpoint()
+        self, query: str, limit: int = 10_000
+    ) -> (List[Dict[str, Any]], int):
         params = {
             "q": query,
             "sort": "publishedDate",
             "limit": limit,
-            "offset": current_offset,
         }
         response = make_get_request(
             f"{self.base_url}/search/works", params, self.headers
         )
+        return response["results"], response["totalHits"]
 
         # 'totalHits' = {int} 740089
         # 'limit' = {int} 2
@@ -116,7 +123,12 @@ class CoreExtractor(IExtractor):
         # idk = (current_offset + 1) * limit
         # b = idk >= int(response["totalHits"])
 
-        return response["results"]  # , b
+    def clean_title(self, param, entry, index):
+        return (
+            param.replace(" ", "").replace("/", "").replace(".", "").lower()[:30]
+            if entry.get("title")
+            else f"NO-TITLE_{index}"
+        )
 
     def parse_to_yyyy_mm_dd(self, date_string: str) -> datetime:
         try:
@@ -130,40 +142,72 @@ class CoreExtractor(IExtractor):
                 # If both fail, raise an error
                 raise ValueError(f"Unable to parse date string: {date_string}")
 
-        # Return the date in yyyy-mm-dd format
+        # Return the date in yyyy-dd-mm format
         return date_obj.strftime("%Y-%m-%d")
 
 
-def start_extraction(query: str, extractor_name: str, checkpoint_name: str):
+# def start_extraction(query: str, extractor_name: str, checkpoint_name: str):
+#     extractor = CoreExtractor(
+#         extractor_name=extractor_name, checkpoint_name=checkpoint_name
+#     )
+#
+#     extractor.extract_until_next_checkpoint(query)
+
+
+def start_extraction(
+    query: str,
+    extractor_name: str,
+    checkpoint_name: str,
+    checkpoint_to_range: str,
+    download_attachments: bool,
+) -> bool:
     extractor = CoreExtractor(
-        extractor_name=extractor_name, checkpoint_name=checkpoint_name
+        extractor_name=extractor_name,
+        checkpoint_name=checkpoint_name,
+        download_attachments=download_attachments,
     )
 
-    extractor.extract_until_next_checkpoint(query)
+    checkpoint_from = extractor.restore_checkpoint()
+    checkpoint_to = extractor.create_checkpoint_end_for_this_run(checkpoint_to_range)
+
+    base_query = f"({checkpoint_name}>{checkpoint_from} AND {checkpoint_name}<{checkpoint_to}) AND "
+    base_query += query
+
+    return extractor.extract_until_next_checkpoint(base_query)
 
 
 def main():
+    parser = argparse.ArgumentParser(description="Run Core extractor")
+    parser.add_argument(
+        "-r",
+        "--run_id",
+        type=int,
+        default=0,
+        help="Run ID to use from the config (default: 0)",
+    )
+    args = parser.parse_args()
+
     load_dotenv()
     config = get_query_config()["core"]
 
-    # Limit 3k
-    # Sort by acceptedDate
-    # Checkpoint offset, if data got is below limit don't remember offset +=1
-    # Simply update the existing data for same offset on next run
+    run = config["runs"][args.run_id]
+    query = run["query"]
 
-    query = config["queries"][0]
-    base_query = (
-        f"(publishedDate>2020-01-01 AND publishedDate<2021-01-01) AND ({query})"
-    )
+    checkpoint_to_range = run["checkpoint_to_range"]
+    download_attachments = run["download_attachments"]
 
-    extractor_name = f"core_{query.replace(' ', '')}"
+    extractor_name = f"core_{query}"
     checkpoint_name = config["checkpoint"]
 
-    # IF NO (or base) CHECKPOINT RUN IN THIS LOOP TO CATCH UP till today
-    for i in range(1):
-        start_extraction(base_query, extractor_name, checkpoint_name)
-
-    # IF HAS CHECKPOINT JUST RUN ONCE FROM IT TO GET NEW DATA SINCE THEN
+    continue_running = True
+    while continue_running:
+        continue_running = start_extraction(
+            query,
+            extractor_name,
+            checkpoint_name,
+            checkpoint_to_range,
+            download_attachments,
+        )
 
 
 if __name__ == "__main__":

@@ -1,6 +1,6 @@
 import csv
 from collections import defaultdict
-from typing import Dict, Any, List
+from typing import Dict, Any
 
 from analysis.jobs.analysis_job_interface import IAnalysisJob
 from utils.file_handling.file_parser.xml_parser import get_full_xml_as_dict_recursively
@@ -8,21 +8,24 @@ from utils.file_handling.file_parser.xml_parser import get_full_xml_as_dict_recu
 
 class XMLTagAnalysisJob(IAnalysisJob):
     """
-    A job to analyze XML tags, their frequency, and average content length across all XML files.
+    A job to analyze XML tags and attributes, their frequency, and average content length across all XML files.
     This job processes all XML files in the given query's data directory, computes statistics
-    on tag usage, including nested tags, and saves the results to a CSV file.
-    The job focuses only on structural tags, ignoring special xmltodict attributes and text nodes.
+    on tag and attribute usage, including nested tags, and saves the results to a CSV file.
     """
 
     def __init__(self, query_name: str):
         super().__init__("xml_tag_analysis", query_name)
-        self.tag_stats: Dict[str, Dict[str, int]] = defaultdict(
-            lambda: defaultdict(int)
+        self.tag_stats: Dict[str, Dict[str, Any]] = defaultdict(
+            lambda: {"occurrences": 0, "total_length": 0, "max_length": 0}
         )
 
     def run(self) -> None:
-        for xml_dict in get_full_xml_as_dict_recursively(self.data_path):
+        for idx, xml_dict in enumerate(
+            get_full_xml_as_dict_recursively(self.data_path)
+        ):
             self.process_dict(xml_dict)
+            if idx % 100_000 == 0:
+                print(f"Processed {idx} files")
 
         for tag_stats in self.tag_stats.values():
             tag_stats["avg_length"] = (
@@ -31,47 +34,53 @@ class XMLTagAnalysisJob(IAnalysisJob):
                 else 0
             )
 
-    def process_dict(self, data: Dict[str, Any], parent_tags: List[str] = []) -> None:
-        for key, value in data.items():
-            # Ignore special xmltodict keys
-            if key.startswith("@") or key.startswith("#"):
-                continue
-
-            current_tag = ".".join(parent_tags + [key])
-
-            self.tag_stats[current_tag]["occurrences"] += 1
+    def process_dict(self, xml_dict: Dict[str, Any], parent_tag: str = "") -> None:
+        for key, value in xml_dict.items():
+            current_tag = f"{parent_tag}.{key}" if parent_tag else key
 
             if isinstance(value, dict):
-                self.process_dict(value, parent_tags + [key])
-            elif isinstance(value, list):
-                for item in value:
-                    if isinstance(item, dict):
-                        self.process_dict(item, parent_tags + [key])
-                    else:
-                        # Count the length of non-dict items in lists
-                        self.tag_stats[current_tag]["total_length"] += len(str(item))
+                # Process attributes
+                for attr_key, attr_value in value.items():
+                    if attr_key.startswith("@"):
+                        attr_tag = f"{current_tag}@{attr_key[1:]}"
+                        self.update_tag_stats(attr_tag, str(attr_value))
+
+                # Process text content
+                if "#text" in value:
+                    self.update_tag_stats(current_tag, str(value["#text"]))
+
+                # Recursively process nested elements
+                self.process_dict(value, current_tag)
             else:
-                # Count the length of string values
-                self.tag_stats[current_tag]["total_length"] += len(str(value))
+                # Process simple tag content
+                self.update_tag_stats(current_tag, str(value))
+
+    def update_tag_stats(self, tag: str, content: str) -> None:
+        stats = self.tag_stats[tag]
+        stats["occurrences"] += 1
+        content_length = len(content)
+        stats["total_length"] += content_length
+        stats["max_length"] = max(stats["max_length"], content_length)
 
     def save_output(self) -> None:
         output_file = self.output_path / f"{self.analysis_name}_results.csv"
         with open(output_file, "w", newline="") as csvfile:
             writer = csv.writer(csvfile)
-            writer.writerow(["Tag", "Occurrences", "Average Length"])
+            writer.writerow(["Tag", "Occurrences", "Average Length", "Max Length"])
             for tag, stats in sorted(self.tag_stats.items()):
                 writer.writerow(
                     [
                         tag,
                         stats["occurrences"],
                         f"{stats['avg_length']:.2f}",
+                        stats["max_length"],
                     ]
                 )
         print(f"Results saved to {output_file}")
 
 
 if __name__ == "__main__":
-    query_name = "cordis_contenttypeISprojectANDSTAR"
+    query_name = "cordis_culturalORheritage"
     job = XMLTagAnalysisJob(query_name)
     job.run()
     job.save_output()

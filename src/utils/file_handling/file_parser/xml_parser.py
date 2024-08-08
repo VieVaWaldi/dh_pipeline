@@ -81,6 +81,9 @@ def extract_element_as_dict(file_path: Path, element_name: str) -> List[Dict[str
 def element_to_dict(element: eT.Element) -> Dict[str, str]:
     """
     Converts an XML element to a dictionary using xmltodict.
+    If a leaf element has attributes, its value is a dict,
+    where its text will be the value of the key #text
+    and its attributes will be keys starting with @.
     """
     xml_string = eT.tostring(element, encoding="unicode")
     return xmltodict.parse(xml_string)

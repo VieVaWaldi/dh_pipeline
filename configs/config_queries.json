@@ -15,9 +15,13 @@
     ]
   },
   "core": {
-    "checkpoint": "offset",
-    "queries": [
-      "cultural AND heritage"
+    "checkpoint": "publishedDate",
+    "runs": [
+      {
+        "query": "((computing AND cultural) OR (computing AND heritage))",
+        "download_attachments": false,
+        "checkpoint_to_range": "6"
+      }
     ]
   },
   "arxiv": {}
