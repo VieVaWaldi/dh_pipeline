@@ -18,6 +18,10 @@ def clean_extractor_name(extractor_name: str):
         .replace("'", "")
         .replace("*", "STAR")
         .replace("=", "IS")
+        .replace("+", "PLUS")
+        .replace(":", "COLON")
+        .replace("(", "LB")
+        .replace(")", "RB")
     )
 
 
@@ -118,7 +122,7 @@ class IExtractor(ABC):
         """
 
     @abstractmethod
-    def get_new_checkpoint_from_data(self) -> str:
+    def get_new_checkpoint_from_data(self) -> Any:
         """
         Once the extraction is done, retrieve the checkpoint and save it using
         :func:`save_checkpoint`.

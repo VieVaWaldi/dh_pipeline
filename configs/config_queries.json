@@ -24,5 +24,14 @@
       }
     ]
   },
-  "arxiv": {}
+  "arxiv": {
+    "checkpoint": "start",
+    "runs": [
+      {
+        "query": "all:computing+AND+(all:humanities+OR+all:heritage)",
+        "download_attachments": true,
+        "checkpoint_to_range": "2000"
+      }
+    ]
+  }
 }
