@@ -1,6 +1,7 @@
 import argparse
 import json
 import logging
+import time
 import os
 import traceback
 from datetime import datetime
@@ -202,6 +203,7 @@ def main():
             checkpoint_to_range,
             download_attachments,
         )
+        time.sleep(500)
 
 
 if __name__ == "__main__":

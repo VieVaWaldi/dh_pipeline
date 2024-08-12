@@ -39,12 +39,12 @@ class ArxivExtractor(IExtractor, ABC):
             return False
 
         self.save_checkpoint(
-            str(self.get_new_checkpoint_from_data(self.last_checkpoint))
+            str(self.get_new_checkpoint_from_data())
         )
 
         # Rate Limiting: Fetch at once a batch of 2000 entries and add 3 seconds delay before fetching a new batch.
         # Log a completion message once all pages/entries have been processed.
-        time.sleep(3)
+        time.sleep(30)
         logging.info(">>> Successfully finished extraction")
         return True
 
@@ -152,7 +152,7 @@ class ArxivExtractor(IExtractor, ABC):
                 ).text  # Extract published date
                 safe_title = f"{published_date}_" + "".join(
                     [c if c.isalnum() else "_" for c in title]
-                )  # title: replace non-alphanumeric characters with underscores
+                )[:40]  # title: replace non-alphanumeric characters with underscores
 
                 # Create a directory for an entry
                 entry_dir = self.data_path / safe_title

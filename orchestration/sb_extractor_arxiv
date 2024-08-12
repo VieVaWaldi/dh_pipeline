@@ -1,0 +1,16 @@
+#!/bin/bash
+
+#SBATCH --job-name=extractor_LBLBcomputingANDculturalRBORLBcomputingANDheritageRBRB
+#SBATCH --partition=long
+#SBATCH --time=240:00:00
+#SBATCH --output=/home/lu72hip/DIGICHer/DIGICHer_Pipeline/data/runs/extractor_arxiv_%j.log
+
+cd /home/lu72hip/DIGICHer/DIGICHer_Pipeline
+source venv/bin/activate
+
+echo "Current user: $(whoami)"
+echo "Current directory: $(pwd)"
+echo "Python version: $(python --version)"
+
+python src/extractors/arxiv_extractor.py -r 0
+# python src/analysis/jobs/basic_stats_job.py -q core_LBLBcomputingANDculturalRBORLBcomputingANDheritageRBRB
