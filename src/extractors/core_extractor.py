@@ -56,7 +56,6 @@ class CoreExtractor(IExtractor):
         return checkpoint if checkpoint is not None else "1990-01-01"
 
     def create_checkpoint_end_for_this_run(self, next_checkpoint: str) -> str:
-        # Adds next_checkpoint as days
         days_to_add = int(next_checkpoint)
         last_checkpoint_date = datetime.strptime(self.last_checkpoint, "%Y-%m-%d")
         new_checkpoint_date = last_checkpoint_date + relativedelta(days=days_to_add)
@@ -98,7 +97,7 @@ class CoreExtractor(IExtractor):
         return max(date_objects).strftime("%Y-%m-%d")
 
     def _search_core(
-        self, query: str, limit: int = 1000
+        self, query: str, limit: int = 2000
     ) -> (List[Dict[str, Any]], int):
         params = {
             "q": query,
@@ -108,6 +107,12 @@ class CoreExtractor(IExtractor):
         response = make_get_request(
             f"{self.base_url}/search/works", params, self.headers
         )
+
+        if limit < response["totalHits"]:
+            log_and_raise_exception(
+                "Losing data because we got more hits than the limit allow for."
+            )
+
         return response["results"], response["totalHits"]
 
     def clean_title(self, param, entry, index):
