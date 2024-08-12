@@ -2,6 +2,7 @@ import argparse
 import json
 import logging
 import os
+import time
 import traceback
 from datetime import datetime
 from pathlib import Path
@@ -40,16 +41,18 @@ class CoreExtractor(IExtractor):
         if not self.api_key:
             log_and_raise_exception("API Key not found")
 
-        core_data, total_hits = self._search_core(query)
+        core_data, total_hits = self._paginated_search_core(query)
 
-        data_path = self.save_extracted_data(core_data)
-        # self.non_contextual_transformation(data_path)
+        if core_data:
+            data_path = self.save_extracted_data(core_data)
+            # self.non_contextual_transformation(data_path)
 
-        checkpoint = self.get_new_checkpoint_from_data()
-        self.save_checkpoint(checkpoint)
+            checkpoint = self.get_new_checkpoint_from_data()
+            self.save_checkpoint(checkpoint)
 
-        logging.info(">>> Successfully finished extraction")
-        return total_hits != 0
+            logging.info(">>> Successfully finished extraction")
+            return total_hits != 0
+        return False
 
     def restore_checkpoint(self) -> str:
         checkpoint = load_file(self.checkpoint_path)
@@ -96,22 +99,37 @@ class CoreExtractor(IExtractor):
 
         return max(date_objects).strftime("%Y-%m-%d")
 
+    def _paginated_search_core(self, query: str) -> (List[Dict[str, Any]], int):
+        all_data = []
+        total_hits = 0
+        offset = 0
+
+        while True:
+            core_data, hits = self._search_core(query, offset)
+            if not core_data:
+                break
+
+            all_data.extend(core_data)
+            total_hits = hits
+            offset += len(core_data)
+
+            if offset >= total_hits or offset >= 2000:  # Respect the 2000 item limit
+                break
+
+        return all_data, total_hits
+
     def _search_core(
-        self, query: str, limit: int = 2000
+        self, query: str, offset: int = 0, chunk_size: int = 100
     ) -> (List[Dict[str, Any]], int):
         params = {
             "q": query,
             "sort": "publishedDate",
-            "limit": limit,
+            "limit": chunk_size,
+            "offset": offset,
         }
         response = make_get_request(
             f"{self.base_url}/search/works", params, self.headers
         )
-
-        if limit < response["totalHits"]:
-            log_and_raise_exception(
-                "Losing data because we got more hits than the limit allow for."
-            )
 
         return response["results"], response["totalHits"]
 
@@ -188,7 +206,7 @@ def main():
         )
 
         # To respect the core limit
-        # time.sleep(60)
+        time.sleep(60)
 
 
 if __name__ == "__main__":
