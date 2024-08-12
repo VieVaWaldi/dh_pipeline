@@ -1,7 +1,6 @@
 import argparse
 import json
 import logging
-import time
 import os
 import traceback
 from datetime import datetime
@@ -43,9 +42,6 @@ class CoreExtractor(IExtractor):
 
         core_data, total_hits = self._search_core(query)
 
-        if total_hits > 10_000:
-            log_and_raise_exception("More data than the limit allows")
-
         data_path = self.save_extracted_data(core_data)
         # self.non_contextual_transformation(data_path)
 
@@ -70,7 +66,7 @@ class CoreExtractor(IExtractor):
         for index, entry in enumerate(data):
             title = self.clean_title(entry["title"], entry, index)
             date = (
-                self.parse_to_yyyy_mm_dd(entry["publishedDate"])
+                self.parse_date_to_obj(entry["publishedDate"]).strftime("%Y-%m-%d")
                 if entry.get("publishedDate")
                 else f"NO-DATE"
             )
@@ -94,11 +90,7 @@ class CoreExtractor(IExtractor):
         )
         date_objects = []
         for date_str in date_elements:
-            date_obj = self.parse_to_yyyy_mm_dd(date_str)
-            date_objects.append(datetime.strptime(date_obj, "%Y-%m-%d"))
-
-        if len(date_objects) != len(date_elements):
-            log_and_raise_exception("Lost json elements when converting to datatime.")
+            date_objects.append(self.parse_date_to_obj(date_str))
 
         if not date_objects:
             log_and_raise_exception("Lost json elements when converting to datatime.")
@@ -106,7 +98,7 @@ class CoreExtractor(IExtractor):
         return max(date_objects).strftime("%Y-%m-%d")
 
     def _search_core(
-        self, query: str, limit: int = 10_000
+        self, query: str, limit: int = 1000
     ) -> (List[Dict[str, Any]], int):
         params = {
             "q": query,
@@ -125,28 +117,14 @@ class CoreExtractor(IExtractor):
             else f"NO-TITLE_{index}"
         )
 
-    def parse_to_yyyy_mm_dd(self, date_string: str) -> datetime:
+    def parse_date_to_obj(self, date_string: str) -> datetime:
         try:
-            # Try parsing with time component
-            date_obj = datetime.strptime(date_string, "%Y-%m-%dT%H:%M:%S")
+            return datetime.strptime(date_string, "%Y-%m-%dT%H:%M:%S")
         except ValueError:
             try:
-                # If that fails, try parsing without time component
-                date_obj = datetime.strptime(date_string, "%Y-%m-%d")
+                return datetime.strptime(date_string, "%Y-%m-%d")
             except ValueError:
-                # If both fail, raise an error
                 raise ValueError(f"Unable to parse date string: {date_string}")
-
-        # Return the date in yyyy-dd-mm format
-        return date_obj.strftime("%Y-%m-%d")
-
-
-# def start_extraction(query: str, extractor_name: str, checkpoint_name: str):
-#     extractor = CoreExtractor(
-#         extractor_name=extractor_name, checkpoint_name=checkpoint_name
-#     )
-#
-#     extractor.extract_until_next_checkpoint(query)
 
 
 def start_extraction(
@@ -203,7 +181,9 @@ def main():
             checkpoint_to_range,
             download_attachments,
         )
-        time.sleep(500)
+
+        # To respect the core limit
+        # time.sleep(60)
 
 
 if __name__ == "__main__":

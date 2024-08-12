@@ -1,28 +1,28 @@
 import json
 import os
 from pathlib import Path
-from typing import List, Dict, Any, Callable
+from typing import List, Dict, Any, Callable, Iterator
 
 from utils.error_handling.error_handling import log_and_raise_exception
 
 
-def get_all_keys_value_recursively(file_path: Path, key: str) -> List[Any]:
+def get_all_keys_value_recursively(file_path: Path, key: str) -> Iterator[Any]:
     """
     Searches all JSON files in all subdirectories under the file_path for the specified key.
     Returns a list of all values for all matching keys.
     """
-    return _process_json_files(file_path, lambda fp: extract_key_values(fp, key))
+    yield from _process_json_files(file_path, lambda fp: extract_key_values(fp, key))
 
 
-def get_all_keys_as_dict_recursively(file_path: Path, key: str) -> List[Dict[str, Any]]:
+def get_all_keys_as_dict_recursively(file_path: Path, key: str) -> Iterator[Dict[str, Any]]:
     """
     Searches all JSON files in all subdirectories under the file_path for the specified key.
     Returns a list of dictionaries for all matching keys.
     """
-    return _process_json_files(file_path, lambda fp: extract_object(fp, key))
+    yield from _process_json_files(file_path, lambda fp: extract_object(fp, key))
 
 
-def _process_json_files(file_path: Path, extraction_func: Callable) -> List[Any]:
+def _process_json_files(file_path: Path, extraction_func: Callable) -> Iterator[Any]:
     """
     Walks through all JSON files in the given file_path and applies the extraction_func to each.
     """
@@ -31,9 +31,7 @@ def _process_json_files(file_path: Path, extraction_func: Callable) -> List[Any]
         for file in files:
             if file.endswith(".json"):
                 full_file_path = os.path.join(root, file)
-                values = extraction_func(full_file_path)
-                all_values.extend(values)
-    return all_values
+                yield extraction_func(full_file_path)
 
 
 def extract_key_values(file_path: Path, key: str) -> List[Any]:

@@ -111,26 +111,24 @@ class CordisExtractor(IExtractor):
         date_elements = xml.get_all_elements_text_recursively(
             self.data_path, self.checkpoint_name
         )
+
         date_objects = []
-        for date_str in date_elements:
-            try:
-                date_obj = datetime.strptime(date_str, "%Y-%m-%d")
-            except ValueError:
-                try:
-                    date_obj = datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S")
-                except ValueError:
-                    log_and_raise_exception(f"Could not parse date {date_str}")
-                    date_obj = None
-
-            date_objects.append(date_obj)
-
-        if len(date_objects) != len(date_elements):
-            log_and_raise_exception("Lost xml elements when converting to datatime.")
+        for date_list in date_elements:
+            date_objects.append(self.parse_date_to_obj(date_list[0]))
 
         if not date_objects:
             log_and_raise_exception("Lost xml elements when converting to datatime.")
 
         return max(date_objects).strftime("%Y-%m-%d")
+
+    def parse_date_to_obj(self, date_str) -> datetime:
+        try:
+            return datetime.strptime(date_str, "%Y-%m-%d")
+        except ValueError:
+            try:
+                return datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S")
+            except ValueError:
+                log_and_raise_exception(f"Could not parse date {date_str}")
 
     def _cordis_get_extraction_task_id(self, key: str, query: str) -> str:
         """
@@ -279,19 +277,7 @@ def main():
             download_attachments,
         )
 
-    # ONE bug is that we gather till checkpoint_day, and from checkpoint_day
-    # so we get the data twice for the same day -> DOESNT MATTER, check duplicates
-
-    # TWO bug is that when the last checkpoint got new data we dont get it because
-    # we always save the next cp. We need to save the cp conditionally when ... ?
-    # ---> DUDE We look for the latest checkpoint in the data itself. no issues here
-
-    # THREE assumption for the bool from extract_until_next_checkpoint is that we have no data holes
-    # within a given checkpoint range.
-
-    # FOUR add backup by copying from vast to ceph
-
-    # QUIT on progress":"Failed or ?Cancelled?
+    # Add backup by copying from vast to ceph
 
 
 if __name__ == "__main__":

@@ -30,7 +30,7 @@ def get_all_elements_as_dict_recursively(
 
 def get_all_elements_text_recursively(
     file_path: Path, element_name: str
-) -> Iterator[str]:
+) -> Iterator[List[Any]]:
     """
     Searches all XML files in all subdirectories under the file_path for element_name.
     Returns a generator of all texts for all matching elements.

@@ -1,10 +1,10 @@
 import unittest
 
-from utils.file_handling.file_handling import get_root_path, load_file
+from utils.file_handling.file_handling import get_root_path
 from utils.file_handling.file_parser.xml_parser import (
-    get_all_elements_as_dict_recursively,
     extract_element_as_dict,
     extract_full_xml_as_dict,
+    get_all_elements_text_recursively,
 )
 from utils.web_requests.web_requests import get_base_url
 
@@ -25,7 +25,7 @@ class TestXMLParser(unittest.TestCase):
         """
         This tests get_new_checkpoint_from_data from cordis.
         """
-        date_gen = get_all_elements_as_dict_recursively(self.data_dir, "startDate")
+        date_gen = get_all_elements_text_recursively(self.data_dir, "startDate")
         count = 0
         for date in date_gen:
             count += 1
