@@ -68,7 +68,7 @@ class CoreExtractor(IExtractor):
         for index, entry in enumerate(data):
             title = self.clean_title(entry["title"], entry, index)
             date = (
-                self.parse_date_to_obj(entry["publishedDate"]).strftime("%Y-%m-%d")
+                self.parse_date_to_obj(entry["publishedDate"][0]).strftime("%Y-%m-%d")
                 if entry.get("publishedDate")
                 else f"NO-DATE"
             )
@@ -92,7 +92,7 @@ class CoreExtractor(IExtractor):
         )
         date_objects = []
         for date_str in date_elements:
-            date_objects.append(self.parse_date_to_obj(date_str))
+            date_objects.append(self.parse_date_to_obj(date_str[0]))
 
         if not date_objects:
             log_and_raise_exception("Lost json elements when converting to datatime.")
