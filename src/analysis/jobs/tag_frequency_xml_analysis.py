@@ -81,16 +81,14 @@ class TagFrequencyXmlAnalysis(IAnalysisJob):
 
 
 if __name__ == "__main__":
-    # parser = argparse.ArgumentParser(description="Run XML Tag Analysis")
-    # parser.add_argument(
-    #     "-q",
-    #     "--query",
-    #     type=str,
-    #     help="Choose query to run analysis on",
-    # )
-    # args = parser.parse_args()
-    # job = TagFrequencyXmlAnalysis(args.query)
-
-    job = TagFrequencyXmlAnalysis("arxiv_allCOLONcomputingPLUSANDPLUSLBallCOLONhumanitiesPLUSORPLUSallCOLONheritageRB")
+    parser = argparse.ArgumentParser(description="Run XML Tag Analysis")
+    parser.add_argument(
+        "-q",
+        "--query",
+        type=str,
+        help="Choose query to run analysis on",
+    )
+    args = parser.parse_args()
+    job = TagFrequencyXmlAnalysis(args.query)
     job.run()
     job.save_output()
