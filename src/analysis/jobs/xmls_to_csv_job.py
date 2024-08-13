@@ -1,7 +1,7 @@
 import csv
 from typing import Dict, Any, List
 from collections import defaultdict
-from analysis.jobs.analysis_job_interface import IAnalysisJob
+from analysis.jobs.analysis_interface import IAnalysisJob
 from utils.file_handling.file_parser.xml_parser import get_full_xml_as_dict_recursively
 
 
@@ -97,10 +97,8 @@ if __name__ == "__main__":
     query_name = "cordis_contenttypeISprojectANDSTAR"
     column_headers = [
         "project.id",
-        "project.acronym",
         "project.title",
         "project.startDate",
-        "project.endDate",
         "project.totalCost",
         "project.relations.associations.organization.relations.categories.category.@classification",
         "project.relations.associations.organization.relations.categories.category.displayCode",

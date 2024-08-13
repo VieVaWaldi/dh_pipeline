@@ -3,11 +3,11 @@ import csv
 from collections import defaultdict
 from typing import Dict, Any
 
-from analysis.jobs.analysis_job_interface import IAnalysisJob
+from analysis.jobs.analysis_interface import IAnalysisJob
 from utils.file_handling.file_parser.xml_parser import get_full_xml_as_dict_recursively
 
 
-class XMLTagAnalysisJob(IAnalysisJob):
+class TagFrequencyXmlAnalysis(IAnalysisJob):
     """
     A job to analyze XML tags and attributes, their frequency, and average content length across all XML files.
     This job processes all XML files in the given query's data directory, computes statistics
@@ -15,7 +15,7 @@ class XMLTagAnalysisJob(IAnalysisJob):
     """
 
     def __init__(self, query_name: str):
-        super().__init__("xml_tag_analysis", query_name)
+        super().__init__("tag_frequency_xml_analysis", query_name)
         self.tag_stats: Dict[str, Dict[str, Any]] = defaultdict(
             lambda: {"occurrences": 0, "total_length": 0, "max_length": 0}
         )
@@ -25,7 +25,7 @@ class XMLTagAnalysisJob(IAnalysisJob):
             get_full_xml_as_dict_recursively(self.data_path)
         ):
             self.process_dict(xml_dict)
-            if idx % 100_000 == 0:
+            if idx % 50_000 == 0:
                 print(f"Processed {idx} files")
 
         for tag_stats in self.tag_stats.values():
@@ -81,15 +81,16 @@ class XMLTagAnalysisJob(IAnalysisJob):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Run XML Tag Analysis")
-    parser.add_argument(
-        "-q",
-        "--query",
-        type=str,
-        help="Choose query to run analysis on",
-    )
-    args = parser.parse_args()
+    # parser = argparse.ArgumentParser(description="Run XML Tag Analysis")
+    # parser.add_argument(
+    #     "-q",
+    #     "--query",
+    #     type=str,
+    #     help="Choose query to run analysis on",
+    # )
+    # args = parser.parse_args()
+    # job = TagFrequencyXmlAnalysis(args.query)
 
-    job = XMLTagAnalysisJob(args.query)
+    job = TagFrequencyXmlAnalysis("arxiv_allCOLONcomputingPLUSANDPLUSLBallCOLONhumanitiesPLUSORPLUSallCOLONheritageRB")
     job.run()
     job.save_output()

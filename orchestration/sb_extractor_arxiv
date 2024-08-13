@@ -13,4 +13,4 @@ echo "Current directory: $(pwd)"
 echo "Python version: $(python --version)"
 
 python src/extractors/arxiv_extractor.py -r 0
-# python src/analysis/jobs/basic_stats_job.py -q core_LBLBcomputingANDculturalRBORLBcomputingANDheritageRBRB
+# python src/analysis/jobs/file_structure_analysis.py -q core_LBLBcomputingANDculturalRBORLBcomputingANDheritageRBRB

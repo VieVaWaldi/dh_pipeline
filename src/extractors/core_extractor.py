@@ -68,7 +68,7 @@ class CoreExtractor(IExtractor):
         for index, entry in enumerate(data):
             title = self.clean_title(entry["title"], entry, index)
             date = (
-                self.parse_date_to_obj(entry["publishedDate"][0]).strftime("%Y-%m-%d")
+                self.parse_date_to_obj(entry["publishedDate"]).strftime("%Y-%m-%d")
                 if entry.get("publishedDate")
                 else f"NO-DATE"
             )
