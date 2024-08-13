@@ -6,6 +6,13 @@ from typing import List, Dict, Any, Callable, Iterator
 from utils.error_handling.error_handling import log_and_raise_exception
 
 
+def get_full_json_as_dict_recursively(file_path: Path) -> Iterator[Dict[str, Any]]:
+    """
+    Searches all JSON files in all subdirectories under the file_path and returns each JSON file as a complete dictionary.
+    """
+    yield from _process_json_files(file_path, extract_full_json_as_dict)
+
+
 def get_all_keys_value_recursively(file_path: Path, key: str) -> Iterator[Any]:
     """
     Searches all JSON files in all subdirectories under the file_path for the specified key.
@@ -14,7 +21,9 @@ def get_all_keys_value_recursively(file_path: Path, key: str) -> Iterator[Any]:
     yield from _process_json_files(file_path, lambda fp: extract_key_values(fp, key))
 
 
-def get_all_keys_as_dict_recursively(file_path: Path, key: str) -> Iterator[Dict[str, Any]]:
+def get_all_keys_as_dict_recursively(
+    file_path: Path, key: str
+) -> Iterator[Dict[str, Any]]:
     """
     Searches all JSON files in all subdirectories under the file_path for the specified key.
     Returns a list of dictionaries for all matching keys.
@@ -26,12 +35,22 @@ def _process_json_files(file_path: Path, extraction_func: Callable) -> Iterator[
     """
     Walks through all JSON files in the given file_path and applies the extraction_func to each.
     """
-    all_values = []
     for root, _, files in os.walk(file_path):
         for file in files:
             if file.endswith(".json"):
                 full_file_path = os.path.join(root, file)
                 yield extraction_func(full_file_path)
+
+
+def extract_full_json_as_dict(file_path: Path) -> Dict[str, Any]:
+    """
+    Extracts the entire JSON file as a dictionary.
+    """
+    try:
+        with open(file_path, "r") as f:
+            return json.load(f)
+    except json.JSONDecodeError:
+        log_and_raise_exception(f"Error parsing JSON file: {file_path}")
 
 
 def extract_key_values(file_path: Path, key: str) -> List[Any]:
@@ -97,8 +116,8 @@ if __name__ == "__main__":
     )
 
     # Example to find all values with the same key in all files
-    published_dates = get_all_keys_value_recursively(json_path, "publishedDate")
-    print(f"{len(published_dates)}, {min(published_dates)}, {max(published_dates)}")
+    # published_dates = get_all_keys_value_recursively(json_path, "publishedDate")
+    # print(f"{len(published_dates)}, {min(published_dates)}, {max(published_dates)}")
 
     # Example to find all objects containing a specific key in all files
     # link_objects = get_all_objects(json_path, "url")
