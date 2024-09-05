@@ -8,24 +8,12 @@ import xmltodict
 from utils.error_handling.error_handling import log_and_raise_exception
 
 
-def get_full_xml_as_dict_recursively(file_path: Path) -> Iterator[Dict[str, Any]]:
+def get_xml_as_dict_recursively(file_path: Path) -> Iterator[Dict[str, Any]]:
     """
     Searches all XML files in all subdirectories under the file_path and
     Returns a generator with each file as an entire dictionary.
     """
-    yield from _process_xml_files(file_path, extract_full_xml_as_dict)
-
-
-def get_all_elements_as_dict_recursively(
-    file_path: Path, element_name: str
-) -> Iterator[Dict[str, str]]:
-    """
-    Searches all XML files in all subdirectories under the file_path for element_name.
-    Returns a generator of dictionaries for all matching elements.
-    """
-    yield from _process_xml_files(
-        file_path, lambda fp: extract_element_as_dict(fp, element_name)
-    )
+    yield from _process_xml_files(file_path, extract_xml_as_dict)
 
 
 def get_all_elements_text_recursively(
@@ -51,7 +39,7 @@ def _process_xml_files(file_path: Path, extraction_func) -> Iterator[Any]:
                 yield extraction_func(full_file_path)
 
 
-def extract_full_xml_as_dict(file_path: Path) -> Dict[str, Any]:
+def extract_xml_as_dict(file_path: Path) -> Dict[str, Any]:
     """
     Extracts the entire XML file as a dictionary.
     """
@@ -103,23 +91,3 @@ def extract_element_texts(file_path: Path, element_name: str) -> List[str]:
         ]
     except eT.ParseError:
         log_and_raise_exception(f"Error parsing XML file: {file_path}")
-
-
-if __name__ == "__main__":
-    """
-    Example to find all elements with the same tag in all files.
-    date_elements = get_all_elements_texts(
-        "/Users/wehrenberger/Code/DIGICHer/DIGICHer_Pipeline/data/pile/OLD_extractors/cordis_TEST/last_startDate_2020-01-01",
-        "startDate",
-    )
-    print(date_elements)
-    """
-
-    """ Example to find all elements with the same tag in all files and turn them to dicts. """
-    linkpath = Path(
-        "/Users/wehrenberger/Code/DIGICHer/DIGICHer_Pipeline/data/pile/OLD_extractors/cordis_TEST/"
-    )
-    link_elements = get_all_elements_as_dict_recursively(
-        linkpath,
-        "webLink",
-    )

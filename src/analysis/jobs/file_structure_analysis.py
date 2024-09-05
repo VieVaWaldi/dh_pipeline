@@ -5,7 +5,7 @@ import os
 from pathlib import Path
 from typing import Dict
 
-from analysis.jobs.analysis_interface import IAnalysisJob
+from analysis.utils.analysis_interface import IAnalysisJob
 from utils.file_handling.file_handling import get_file_size
 
 

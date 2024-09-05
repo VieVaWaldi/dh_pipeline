@@ -1,0 +1,15 @@
+#!/bin/bash
+
+#SBATCH --job-name=analysis_csv_from_dict
+#SBATCH --partition=standard
+#SBATCH --time=02:00:00
+#SBATCH --output=/home/lu72hip/DIGICHer/DIGICHer_Pipeline/data/runs/analysis_tag_frequency_%j.log
+
+cd /home/lu72hip/DIGICHer/DIGICHer_Pipeline
+source venv/bin/activate
+
+echo "Current user: $(whoami)"
+echo "Current directory: $(pwd)"
+echo "Python version: $(python --version)"
+
+python src/analysis/jobs/sb_csv_from_dict.py

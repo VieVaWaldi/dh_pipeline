@@ -15,7 +15,7 @@ from extractors.extractor_interface import IExtractor
 from utils.config.config_loader import get_query_config
 from utils.error_handling.error_handling import log_and_raise_exception
 from utils.file_handling.file_handling import load_file
-from utils.file_handling.file_parser.json_parser import get_all_keys_value_recursively
+from utils.file_handling.file_parsing.json_parser import get_all_keys_value_recursively
 from utils.web_requests.web_requests import make_get_request
 
 

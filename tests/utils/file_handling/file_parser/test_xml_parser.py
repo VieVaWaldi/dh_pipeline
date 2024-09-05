@@ -1,9 +1,9 @@
 import unittest
 
 from utils.file_handling.file_handling import get_root_path
-from utils.file_handling.file_parser.xml_parser import (
+from utils.file_handling.file_parsing.xml_parser import (
     extract_element_as_dict,
-    extract_full_xml_as_dict,
+    extract_xml_as_dict,
     get_all_elements_text_recursively,
 )
 from utils.web_requests.web_requests import get_base_url
@@ -17,7 +17,7 @@ class TestXMLParser(unittest.TestCase):
             / "tests"
             / "utils"
             / "file_handling"
-            / "file_parser"
+            / "file_parsing"
             / "test_xml"
         )
 
@@ -44,7 +44,7 @@ class TestXMLParser(unittest.TestCase):
         assert len(eu_links) == 39
 
     def test_get_dict_from_xml_file(self):
-        xml_dict = extract_full_xml_as_dict(self.data_dir / "test_1.xml")
+        xml_dict = extract_xml_as_dict(self.data_dir / "test_1.xml")
         print(xml_dict)
 
 

@@ -12,7 +12,7 @@ echo "Current user: $(whoami)"
 echo "Current directory: $(pwd)"
 echo "Python version: $(python --version)"
 
-python src/analysis/jobs/file_structure_analysis.py -q cordis_contenttypeISprojectANDSTAR
+#python src/analysis/jobs/file_structure_analysis.py -q cordis_contenttypeISprojectANDSTAR
 python src/analysis/jobs/file_structure_analysis.py -q cordis_culturalORheritage
 
 python src/analysis/jobs/file_structure_analysis.py -q core_LBLBcomputingANDculturalRBORLBcomputingANDheritageRBRB

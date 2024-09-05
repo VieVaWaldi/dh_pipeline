@@ -9,7 +9,7 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-import utils.file_handling.file_parser.xml_parser as xml
+import utils.file_handling.file_parsing.xml_parser as xml
 from extractors.extractor_interface import IExtractor
 from utils.config.config_loader import get_query_config
 from utils.error_handling.error_handling import log_and_raise_exception
@@ -20,7 +20,7 @@ from utils.file_handling.file_handling import (
     ensure_path_exists,
     delete_if_empty,
 )
-from utils.file_handling.file_processing.file_cleanup import trim_excessive_whitespace
+from utils.file_handling.file_processing.file_sanitization import trim_excessive_whitespace
 from utils.web_requests.selenium_file_downloader import SeleniumFileDownloader
 from utils.web_requests.web_requests import (
     make_delete_request,

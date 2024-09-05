@@ -14,7 +14,7 @@ from extractors.extractor_interface import IExtractor
 from utils.config.config_loader import get_query_config
 from utils.error_handling.error_handling import log_and_raise_exception
 from utils.file_handling.file_handling import load_file, write_file
-from utils.file_handling.file_processing.file_cleanup import trim_excessive_whitespace
+from utils.file_handling.file_processing.file_sanitization import trim_excessive_whitespace
 
 
 class ArxivExtractor(IExtractor, ABC):

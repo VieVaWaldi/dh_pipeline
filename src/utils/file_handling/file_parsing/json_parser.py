@@ -6,11 +6,12 @@ from typing import List, Dict, Any, Callable, Iterator
 from utils.error_handling.error_handling import log_and_raise_exception
 
 
-def get_full_json_as_dict_recursively(file_path: Path) -> Iterator[Dict[str, Any]]:
+def get_json_as_dict_recursively(file_path: Path) -> Iterator[Dict[str, Any]]:
     """
-    Searches all JSON files in all subdirectories under the file_path and returns each JSON file as a complete dictionary.
+    Searches all JSON files in all subdirectories under the file_path
+    and returns each JSON file as a complete dictionary.
     """
-    yield from _process_json_files(file_path, extract_full_json_as_dict)
+    yield from _process_json_files(file_path, extract_json_as_dict)
 
 
 def get_all_keys_value_recursively(file_path: Path, key: str) -> Iterator[Any]:
@@ -19,16 +20,6 @@ def get_all_keys_value_recursively(file_path: Path, key: str) -> Iterator[Any]:
     Returns a list of all values for all matching keys.
     """
     yield from _process_json_files(file_path, lambda fp: extract_key_values(fp, key))
-
-
-def get_all_keys_as_dict_recursively(
-    file_path: Path, key: str
-) -> Iterator[Dict[str, Any]]:
-    """
-    Searches all JSON files in all subdirectories under the file_path for the specified key.
-    Returns a list of dictionaries for all matching keys.
-    """
-    yield from _process_json_files(file_path, lambda fp: extract_object(fp, key))
 
 
 def _process_json_files(file_path: Path, extraction_func: Callable) -> Iterator[Any]:
@@ -42,7 +33,7 @@ def _process_json_files(file_path: Path, extraction_func: Callable) -> Iterator[
                 yield extraction_func(full_file_path)
 
 
-def extract_full_json_as_dict(file_path: Path) -> Dict[str, Any]:
+def extract_json_as_dict(file_path: Path) -> Dict[str, Any]:
     """
     Extracts the entire JSON file as a dictionary.
     """
@@ -64,18 +55,6 @@ def extract_key_values(file_path: Path, key: str) -> List[Any]:
     except json.JSONDecodeError:
         print(f"Error parsing JSON file: {file_path}")
         return []
-
-
-def extract_object(file_path: Path, key: str) -> List[Dict[str, Any]]:
-    """
-    Extracts the object with the specified key from a JSON file.
-    """
-    try:
-        with open(file_path, "r") as f:
-            data = json.load(f)
-        return _find_key_objects(data, key)
-    except json.JSONDecodeError:
-        log_and_raise_exception(f"Error parsing JSON file: {file_path}")
 
 
 def _find_key_values(obj: Any, key: str) -> List[Any]:
@@ -108,17 +87,3 @@ def _find_key_objects(obj: Any, key: str) -> List[Dict[str, Any]]:
         for item in obj:
             results.extend(_find_key_objects(item, key))
     return results
-
-
-if __name__ == "__main__":
-    json_path = Path(
-        "/Users/wehrenberger/Code/DIGICHer/DIGICHer_Pipeline/data/pile/extractors/core_culturalANDheritage/last_publishedDate_None"
-    )
-
-    # Example to find all values with the same key in all files
-    # published_dates = get_all_keys_value_recursively(json_path, "publishedDate")
-    # print(f"{len(published_dates)}, {min(published_dates)}, {max(published_dates)}")
-
-    # Example to find all objects containing a specific key in all files
-    # link_objects = get_all_objects(json_path, "url")
-    # print("Link objects:", link_objects)
