@@ -10,7 +10,7 @@ from utils.file_handling.file_parsing.xml_parser import (
 )
 
 
-def get_all_documents_with_path(path: Path, cordis_only_project_flag: bool = True):
+def get_all_documents_with_path(path: Path, cordis_only_project_flag: bool = False):
     """
     Returns all documents as dictionaries given a path recursively.
     """
@@ -25,7 +25,7 @@ def _process_files(file_path: Path, cordis_only_project_flag: bool) -> Iterator[
         for file in files:
             full_file_path = Path(os.path.join(root, file))
 
-            if not is_cordis_only_project(cordis_only_project_flag, file_path):
+            if skip_not_a_cordis_project(cordis_only_project_flag, full_file_path):
                 continue
 
             if file.endswith(".json"):
@@ -34,5 +34,14 @@ def _process_files(file_path: Path, cordis_only_project_flag: bool) -> Iterator[
                 yield extract_xml_as_dict(full_file_path), full_file_path
 
 
-def is_cordis_only_project(is_flag: bool, path: Path):
-    return is_flag and "cordis" in str(path) and "project" not in str(path)
+def skip_not_a_cordis_project(is_flag: bool, path: Path):
+    """
+    Only returns
+    """
+    if not is_flag:
+        return False
+
+    if "cordis" in str(path) and not "project" in str(path):
+        return True
+    else:
+        return False
