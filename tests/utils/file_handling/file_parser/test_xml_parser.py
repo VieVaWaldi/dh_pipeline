@@ -15,7 +15,7 @@ class TestXMLParser(unittest.TestCase):
         self.data_dir = (
             get_root_path()
             / "tests"
-            / "utils"
+            / "transfomer_utils"
             / "file_handling"
             / "file_parsing"
             / "test_xml"

@@ -1,47 +1,115 @@
-import argparse
+import copy
+from datetime import datetime
 from pathlib import Path
 
-from utils.file_handling.file_parsing.xml_parser import get_xml_as_dict_recursively
+# from transformer.transformer_utils import Tables, traverse_dictionary_update_table_dict
+from utils.file_handling.file_handling import save_json_dict
+from utils.file_handling.file_parsing.general_parser import get_all_documents_with_path
+
+# MISSING
 
 
+PRA = "project.relations.associations."
 
-class CordisTransformer:  # (IExtractor, ABC)
-    def __init__(self):
-        # super().__init__(extractor_name, checkpoint_name)
-        pass
-
-    def transformation(self):
-        # for each folder in order!
-        path = Path(
-            "/Users/wehrenberger/Code/DIGICHer/DIGICHer_Pipeline/data/pile/extractors/_checkpoint/cordis_culturalORheritage"
-        )
-        docs = []
-        for document in get_xml_as_dict_recursively(path):
-            # header, values = xml_to_csv_row(document)
-            docs.append(document)
-
-        # process_xml_documents(docs, "cordis.csv")
+# source_schema = {
+#     PRA
+#     + "article[_].@source": {
+#         "table": Tables.PUBLICATIONS.value,
+#         "column": "i",
+#         "type": str,
+#     },
+#     PRA
+#     + "article[_].@type": {
+#         "table": Tables.PUBLICATIONS.value,
+#         "column": "i",
+#         "type": str,
+#     },
+#     PRA
+#     + "article[_].archivedDate": {
+#         "table": Tables.PUBLICATIONS.value,
+#         "column": "i",
+#         "type": str,
+#     },
+#     PRA
+#     + "article[_].availableLanguages.#text": {
+#         "table": Tables.PUBLICATIONS.value,
+#         "column": "i",
+#         "type": str,
+#     },
+#     PRA
+#     + "article[_].availableLanguages.@readOnly": {
+#         "table": Tables.PUBLICATIONS.value,
+#         "column": "i",
+#         "type": str,
+#     },
+#     PRA
+#     + "article[_].contentUpdateDate": {
+#         "table": Tables.PUBLICATIONS.value,
+#         "column": "i",
+#         "type": str,
+#     },
+#     PRA
+#     + "article[_].id": {
+#         "table": Tables.PUBLICATIONS.value,
+#         "column": "i",
+#         "type": str,
+#     },
+#     PRA
+#     + "article[_].rcn": {
+#         "table": Tables.PUBLICATIONS.value,
+#         "column": "i",
+#         "type": str,
+#     },
+#     PRA
+#     + "article[_].teaser": {
+#         "table": Tables.PUBLICATIONS.value,
+#         "column": "i",
+#         "type": str,
+#     },
+#     PRA
+#     + "article[_].title": {
+#         "table": Tables.PUBLICATIONS.value,
+#         "column": "i",
+#         "type": str,
+#     },
+# }
 #
+# table_schema = {
+#     Tables.PUBLICATIONS.value: {
+#         PRA + "article[_].@source": None,
+#         PRA + "article[_].@type": None,
+#         PRA + "article[_].archivedDate": None,
+#         PRA + "article[_].availableLanguages.#text": None,
+#         PRA + "article[_].availableLanguages.@readOnly": None,
+#         PRA + "article[_].contentUpdateDate": None,
+#         PRA + "article[_].id": None,
+#         PRA + "article[_].rcn": None,
+#         PRA + "article[_].teaser": None,
+#         PRA + "article[_].title": None,
+#     }
+# }
 
-def start_transformation():
-    transformer = CordisTransformer()
-    return transformer.transformation()
 
-
-def main():
-    parser = argparse.ArgumentParser(description="Run Cordis transformer")
-    # parser.add_argument(
-    #     "-r",
-    #     "--run_id",
-    #     type=int,
-    #     default=0,
-    #     help="Run ID to use from the config (default: 0)",
-    # )
-    # args = parser.parse_args()
-    # load_dotenv()
-    # config = get_query_config()["arxiv"]
-    start_transformation()
+def run_transformer():
+    cordis_only_project_flag = True
+    input_path = Path(
+        "/Users/wehrenberger/Code/DIGICHer/DIGICHer_Pipeline/data/pile/_checkpoint/cordis_culturalORheritage"
+    )
+    for doc_idx, (document, path) in enumerate(
+        get_all_documents_with_path(input_path, cordis_only_project_flag)
+    ):
+        # table_dict = copy.deepcopy(table_schema)
+        # traverse_dictionary_update_table_dict(document, table_dict, source_schema)
+        save_json_dict(
+            document,
+            Path(
+                f"/Users/wehrenberger/Code/DIGICHer/DIGICHer_Pipeline/data/rmme/cordis/THIS_{doc_idx}.json"
+            ),
+        )
+        break
+        # if doc_idx > 10:
+        #     break
 
 
 if __name__ == "__main__":
-    main()
+    run_transformer()

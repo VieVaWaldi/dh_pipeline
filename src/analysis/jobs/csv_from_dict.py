@@ -3,7 +3,7 @@ from collections import defaultdict
 from typing import Dict, Any, List
 
 from analysis.utils.analysis_interface import IAnalysisJob
-from analysis.utils.analysis_utils import is_cordis_only_project_flag, clean_value
+from analysis.utils.analysis_utils import clean_value
 from utils.file_handling.file_parsing.general_parser import get_all_documents_with_path
 
 
@@ -36,11 +36,8 @@ class CSVFromDict(IAnalysisJob):
 
     def run(self) -> None:
         for idx, (document, path) in enumerate(
-            get_all_documents_with_path(self.data_path)
+            get_all_documents_with_path(self.data_path, self.cordis_only_project_flag)
         ):
-            if is_cordis_only_project_flag(self.cordis_only_project_flag, path):
-                continue
-
             self.rows.append(self.extract_values_from_columns(document))
 
             if idx % 10_000 == 0:
@@ -139,33 +136,54 @@ def run_arxiv():
 
 def run_cordis():
     columns = [
-        # Project
-        "project.id",
-        "project.identifiers.grantDoi",
-        "project.rcn",
-        "project.startDate",
-        "project.endDate",
+        # VISUAL MAP
+        # General
         "project.title",
-        "project.acronym",
         "project.totalCost",
-        "project.ecMaxContribution",
-        # Categories
+        "project.relations.associations.programme[_].frameworkProgramme",
+        "project.relations.associations.programme.frameworkProgramme",
+        "project.objective",
+        # Time
+        "project.startDate",
+        # Topic
+        "project.relations.categories.category[_].@classification", # needed for filtering: euroSciVoc
+        "project.relations.categories.category.@classification",  # needed for filtering: euroSciVoc
+        "project.relations.categories.category[_].title",
         "project.relations.categories.category.title",
-        # Organizations[]
-        "project.relations.associations.organization.@type",
-        "project.relations.associations.organization.legalName",
-        "project.relations.associations.organization.address.street",
-        "project.relations.associations.organization.address.city",
-        "project.relations.associations.organization.address.postalCode",
+        "project.keywords",
+        # Location
+        "project.relations.associations.organization.address.geolocation",
         "project.relations.associations.organization.address.country",
-        # Programme
-        "project.relations.associations.programme.id",
-        "project.relations.associations.programme.title"
-        # Results
-        "project.relations.associations.result.id",
-        "project.relations.associations.result.title",
-        "project.relations.associations.result.relations.associations.organization.legalName",
+        "project.relations.associations.organization.address.city"
     ]
+    # columns = [
+    #     # Project
+    #     "project.id",
+    #     "project.identifiers.grantDoi",
+    #     "project.rcn",
+    #     "project.startDate",
+    #     "project.endDate",
+    #     "project.title",
+    #     "project.acronym",
+    #     "project.totalCost",
+    #     "project.ecMaxContribution",
+    #     # Categories
+    #     "project.relations.categories.category.title",
+    #     # Organizations[]
+    #     "project.relations.associations.organization.@type",
+    #     "project.relations.associations.organization.legalName",
+    #     "project.relations.associations.organization.address.street",
+    #     "project.relations.associations.organization.address.city",
+    #     "project.relations.associations.organization.address.postalCode",
+    #     "project.relations.associations.organization.address.country",
+    #     # Programme
+    #     "project.relations.associations.programme.id",
+    #     "project.relations.associations.programme.title"
+    #     # Results
+    #     "project.relations.associations.result.id",
+    #     "project.relations.associations.result.title",
+    #     "project.relations.associations.result.relations.associations.organization.legalName",
+    # ]
     job = CSVFromDict(
         # cordis_contenttypeISprojectANDSTAR
         "cordis_culturalORheritage",
@@ -181,7 +199,8 @@ def run_core():
         "id",
         "arxivId",
         "doi",
-        "magId", "publishedDate",
+        "magId",
+        "publishedDate",
         "authors.name",
         "dataProviders.name",
         "publisher",
@@ -203,6 +222,6 @@ def run_core():
 
 
 if __name__ == "__main__":
-    run_arxiv()
+    # run_arxiv()
     run_cordis()
-    run_core()
+    # run_core()

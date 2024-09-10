@@ -76,6 +76,16 @@ def load_json_file(path: Path) -> Dict[str, Any] | None:
         log_and_raise_exception("ERROR loading json:  ", e)
 
 
+def save_json_dict(dictionary: Dict[str, Any], path: Path):
+    ensure_path_exists(path)
+
+    try:
+        with open(path, "w", encoding=ENCODING) as f:
+            json.dump(dictionary, f, indent=4)
+    except Exception as e:
+        log_and_raise_exception("ERROR saving json:  ", e)
+
+
 def write_file(path: Path, content: str) -> None:
     """Writes content to file."""
     try:
@@ -116,6 +126,15 @@ def get_file_size(file_path: Path) -> int:
         raise Exception(
             f"An error occurred when getting the size of {file_path}: {str(e)}"
         )
+
+
+def count_files(path: Path, file_type: str = ".xml") -> int:
+    count = 0
+    for root, dirs, files in os.walk(path):
+        for file in files:
+            if file.endswith(file_type):
+                count += 1
+    return count
 
 
 if __name__ == "__main__":

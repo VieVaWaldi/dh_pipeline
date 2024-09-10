@@ -4,7 +4,7 @@ from collections import defaultdict
 from typing import Dict, Any
 
 from analysis.utils.analysis_interface import IAnalysisJob
-from analysis.utils.analysis_utils import clean_value, is_cordis_only_project_flag
+from analysis.utils.analysis_utils import clean_value
 from utils.file_handling.file_parsing.general_parser import get_all_documents_with_path
 
 
@@ -36,13 +36,10 @@ class KeysFrequencyAnalysis(IAnalysisJob):
         self.num_samples = 10
         self.cordis_only_project_flag = cordis_only_project_flag
 
-    def run(self) -> None:
+    def run(self):
         for idx, (document, path) in enumerate(
-            get_all_documents_with_path(self.data_path)
+            get_all_documents_with_path(self.data_path, self.cordis_only_project_flag)
         ):
-            if is_cordis_only_project_flag(self.cordis_only_project_flag, path):
-                continue
-
             self.traverse_dictionary(document)
             self.total_files += 1
             if idx % 20_000 == 0:
@@ -51,11 +48,9 @@ class KeysFrequencyAnalysis(IAnalysisJob):
         self.update_avg_length_per_key()
         self.save_output()
 
-    def traverse_dictionary(
-        self, document: Dict[str, Any], parent_tag: str = ""
-    ) -> None:
+    def traverse_dictionary(self, document: Dict[str, Any], parent_key: str = ""):
         for key, value in document.items():
-            current_key = f"{parent_tag}.{key}" if parent_tag else key
+            current_key = f"{parent_key}.{key}" if parent_key else key
 
             if isinstance(value, dict):
                 self.traverse_dictionary(value, current_key)
@@ -73,7 +68,7 @@ class KeysFrequencyAnalysis(IAnalysisJob):
             else:
                 self.update_tag_stats(current_key, str(value))
 
-    def update_tag_stats(self, key: str, content: str) -> None:
+    def update_tag_stats(self, key: str, content: str):
         stats = self.keys_statistics[key]
         stats["occurrences"] += 1
         content_length = len(content)
@@ -82,7 +77,7 @@ class KeysFrequencyAnalysis(IAnalysisJob):
         if len(stats["samples"]) < self.num_samples and content and content != "":
             stats["samples"].append(clean_value(content[:30]))
 
-    def update_list_stats(self, list_key: str, list_items: int) -> None:
+    def update_list_stats(self, list_key: str, list_items: int):
         stats = self.keys_statistics[list_key]
         if list_items == -1:
             return  # only save tag to have it at the right position
@@ -99,7 +94,7 @@ class KeysFrequencyAnalysis(IAnalysisJob):
                 else 0
             )
 
-    def save_output(self) -> None:
+    def save_output(self):
         output_file = self.output_path / f"{self.analysis_name}_results.csv"
         unique_keys_count = len(self.keys_statistics)
         rows_written = 0
