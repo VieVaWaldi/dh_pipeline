@@ -7,7 +7,7 @@ from urllib.parse import urlparse
 
 import requests
 
-from utils.error_handling.error_handling import log_and_raise_exception
+from common_utils.error_handling.error_handling import log_and_raise_exception
 
 MAX_RESPONSE_LOG_LENGTH = 512
 

@@ -11,12 +11,14 @@ from typing import List, Dict, Any
 from dateutil.relativedelta import relativedelta
 from dotenv import load_dotenv
 
+from common_utils.config.config_loader import get_query_config
+from common_utils.error_handling.error_handling import log_and_raise_exception
+from common_utils.file_handling.file_handling import load_file
+from common_utils.file_handling.file_parsing.json_parser import (
+    get_all_keys_value_recursively,
+)
+from common_utils.web_requests.web_requests import make_get_request
 from extractors.extractor_interface import IExtractor
-from utils.config.config_loader import get_query_config
-from utils.error_handling.error_handling import log_and_raise_exception
-from utils.file_handling.file_handling import load_file
-from utils.file_handling.file_parsing.json_parser import get_all_keys_value_recursively
-from utils.web_requests.web_requests import make_get_request
 
 
 class CoreExtractor(IExtractor):

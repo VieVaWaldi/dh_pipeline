@@ -10,11 +10,13 @@ from typing import Any, List, Dict
 import requests
 from dotenv import load_dotenv
 
+from common_utils.config.config_loader import get_query_config
+from common_utils.error_handling.error_handling import log_and_raise_exception
+from common_utils.file_handling.file_handling import load_file, write_file
+from common_utils.file_handling.file_processing.file_sanitization import (
+    trim_excessive_whitespace,
+)
 from extractors.extractor_interface import IExtractor
-from utils.config.config_loader import get_query_config
-from utils.error_handling.error_handling import log_and_raise_exception
-from utils.file_handling.file_handling import load_file, write_file
-from utils.file_handling.file_processing.file_sanitization import trim_excessive_whitespace
 
 
 class ArxivExtractor(IExtractor, ABC):
@@ -38,9 +40,7 @@ class ArxivExtractor(IExtractor, ABC):
             logging.info(">>> Finished extraction, no more data")
             return False
 
-        self.save_checkpoint(
-            str(self.get_new_checkpoint_from_data())
-        )
+        self.save_checkpoint(str(self.get_new_checkpoint_from_data()))
 
         # Rate Limiting: Fetch at once a batch of 2000 entries and add 3 seconds delay before fetching a new batch.
         # Log a completion message once all pages/entries have been processed.
@@ -150,9 +150,10 @@ class ArxivExtractor(IExtractor, ABC):
                 published_date = entry_element.find(
                     "{http://www.w3.org/2005/Atom}published"
                 ).text  # Extract published date
-                safe_title = f"{published_date}_" + "".join(
-                    [c if c.isalnum() else "_" for c in title]
-                )[:40]  # title: replace non-alphanumeric characters with underscores
+                safe_title = (
+                    f"{published_date}_"
+                    + "".join([c if c.isalnum() else "_" for c in title])[:40]
+                )  # title: replace non-alphanumeric characters with underscores
 
                 # Create a directory for an entry
                 entry_dir = self.data_path / safe_title

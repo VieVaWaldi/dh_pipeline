@@ -4,7 +4,7 @@ from typing import Dict, Any, List
 
 from analysis.utils.analysis_interface import IAnalysisJob
 from analysis.utils.analysis_utils import clean_value
-from utils.file_handling.file_parsing.general_parser import get_all_documents_with_path
+from common_utils.file_handling.file_parsing.general_parser import yield_all_documents
 
 
 class CSVFromDict(IAnalysisJob):
@@ -36,7 +36,7 @@ class CSVFromDict(IAnalysisJob):
 
     def run(self) -> None:
         for idx, (document, path) in enumerate(
-            get_all_documents_with_path(self.data_path, self.cordis_only_project_flag)
+            yield_all_documents(self.data_path, self.cordis_only_project_flag)
         ):
             self.rows.append(self.extract_values_from_columns(document))
 

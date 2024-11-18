@@ -3,13 +3,13 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Dict, Any, Union
 
-from utils.config.config_loader import get_config
-from utils.file_handling.file_handling import (
+from common_utils.config.config_loader import get_config
+from common_utils.file_handling.file_handling import (
     ensure_path_exists,
     write_file,
     get_root_path,
 )
-from utils.logging.logger import setup_logging
+from common_utils.logging.logger import setup_logging
 
 
 def clean_extractor_name(extractor_name: str):

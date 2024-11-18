@@ -2,24 +2,25 @@ import os
 from pathlib import Path
 from typing import Iterator, Any
 
-from utils.file_handling.file_parsing.json_parser import (
+from common_utils.file_handling.file_parsing.json_parser import (
     extract_json_as_dict,
 )
-from utils.file_handling.file_parsing.xml_parser import (
+from common_utils.file_handling.file_parsing.xml_parser import (
     extract_xml_as_dict,
 )
 
 
-def get_all_documents_with_path(path: Path, cordis_only_project_flag: bool = False):
+def yield_all_documents(document_path: Path, cordis_only_project_flag: bool = False):
     """
-    Returns all documents as dictionaries given a path recursively.
+    Yields all documents as dictionaries including their path name, given a path recursively.
     """
-    yield from _process_files(path, cordis_only_project_flag)
+    yield from _process_files(document_path, cordis_only_project_flag)
 
 
 def _process_files(file_path: Path, cordis_only_project_flag: bool) -> Iterator[Any]:
     """
-    Walks through all files in the given file_path and extracts the document as a dictionary.
+    Walks through all files in the given file_path and yields the extracted the documents
+    as a dictionary including their path.
     """
     for root, _, files in os.walk(file_path):
         for file in files:
@@ -36,7 +37,7 @@ def _process_files(file_path: Path, cordis_only_project_flag: bool) -> Iterator[
 
 def skip_not_a_cordis_project(is_flag: bool, path: Path):
     """
-    Only returns
+    Only returns Cordis documents that are of the type project.
     """
     if not is_flag:
         return False

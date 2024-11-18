@@ -6,7 +6,7 @@ import zipfile
 from pathlib import Path
 from typing import Any, Dict
 
-from utils.error_handling.error_handling import log_and_raise_exception
+from common_utils.error_handling.error_handling import log_and_raise_exception
 
 ENCODING = "utf-8"
 

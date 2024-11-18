@@ -5,7 +5,7 @@ from typing import Dict, Any
 
 from analysis.utils.analysis_interface import IAnalysisJob
 from analysis.utils.analysis_utils import clean_value
-from utils.file_handling.file_parsing.general_parser import get_all_documents_with_path
+from common_utils.file_handling.file_parsing.general_parser import yield_all_documents
 
 
 class KeysFrequencyAnalysis(IAnalysisJob):
@@ -38,7 +38,7 @@ class KeysFrequencyAnalysis(IAnalysisJob):
 
     def run(self):
         for idx, (document, path) in enumerate(
-            get_all_documents_with_path(self.data_path, self.cordis_only_project_flag)
+            yield_all_documents(self.data_path, self.cordis_only_project_flag)
         ):
             self.traverse_dictionary(document)
             self.total_files += 1

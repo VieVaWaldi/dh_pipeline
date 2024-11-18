@@ -6,9 +6,9 @@ from pathlib import Path
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
-from utils.error_handling.error_handling import log_and_raise_exception
-from utils.file_handling.file_handling import ensure_path_exists
-from utils.web_requests.web_requests import get_base_url
+from common_utils.error_handling.error_handling import log_and_raise_exception
+from common_utils.file_handling.file_handling import ensure_path_exists
+from common_utils.web_requests.web_requests import get_base_url
 
 
 class SeleniumFileDownloader:

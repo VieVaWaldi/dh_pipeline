@@ -3,7 +3,7 @@ from typing import Any, Dict
 
 from dotenv import load_dotenv
 
-from utils.file_handling.file_handling import load_json_file, get_root_path
+from common_utils.file_handling.file_handling import load_json_file, get_root_path
 
 
 def get_config() -> Dict[str, Any]:

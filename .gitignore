@@ -1,6 +1,7 @@
 ### Custom ignores ###
 
 /scripts
+/_scripts
 .vscode/
 .idea/
 .env

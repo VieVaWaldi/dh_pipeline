@@ -9,25 +9,27 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-import utils.file_handling.file_parsing.xml_parser as xml
-from extractors.extractor_interface import IExtractor
-from utils.config.config_loader import get_query_config
-from utils.error_handling.error_handling import log_and_raise_exception
-from utils.file_handling.file_handling import (
+import common_utils.file_handling.file_parsing.xml_parser as xml
+from common_utils.config.config_loader import get_query_config
+from common_utils.error_handling.error_handling import log_and_raise_exception
+from common_utils.file_handling.file_handling import (
     unpack_and_remove_zip,
     load_file,
     write_file,
     ensure_path_exists,
     delete_if_empty,
 )
-from utils.file_handling.file_processing.file_sanitization import trim_excessive_whitespace
-from utils.web_requests.selenium_file_downloader import SeleniumFileDownloader
-from utils.web_requests.web_requests import (
+from common_utils.file_handling.file_processing.file_sanitization import (
+    trim_excessive_whitespace,
+)
+from common_utils.web_requests.selenium_file_downloader import SeleniumFileDownloader
+from common_utils.web_requests.web_requests import (
     make_delete_request,
     make_get_request,
     download_file,
     get_base_url,
 )
+from extractors.extractor_interface import IExtractor
 
 
 class CordisExtractor(IExtractor):

@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Dict
 
 from analysis.utils.analysis_interface import IAnalysisJob
-from utils.file_handling.file_handling import get_file_size
+from common_utils.file_handling.file_handling import get_file_size
 
 
 class FileStructureAnalysis(IAnalysisJob):
