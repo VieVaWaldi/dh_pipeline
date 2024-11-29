@@ -21,8 +21,7 @@ from data_models.digicher_model import (
     InstitutionsPeople,
     InstitutionsResearchOutputs,
 )
-from etl.arxiv_transfomer import get_or_create
-from etl.cordis_extractor import (
+from etl.cordis.cordis_transform_obj import (
     CordisProject,
     FundingProgramme,
     Topic,
@@ -31,9 +30,10 @@ from etl.cordis_extractor import (
     Weblink,
     ResearchOutput,
 )
+from etl.utils.database.get_or_create import get_or_create
 
 
-class CordisTransformer:
+class CordisTransformOrm:
     """Transforms CordisProject into ORM models with proper relationships"""
 
     def __init__(self, session: Session, sanitizer):

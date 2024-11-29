@@ -29,7 +29,7 @@ from common_utils.web_requests.web_requests import (
     download_file,
     get_base_url,
 )
-from extractors.extractor_interface import IExtractor
+from etl.interfaces.extractor_interface import IExtractor
 
 
 class CordisExtractor(IExtractor):

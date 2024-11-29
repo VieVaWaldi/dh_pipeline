@@ -97,20 +97,19 @@ class CordisProject:
     weblinks: List[Weblink]
 
 
-
 PROJECT = "project"
 RELATIONS = "relations"
 ASSOCIATIONS = "associations"
-PRE = f"{RELATIONS}.{ASSOCIATIONS}" # {PROJECT}.
+PRE = f"{RELATIONS}.{ASSOCIATIONS}"  # {PROJECT}.
 
 
 RESULT_PATH = f"{PRE}.result"
 ORG_PATH = f"{PRE}.organization"
 PROGRAMME_PATH = f"{PRE}.programme"
-CATEGORIES_PATH = f"{RELATIONS}.categories.category" # {PROJECT}.
+CATEGORIES_PATH = f"{RELATIONS}.categories.category"  # {PROJECT}.
 
 
-class CordisExtractor:
+class CordisTransformObj:
     """
     Extracts structured data from CORDIS source documents and creates corresponding
     Python objects according to the defined schema.
@@ -134,7 +133,6 @@ class CordisExtractor:
                 project_data.get("ecMaxContribution")
             ),
             objective=project_data.get("objective"),
-
             call_identifier=self._get_call_info(project_data, "identifier"),
             call_title=self._get_call_info(project_data, "title"),
             call_rcn=self._get_call_info(project_data, "rcn"),
@@ -305,7 +303,7 @@ class CordisExtractor:
             self._get_nested(result_data, "relations.associations.webLink")
         ):
             if link_data.get("physUrl") is None:
-                    continue
+                continue
             weblink = Weblink(
                 url=link_data.get("physUrl"), title=link_data.get("title")
             )
@@ -318,7 +316,7 @@ class CordisExtractor:
         org_path = "relations.associations.organization"
         for org_data in self.ensure_list(self._get_nested(result_data, org_path)):
             if org_data.get("legalName") is None:
-                    continue
+                continue
             institution = Institution(
                 name=org_data.get("legalName"),
                 sme=self._parse_bool(org_data.get("@sme")),

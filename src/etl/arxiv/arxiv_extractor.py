@@ -16,7 +16,7 @@ from common_utils.file_handling.file_handling import load_file, write_file
 from common_utils.file_handling.file_processing.file_sanitization import (
     trim_excessive_whitespace,
 )
-from extractors.extractor_interface import IExtractor
+from etl.interfaces.extractor_interface import IExtractor
 
 
 class ArxivExtractor(IExtractor, ABC):

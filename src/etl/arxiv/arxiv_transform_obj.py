@@ -35,7 +35,7 @@ class ArxivEntry:
     weblinks: List[ArxivWeblink]
 
 
-class ArxivExtractor:
+class ArxivTransformObj:
     """
     The Goal is to create objects that match the source!
     Later we map these objects to ORM!

@@ -18,7 +18,7 @@ from common_utils.file_handling.file_parsing.json_parser import (
     get_all_keys_value_recursively,
 )
 from common_utils.web_requests.web_requests import make_get_request
-from extractors.extractor_interface import IExtractor
+from etl.interfaces.extractor_interface import IExtractor
 
 
 class CoreExtractor(IExtractor):

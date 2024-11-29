@@ -202,7 +202,7 @@ CREATE TABLE Projects (
 -------------------------------------------------------------------
 --- Multi relationship tables                                   ---
 
---- Publication to Others                                       ---
+--- ResearchOutputs to Others                                   ---
 
 CREATE TABLE ResearchOutputs_People (
     publication_id INTEGER REFERENCES ResearchOutputs(id) ON DELETE CASCADE,

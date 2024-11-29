@@ -3,12 +3,22 @@
     "analysis_path": "data/analysis/",
     "checkpoint_path": "data/checkpoints/",
     "logging_path": "data/logs/",
-    "data_path": "data/pile/"
+    "data_path": "data/pile/",
+    "db": {
+      "url": "wehrenberger@localhost",
+      "port": "5432",
+      "db_name": "test_digicher"
+    }
   },
   "prod": {
     "analysis_path": "data/analysis/",
     "checkpoint_path": "data/checkpoints/",
     "logging_path": "data/logs/",
-    "data_path": "/vast/lu72hip/data/pile/"
+    "data_path": "/vast/lu72hip/data/pile/",
+    "db": {
+      "url": "lu72hip@localhost",
+      "port": "5433",
+      "db_name": "test_digicher"
+    }
   }
 }
