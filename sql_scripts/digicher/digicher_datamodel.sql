@@ -127,7 +127,7 @@ CREATE TABLE ResearchOutputs (
     id SERIAL PRIMARY KEY,
     id_original TEXT UNIQUE NOT NULL,
     type TEXT NOT NULL, -- eg publication, relatedResult for cordis ...
-    doi_id INTEGER UNIQUE REFERENCES Dois(id), -- REF DOIS
+    doi_id INTEGER REFERENCES Dois(id), -- ToDo UNIQUE
     arxiv_id TEXT,
     title TEXT NOT NULL,
     publication_date DATE,

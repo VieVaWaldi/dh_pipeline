@@ -99,7 +99,7 @@ class ResearchOutputs(Base):
     type: Mapped[str] = mapped_column(nullable=False)
     arxiv_id: Mapped[str] = mapped_column()
 
-    doi_id: Mapped[int] = mapped_column(ForeignKey("dois.id"), unique=True)
+    doi_id: Mapped[int] = mapped_column(ForeignKey("dois.id"))
     doi: Mapped["Dois"] = relationship(back_populates="publication")
 
     title: Mapped[str] = mapped_column(nullable=False)
