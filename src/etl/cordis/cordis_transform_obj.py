@@ -156,11 +156,13 @@ class CordisTransformObj:
         for result_data in self.ensure_list(self._get_nested(data, RESULT_PATH)):
             if result_data.get("id") is None:
                 continue
+            # fixes doi null violation. ToDo we need sanitization
+            title = result_data.get("title").replace('–', '-').replace('—', '-')
             result = ResearchOutput(
                 id_original=result_data.get("id"),
                 doi=self._get_doi(result_data, "identifiers.doi"),
                 type=result_data.get("@type"),
-                title=result_data.get("title"),
+                title=title,
                 publication_date=self._parse_date(result_data.get("contentUpdateDate")),
                 journal=self._get_nested(result_data, "details.journalTitle"),
                 summary=result_data.get("description"),
