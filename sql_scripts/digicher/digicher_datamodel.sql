@@ -57,7 +57,6 @@
 -- Projects
 --    id_original
 
-
 ----- 5. WIP Adding later information
 
 -- Eg we have a filled database with all the core entities.
@@ -92,14 +91,13 @@ CREATE TABLE People (
 );
 
 CREATE TABLE Topics (
--- Cordis, only if: category@classification == euroSciVoc
     id SERIAL PRIMARY KEY,
     name TEXT UNIQUE NOT NULL,
     standardised_name TEXT, -- Cordis: category.displayCode.#text
     code TEXT,
-    display_code TEXT,
-    description TEXT,
-    cordis_classification TEXT,
+    --    display_code TEXT, -- REMOVED
+    --    description TEXT, -- REMOVED
+    --    cordis_classification TEXT, -- REMOVED
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
     -- Primary or secondary topic are handled in the junction tables.
@@ -128,7 +126,7 @@ CREATE TABLE Dois (
 CREATE TABLE ResearchOutputs (
     id SERIAL PRIMARY KEY,
     id_original TEXT UNIQUE NOT NULL,
-    type TEXT NOT NULL, -- eg publication, work package ...
+    type TEXT NOT NULL, -- eg publication, relatedResult for cordis ...
     doi_id INTEGER UNIQUE REFERENCES Dois(id), -- REF DOIS
     arxiv_id TEXT,
     title TEXT NOT NULL,
@@ -155,7 +153,7 @@ CREATE TABLE Institutions (
     address_postalcode TEXT,
     address_city TEXT,
     address_country TEXT,
-    address_geolocation TEXT,
+    address_geolocation float[], -- ADDED ARRAY
     url TEXT,
     short_name TEXT,
     vat_number TEXT,
@@ -163,37 +161,35 @@ CREATE TABLE Institutions (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
----- WIP
 CREATE TABLE FundingProgrammes (
     id SERIAL PRIMARY KEY,
-    code TEXT UNIQUE NOT NULL, -- programme.code
-    title TEXT, -- programme.title
-    short_title TEXT, -- programme.shortTitle
-    framework_programme TEXT, -- programme.frameworkProgramme
-    pga TEXT, -- programme.pga
-    rcn INTEGER, -- programme.rcn
+    code TEXT UNIQUE NOT NULL,
+    title TEXT,
+    short_title TEXT,
+    framework_programme TEXT,
+    pga TEXT,
+    rcn INTEGER,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
----- WIP
 CREATE TABLE Projects (
     id SERIAL PRIMARY KEY,
-    id_original TEXT UNIQUE NOT NULL, -- project.id
+    id_original TEXT UNIQUE NOT NULL,
     doi_id INTEGER UNIQUE REFERENCES Dois(id), -- REF DOIS
-    fundingprogramme_id INTEGER UNIQUE REFERENCES FundingProgrammes(id), -- REF FUNDING_PROGS
-    acronym TEXT, -- project.acronym
-    title TEXT NOT NULL, -- project.title
-    status TEXT, -- project.status
-    start_date DATE, -- project.startDate
-    end_date DATE, -- project.endDate
-    ec_signature_date DATE, -- project.ecSignatureDate
-    total_cost DECIMAL(15,2), -- project.totalCost
-    ec_max_contribution DECIMAL(15,2), -- project.ecMaxContribution
-    objective TEXT, -- project.objective
-    call_identifier TEXT, -- project.relations.associations.call.identifier
-    call_title TEXT, -- project.relations.associations.call.title
-    call_rcn TEXT, -- project.relations.associations.call.rcn
+    --    fundingprogramme_id INTEGER UNIQUE -- REMOVED
+    acronym TEXT,
+    title TEXT NOT NULL,
+    status TEXT,
+    start_date DATE,
+    end_date DATE,
+    ec_signature_date DATE,
+    total_cost DECIMAL(15,2),
+    ec_max_contribution DECIMAL(15,2),
+    objective TEXT,
+    call_identifier TEXT,
+    call_title TEXT,
+    call_rcn TEXT,
     -- Note: There is also a list of calls ([_]) which contains master and sub calls that we're not using
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
@@ -212,7 +208,6 @@ CREATE TABLE ResearchOutputs_People (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (publication_id, person_id)
 );
--- For Cordis Junction People from ResearchOutputs
 
 CREATE TABLE ResearchOutputs_Topics (
     publication_id INTEGER REFERENCES ResearchOutputs(id) ON DELETE CASCADE,
@@ -222,7 +217,6 @@ CREATE TABLE ResearchOutputs_Topics (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (publication_id, topic_id)
 );
--- For Cordis Junction Topics from ResearchOutputs
 
 CREATE TABLE ResearchOutputs_Weblinks (
     publication_id INTEGER REFERENCES ResearchOutputs(id) ON DELETE CASCADE,
@@ -230,7 +224,6 @@ CREATE TABLE ResearchOutputs_Weblinks (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (publication_id, weblink_id)
 );
--- For Cordis Junction Weblinks from ResearchOutputs
 
 --- Institutions to Others                                      ---
 
@@ -240,7 +233,6 @@ CREATE TABLE Institutions_People (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (institution_id, person_id)
 );
--- For Cordis Junction People from Institutions
 
 CREATE TABLE Institutions_ResearchOutputs (
     institution_id INTEGER REFERENCES Institutions(id) ON DELETE CASCADE,
@@ -248,12 +240,11 @@ CREATE TABLE Institutions_ResearchOutputs (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (institution_id, publication_id)
 );
--- For Cordis Junction ResearchOutputs from Institutions
 
 --- Projects to Others                                          ---
 
--- ToDo: Understand what happens if i remove this project. Will the topic
--- also be removed or just the junction table?
+-- ToDo: Understand what happens if i remove this project.
+-- Will the topic also be removed or just the junction table?
 
 CREATE TABLE Projects_Topics (
     project_id INTEGER REFERENCES Projects(id) ON DELETE CASCADE,
@@ -263,7 +254,6 @@ CREATE TABLE Projects_Topics (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (project_id, topic_id)
 );
--- For Cordis Junction Topics from Projects
 
 CREATE TABLE Projects_Weblinks (
     project_id INTEGER REFERENCES Projects(id) ON DELETE CASCADE,
@@ -271,7 +261,6 @@ CREATE TABLE Projects_Weblinks (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (project_id, weblink_id)
 );
--- For Cordis Junction Weblinks from Projects
 
 CREATE TABLE Projects_ResearchOutputs (
     project_id INTEGER REFERENCES Projects(id) ON DELETE CASCADE,
@@ -279,22 +268,29 @@ CREATE TABLE Projects_ResearchOutputs (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (project_id, publication_id)
 );
--- For Cordis Junction ResearchOutputs from Projects
 
 CREATE TABLE Projects_Institutions (
     project_id INTEGER REFERENCES Projects(id) ON DELETE CASCADE,
     institution_id INTEGER REFERENCES Institutions(id) ON DELETE CASCADE,
-    ec_contribution DECIMAL(15,2), -- organization.@ecContribution
-    net_ec_contribution DECIMAL(15,2), -- organization.@netEcContribution
-    total_cost DECIMAL(15,2), -- organization.@totalCost
-    type TEXT, -- organization.@type
-    organization_id TEXT, -- organization.id
-    rcn INTEGER, -- organization.rcn
+    -- Institutions position in the naming list
+    institution_position INTEGER NOT NULL, -- ADDED
+    ec_contribution DECIMAL(15,2),
+    net_ec_contribution DECIMAL(15,2),
+    total_cost DECIMAL(15,2),
+    type TEXT, -- coordinator, participant ... Can be used to get primary institution
+    organization_id TEXT,
+    rcn INTEGER,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (project_id, institution_id)
 );
--- For Cordis Junction Institutions from Projects
--- Junction Project to Topic on Projects.id == Topics.id, is_primary if [0]
+
+-- ADDED
+CREATE TABLE Projects_FundingProgrammes (
+    project_id INTEGER REFERENCES Projects(id) ON DELETE CASCADE,
+    fundingprogramme_id INTEGER REFERENCES FundingProgrammes(id) ON DELETE CASCADE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (project_id, fundingprogramme_id)
+);
 
 
 -------------------------------------------------------------------
@@ -341,7 +337,7 @@ CREATE INDEX idx_inst_pub_pub ON Institutions_ResearchOutputs(publication_id);
 
 CREATE INDEX idx_projects_title ON Projects USING gin(to_tsvector('english', title));
 CREATE INDEX idx_projects_dates ON Projects(start_date, end_date);
-CREATE INDEX idx_projects_funding ON Projects(fundingprogramme_id);
+-- CREATE INDEX idx_projects_funding ON Projects(fundingprogramme_id); -- REMOVED
 CREATE INDEX idx_projects_status ON Projects(status);
 CREATE INDEX idx_projects_doi ON Projects(doi_id);
 CREATE INDEX idx_projects_id_original ON Projects(id_original);

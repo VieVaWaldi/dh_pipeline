@@ -7,6 +7,8 @@ from sqlalchemy import (
     UniqueConstraint,
     ForeignKey,
     Boolean,
+    ARRAY,
+    Float,
 )
 from sqlalchemy.orm import mapped_column, relationship, Mapped, declarative_base
 
@@ -57,18 +59,12 @@ class Topics(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(unique=True, nullable=False)
     standardised_name: Mapped[str] = mapped_column()
-
     code: Mapped[str] = mapped_column()
-    display_code: Mapped[str] = mapped_column()
-    description: Mapped[str] = mapped_column()
-    cordis_classification: Mapped[str] = mapped_column()
 
     researchoutputs: Mapped[List["ResearchOutputsTopics"]] = relationship(
         back_populates="topic"
     )
-    projects: Mapped[List["ProjectsTopics"]] = relationship(
-        back_populates="topic"
-    )  # new
+    projects: Mapped[List["ProjectsTopics"]] = relationship(back_populates="topic")
 
 
 class Weblinks(Base):
@@ -81,9 +77,7 @@ class Weblinks(Base):
     researchoutputs: Mapped["ResearchOutputsWeblinks"] = relationship(
         back_populates="weblink"
     )
-    projects: Mapped[List["ProjectsWeblinks"]] = relationship(
-        back_populates="weblink"
-    )  # new
+    projects: Mapped[List["ProjectsWeblinks"]] = relationship(back_populates="weblink")
 
 
 class Dois(Base):
@@ -94,7 +88,7 @@ class Dois(Base):
 
     # One to One references
     publication: Mapped["ResearchOutputs"] = relationship(back_populates="doi")
-    project: Mapped["Projects"] = relationship(back_populates="doi")  # new
+    project: Mapped["Projects"] = relationship(back_populates="doi")
 
 
 class ResearchOutputs(Base):
@@ -130,7 +124,7 @@ class ResearchOutputs(Base):
     )
     projects: Mapped[List["ProjectsResearchOutputs"]] = relationship(
         back_populates="publication"
-    )  # new
+    )
 
 
 class Institutions(Base):
@@ -145,7 +139,7 @@ class Institutions(Base):
     address_postalcode: Mapped[str] = mapped_column()
     address_city: Mapped[str] = mapped_column()
     address_country: Mapped[str] = mapped_column()
-    address_geolocation: Mapped[str] = mapped_column()
+    address_geolocation: Mapped[list[float]] = mapped_column(ARRAY(Float), nullable=True)
     url: Mapped[str] = mapped_column()
     short_name: Mapped[str] = mapped_column()
     vat_number: Mapped[str] = mapped_column()
@@ -158,8 +152,7 @@ class Institutions(Base):
     )
     projects: Mapped[List["ProjectsInstitutions"]] = relationship(
         back_populates="institution"
-    )  # new
-
+    )
 
 class FundingProgrammes(Base):
     __tablename__ = "fundingprogrammes"
@@ -172,9 +165,7 @@ class FundingProgrammes(Base):
     pga: Mapped[str] = mapped_column()
     rcn: Mapped[int] = mapped_column(Integer)
 
-    projects: Mapped[List["Projects"]] = relationship(
-        back_populates="fundingprogramme"
-    )  # new
+    projects: Mapped[List["ProjectsFundingProgrammes"]] = relationship(back_populates="fundingprogramme")
 
 
 class Projects(Base):
@@ -183,9 +174,6 @@ class Projects(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     id_original: Mapped[str] = mapped_column(unique=True, nullable=False)
     doi_id: Mapped[int] = mapped_column(ForeignKey("dois.id"), unique=True)
-    fundingprogramme_id: Mapped[int] = mapped_column(
-        ForeignKey("fundingprogrammes.id"), unique=True
-    )
     acronym: Mapped[str] = mapped_column()
     title: Mapped[str] = mapped_column(nullable=False)
     status: Mapped[str] = mapped_column()
@@ -203,15 +191,15 @@ class Projects(Base):
     doi: Mapped["Dois"] = relationship(back_populates="project")
 
     # Many to Many
-    fundingprogramme: Mapped["FundingProgrammes"] = relationship(
-        back_populates="projects"
-    )
     topics: Mapped[List["ProjectsTopics"]] = relationship(back_populates="project")
     weblinks: Mapped[List["ProjectsWeblinks"]] = relationship(back_populates="project")
     researchoutputs: Mapped[List["ProjectsResearchOutputs"]] = relationship(
         back_populates="project"
     )
     institutions: Mapped[List["ProjectsInstitutions"]] = relationship(
+        back_populates="project"
+    )
+    fundingprogrammes: Mapped[List["ProjectsFundingProgrammes"]] = relationship(
         back_populates="project"
     )
 
@@ -355,6 +343,7 @@ class ProjectsInstitutions(Base):
     institution_id: Mapped[int] = mapped_column(
         ForeignKey("institutions.id", ondelete="CASCADE"), primary_key=True
     )
+    institution_position: Mapped[int] = mapped_column()
     ec_contribution: Mapped[int] = mapped_column()
     net_ec_contribution: Mapped[int] = mapped_column()
     total_cost: Mapped[int] = mapped_column()
@@ -364,3 +353,17 @@ class ProjectsInstitutions(Base):
 
     project: Mapped["Projects"] = relationship(back_populates="institutions")
     institution: Mapped["Institutions"] = relationship(back_populates="projects")
+
+
+class ProjectsFundingProgrammes(Base):
+    __tablename__ = "projects_fundingprogrammes"
+
+    project_id: Mapped[int] = mapped_column(
+        ForeignKey("projects.id", ondelete="CASCADE"), primary_key=True
+    )
+    fundingprogramme_id: Mapped[int] = mapped_column(
+        ForeignKey("fundingprogrammes.id", ondelete="CASCADE"), primary_key=True
+    )
+
+    project: Mapped["Projects"] = relationship(back_populates="fundingprogrammes")
+    fundingprogramme: Mapped["FundingProgrammes"] = relationship(back_populates="projects")

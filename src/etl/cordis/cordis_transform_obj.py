@@ -18,8 +18,6 @@ class Person:
 class Topic:
     name: str  # title in source
     code: Optional[str]
-    description: Optional[str]
-    cordis_classification: Optional[str]  # @classification in source
 
 
 @dataclass
@@ -47,10 +45,18 @@ class Institution:
     address_postalcode: Optional[str]
     address_city: Optional[str]
     address_country: Optional[str]
-    address_geolocation: Optional[str]
+    address_geolocation: Optional[list[int]]
     url: Optional[str]
     short_name: Optional[str]
     vat_number: Optional[str]
+
+    # For projects only
+    ec_contribution: Optional[float]
+    net_ec_contribution: Optional[float]
+    total_cost: Optional[float]
+    type: Optional[str]
+    organization_id: Optional[str]
+    rcn: Optional[str]
 
     people: List[Person]
 
@@ -59,6 +65,7 @@ class Institution:
 class ResearchOutput:
     id_original: str  # id in source
     type: str  # @type in source
+    doi: str
     title: str
     publication_date: Optional[date]  # contentUpdateDate in source
     journal: Optional[str]  # journalTitle in source
@@ -74,6 +81,7 @@ class ResearchOutput:
 @dataclass
 class CordisProject:
     id_original: str  # id in source
+    doi: str
     title: str
     acronym: Optional[str]
     status: Optional[str]
@@ -84,12 +92,10 @@ class CordisProject:
     ec_max_contribution: Optional[float]
     objective: Optional[str]
 
-    # There is a list of calls but we only will use the first item in there
     call_identifier: Optional[str]
     call_title: Optional[str]
     call_rcn: Optional[str]
 
-    dois: List[str]
     fundingprogrammes: List[FundingProgramme]
     research_outputs: List[ResearchOutput]
     institutions: List[Institution]
@@ -100,13 +106,13 @@ class CordisProject:
 PROJECT = "project"
 RELATIONS = "relations"
 ASSOCIATIONS = "associations"
-PRE = f"{RELATIONS}.{ASSOCIATIONS}"  # {PROJECT}.
+PRE = f"{RELATIONS}.{ASSOCIATIONS}"
 
 
 RESULT_PATH = f"{PRE}.result"
 ORG_PATH = f"{PRE}.organization"
 PROGRAMME_PATH = f"{PRE}.programme"
-CATEGORIES_PATH = f"{RELATIONS}.categories.category"  # {PROJECT}.
+CATEGORIES_PATH = f"{RELATIONS}.categories.category"
 
 
 class CordisTransformObj:
@@ -115,13 +121,14 @@ class CordisTransformObj:
     Python objects according to the defined schema.
     """
 
-    def extract(self, data: Dict[str, Any]) -> CordisProject:
-        """Main extraction method that processes the raw data into a CordisProject object."""
+    def get(self, data: Dict[str, Any]) -> CordisProject:
+        """Main getion method that processes the raw data into a CordisProject object."""
 
         project_data = data.get(PROJECT, {})
 
         return CordisProject(
             id_original=project_data.get("id"),
+            doi=self._get_doi(project_data, "identifiers.grantDoi"),
             title=project_data.get("title"),
             acronym=project_data.get("acronym"),
             status=project_data.get("status"),
@@ -136,15 +143,14 @@ class CordisTransformObj:
             call_identifier=self._get_call_info(project_data, "identifier"),
             call_title=self._get_call_info(project_data, "title"),
             call_rcn=self._get_call_info(project_data, "rcn"),
-            dois=self._extract_dois(project_data),
-            fundingprogrammes=self._extract_fundingprogrammes(project_data),
-            research_outputs=self._extract_research_outputs(project_data),
-            institutions=self._extract_institutions(project_data),
-            topics=self._extract_topics(project_data),
-            weblinks=self._extract_weblinks(project_data),
+            fundingprogrammes=self._get_fundingprogrammes(project_data),
+            research_outputs=self._get_research_outputs(project_data),
+            institutions=self._get_institutions(project_data),
+            topics=self._get_topics(project_data),
+            weblinks=self._get_weblinks(project_data),
         )
 
-    def _extract_research_outputs(self, data: dict) -> List[ResearchOutput]:
+    def _get_research_outputs(self, data: dict) -> List[ResearchOutput]:
         """Extracts research outputs from the project data."""
         results = []
         for result_data in self.ensure_list(self._get_nested(data, RESULT_PATH)):
@@ -152,26 +158,28 @@ class CordisTransformObj:
                 continue
             result = ResearchOutput(
                 id_original=result_data.get("id"),
+                doi=self._get_doi(result_data, "identifiers.doi"),
                 type=result_data.get("@type"),
                 title=result_data.get("title"),
                 publication_date=self._parse_date(result_data.get("contentUpdateDate")),
                 journal=self._get_nested(result_data, "details.journalTitle"),
                 summary=result_data.get("description"),
                 comment=result_data.get("teaser"),
-                institutions=self._extract_result_institutions(result_data),
-                topics=self._extract_result_topics(result_data),
-                people=self._extract_result_people(result_data),
-                weblinks=self._extract_result_weblinks(result_data),
+                institutions=self._get_result_institutions(result_data),
+                topics=self._get_result_topics(result_data),
+                people=self._get_result_people(result_data),
+                weblinks=self._get_result_weblinks(result_data),
             )
             results.append(result)
         return results
 
-    def _extract_institutions(self, data: dict) -> List[Institution]:
+    def _get_institutions(self, data: dict) -> List[Institution]:
         """Extracts institutions from the project data."""
         institutions = []
         for org_data in self.ensure_list(self._get_nested(data, ORG_PATH)):
             if org_data.get("legalName") is None:
                 continue
+            coordinates = self._parse_geolocation(self._get_nested(org_data, "address.geolocation"))
             institution = Institution(
                 name=org_data.get("legalName"),
                 sme=self._parse_bool(org_data.get("@sme")),
@@ -180,16 +188,25 @@ class CordisTransformObj:
                 address_postalcode=self._get_nested(org_data, "address.postalCode"),
                 address_city=self._get_nested(org_data, "address.city"),
                 address_country=self._get_nested(org_data, "address.country"),
-                address_geolocation=self._get_nested(org_data, "address.geolocation"),
+                address_geolocation=coordinates,
                 url=self._get_nested(org_data, "address.url"),
                 short_name=org_data.get("shortName"),
                 vat_number=org_data.get("vatNumber"),
-                people=self._extract_organization_people(org_data),
+                people=self._get_organization_people(org_data),
+                #
+                ec_contribution=self._parse_float(org_data.get("@ecContribution")),
+                net_ec_contribution=self._parse_float(
+                    org_data.get("@netEcContribution")
+                ),
+                total_cost=self._parse_float(org_data.get("@totalCost")),
+                type=org_data.get("@type"),
+                organization_id=org_data.get("id"),
+                rcn=org_data.get("rcn"),
             )
             institutions.append(institution)
         return institutions
 
-    def _extract_organization_people(self, org_data: dict) -> List[Person]:
+    def _get_organization_people(self, org_data: dict) -> List[Person]:
         """Extracts people associated with an organization."""
         people = []
         person_path = "relations.associations.person"
@@ -208,7 +225,7 @@ class CordisTransformObj:
             people.append(person)
         return people
 
-    def _extract_result_people(self, result_data: dict) -> List[Person]:
+    def _get_result_people(self, result_data: dict) -> List[Person]:
         """Extracts people (authors) from a research output."""
         authors = []
         authors_str = self._get_nested(result_data, "details.authors")
@@ -228,7 +245,7 @@ class CordisTransformObj:
                 )
         return authors
 
-    def _extract_fundingprogrammes(self, data: dict) -> List[FundingProgramme]:
+    def _get_fundingprogrammes(self, data: dict) -> List[FundingProgramme]:
         """Extracts funding programmes from the project data."""
         programmes = []
         for prog_data in self.ensure_list(self._get_nested(data, PROGRAMME_PATH)):
@@ -245,46 +262,39 @@ class CordisTransformObj:
             programmes.append(programme)
         return programmes
 
-    def _extract_topics(self, data: dict) -> List[Topic]:
+    def _get_topics(self, data: dict) -> List[Topic]:
         """Extracts topics (categories) from the project data."""
         topics = []
         for cat_data in self.ensure_list(self._get_nested(data, CATEGORIES_PATH)):
             if cat_data.get("title") is None:
                 continue
-            topic = Topic(
-                name=cat_data.get("title"),
-                code=cat_data.get("code"),
-                description=cat_data.get("description"),
-                cordis_classification=cat_data.get("@classification"),
-            )
+            classification = cat_data.get("@classification")
+            if not isinstance(classification, str) or classification != "euroSciVoc":
+                continue
+            topic = Topic(name=cat_data.get("title"), code=cat_data.get("code"))
             topics.append(topic)
         return topics
 
-    def _extract_result_topics(self, result_data: dict) -> List[Topic]:
+    def _get_result_topics(self, result_data: dict) -> List[Topic]:
         """Extracts topics from a research output."""
         topics = []
         cat_path = "relations.categories.category"
         for cat_data in self.ensure_list(self._get_nested(result_data, cat_path)):
             if cat_data.get("title") is None:
                 continue
-            topic = Topic(
-                name=cat_data.get("title"),
-                code=cat_data.get("code"),
-                description=cat_data.get("description"),
-                cordis_classification=cat_data.get("@classification"),
-            )
+            classification = cat_data.get("@classification")
+            if not isinstance(classification, str) or classification != "euroSciVoc":
+                continue
+            topic = Topic(name=cat_data.get("title"), code=cat_data.get("code"))
             topics.append(topic)
         return topics
 
-    def _extract_dois(self, data: dict) -> List[str]:
+    def _get_doi(self, data: dict, path: str) -> str:
         """Extracts DOIs from the project data."""
-        dois = []
-        doi_data = self._get_nested(data, "identifiers.doi")
-        if doi_data:
-            dois.extend(self.ensure_list(doi_data))
-        return dois
+        doi_data = self._get_nested(data, path)
+        return doi_data if doi_data else None
 
-    def _extract_weblinks(self, data: dict) -> List[Weblink]:
+    def _get_weblinks(self, data: dict) -> List[Weblink]:
         """Extracts weblinks from the project data."""
         weblinks = []
         for link_data in self.ensure_list(self._get_nested(data, f"{PRE}.webLink")):
@@ -296,7 +306,7 @@ class CordisTransformObj:
             weblinks.append(weblink)
         return weblinks
 
-    def _extract_result_weblinks(self, result_data: dict) -> List[Weblink]:
+    def _get_result_weblinks(self, result_data: dict) -> List[Weblink]:
         """Extracts weblinks from a research output."""
         weblinks = []
         for link_data in self.ensure_list(
@@ -310,13 +320,14 @@ class CordisTransformObj:
             weblinks.append(weblink)
         return weblinks
 
-    def _extract_result_institutions(self, result_data: dict) -> List[Institution]:
+    def _get_result_institutions(self, result_data: dict) -> List[Institution]:
         """Extracts institutions from a research output."""
         institutions = []
         org_path = "relations.associations.organization"
         for org_data in self.ensure_list(self._get_nested(result_data, org_path)):
             if org_data.get("legalName") is None:
                 continue
+            coordinates = self._parse_geolocation(self._get_nested(org_data, "address.geolocation"))
             institution = Institution(
                 name=org_data.get("legalName"),
                 sme=self._parse_bool(org_data.get("@sme")),
@@ -325,7 +336,7 @@ class CordisTransformObj:
                 address_postalcode=self._get_nested(org_data, "address.postalCode"),
                 address_city=self._get_nested(org_data, "address.city"),
                 address_country=self._get_nested(org_data, "address.country"),
-                address_geolocation=self._get_nested(org_data, "address.geolocation"),
+                address_geolocation=coordinates,
                 url=self._get_nested(org_data, "address.url"),
                 short_name=org_data.get("shortName"),
                 vat_number=org_data.get("vatNumber"),
@@ -333,6 +344,26 @@ class CordisTransformObj:
             )
             institutions.append(institution)
         return institutions
+
+    def _parse_geolocation(self, geolocation: str) -> Optional[list]:
+        """
+        Parse geolocation string and return as [lon, lat] array.
+        Returns None if coordinates are invalid.
+        """
+        if not geolocation:
+            return None
+
+        cleaned = geolocation.replace("(", "").replace(")", "")
+        try:
+            lat, lon = map(lambda x: float(x.strip()), cleaned.split(","))
+            if not geolocation.startswith("("):
+                lat, lon = lon, lat
+            if lat < -90 or lat > 90 or lon < -180 or lon > 180:
+                return None
+
+            return [lon, lat]
+        except (ValueError, TypeError):
+            return None
 
     def _get_call_info(self, data: dict, field: str) -> Optional[str]:
         """Gets call information from the first call entry."""
@@ -342,14 +373,21 @@ class CordisTransformObj:
             return first_call.get(field)
         return None
 
+    """ HELPER METHODS  """
+
     @staticmethod
     def _parse_date(date_str: Optional[str]) -> Optional[date]:
-        """Parses date strings in YYYY-MM-DD format."""
+        """Parses date strings in YYYY-MM-DD or YYYY-MM-DD HH:MM:SS format."""
         if date_str:
             try:
+                # First try YYYY-MM-DD format
                 return datetime.strptime(date_str, "%Y-%m-%d").date()
             except (ValueError, TypeError):
-                return None
+                try:
+                    # Then try YYYY-MM-DD HH:MM:SS format
+                    return datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S").date()
+                except (ValueError, TypeError):
+                    return None
         return None
 
     @staticmethod

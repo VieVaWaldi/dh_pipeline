@@ -8,6 +8,7 @@ from common_utils.logging.logger import setup_logging
 from etl.cordis.cordis_transform_obj import CordisTransformObj
 from etl.cordis.cordis_transform_orm import CordisTransformOrm
 from etl.utils.database.db_connection import create_db_session
+from etl.utils.database.get_or_create import ModelCreationMonitor
 from etl.utils.sanitizer import DataSanitizer
 
 
@@ -18,7 +19,7 @@ def run_cordis_dataloader(source_path: Path, batch_size: int):
         doc_count = 0
 
         for doc_idx, (document, path) in enumerate(yield_all_documents(source_path)):
-            cordis_project = CordisTransformObj().extract(document)
+            cordis_project = CordisTransformObj().get(document)
 
             try:
                 if cordis_project.id_original:
@@ -40,6 +41,8 @@ def run_cordis_dataloader(source_path: Path, batch_size: int):
                 logging.error(f"Error details: {str(e)}")
                 logging.error(f"Document path: {path}")
                 raise
+        session.commit()  # Dont forget to do that for the final smaller batch
+    ModelCreationMonitor.log_stats()
 
 
 if __name__ == "__main__":
@@ -49,5 +52,7 @@ if __name__ == "__main__":
     )
     setup_logging(logging_path, "dataloader")
 
-    cordis_path = Path("/vast/lu72hip/data/pile/extractors/cordis_culturalORheritage")
+    cordis_path = Path(
+        "/Users/wehrenberger/Code/DIGICHer/DIGICHer_Pipeline/data/pile/_checkpoint/cordis_culturalORheritage"
+    )
     run_cordis_dataloader(cordis_path, batch_size=100)

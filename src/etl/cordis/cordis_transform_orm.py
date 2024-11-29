@@ -20,6 +20,7 @@ from data_models.digicher_model import (
     ResearchOutputsWeblinks,
     InstitutionsPeople,
     InstitutionsResearchOutputs,
+    ProjectsFundingProgrammes,
 )
 from etl.cordis.cordis_transform_obj import (
     CordisProject,
@@ -42,35 +43,31 @@ class CordisTransformOrm:
 
     def map_to_orm(self, cordis_project: CordisProject):
         """Main entry point to transform a CordisProject into ORM models"""
-        # 1. Create primary entities
+
+        """ 1. Create primary entities Project """
         project = self._create_project(cordis_project)
+        doi = self._create_doi(cordis_project.doi)
         fundingprogrammes = self._create_fundingprogrammes(
             cordis_project.fundingprogrammes
         )
-        dois = self._create_dois(cordis_project.dois)
-
-        # 2. Create project-related entities
         topics = self._create_topics(cordis_project.topics)
         institutions = self._create_institutions(cordis_project.institutions)
         weblinks = self._create_weblinks(cordis_project.weblinks)
 
-        self.session.flush()  # Get IDs for all created entities
+        self.session.flush()  # Get all serial IDs for the instances
 
-        # 3. Create project relationships
-        if dois:
-            project.doi = dois[0]  # Link first DOI to project
+        """ 3. Create project relationships """
+        if doi is not None:
+            project.doi = doi
 
-        # self._create_project_fundingprogrammes(project, fundingprogrammes)
-        # if project.fundingprogramme is None:
-        #     project.fundingprogramme = fundingprogrammes[
-        #         0
-        #     ]  # Link primary funding programme
-
+        self._create_project_fundingprogrammes(project, fundingprogrammes)
         self._create_project_topics(project, topics)
-        self._create_project_institutions(project, institutions)
+        self._create_project_institutions(
+            project, cordis_project.institutions, institutions
+        )
         self._create_project_weblinks(project, weblinks)
 
-        # 4. Handle research outputs
+        """ 4. Create entities ResearchOutput """
         for research_output in cordis_project.research_outputs:
             output_orm = self._create_research_output(research_output)
             self._create_project_research_outputs(project, output_orm)
@@ -115,25 +112,21 @@ class CordisTransformOrm:
             orm_programmes.append(instance)
         return orm_programmes
 
-    def _create_dois(self, doi_strings: List[str]) -> List[Dois]:
+    def _create_doi(self, doi: str) -> Dois | None:
         """Create or get Dois instances"""
-        orm_dois = []
-        for doi in doi_strings:
-            unique_key = {"doi": doi}
-            instance, _ = get_or_create(self.session, Dois, unique_key)
-            orm_dois.append(instance)
-        return orm_dois
+        if doi is None or doi == "":
+            return None
+
+        unique_key = {"doi": doi}
+        instance, _ = get_or_create(self.session, Dois, unique_key)
+        return instance
 
     def _create_topics(self, topics: List[Topic]) -> List[Topics]:
         """Create or get Topics instances"""
         orm_topics = []
         for topic in topics:
             unique_key = {"name": topic.name}
-            args = {
-                "code": topic.code,
-                "description": topic.description,
-                "cordis_classification": topic.cordis_classification,
-            }
+            args = {"code": topic.code}
             instance, _ = get_or_create(self.session, Topics, unique_key, **args)
             orm_topics.append(instance)
         return orm_topics
@@ -161,7 +154,7 @@ class CordisTransformOrm:
         for inst in institutions:
             unique_key = {"name": inst.name}
             args = {
-                "sme": inst.sme,
+                "sme": inst.sme if inst.sme is not None else False,
                 "address_street": inst.address_street,
                 "address_postbox": inst.address_postbox,
                 "address_postalcode": inst.address_postalcode,
@@ -211,9 +204,14 @@ class CordisTransformOrm:
         weblinks = self._create_weblinks(output.weblinks)
         institutions = self._create_institutions(output.institutions)
 
+        doi = self._create_doi(output.doi)
+
         self.session.flush()
 
         # Create relationships
+        if doi is not None:
+            instance.doi = doi
+
         self._create_research_outputs_people(instance, people)
         self._create_research_outputs_topics(instance, topics)
         self._create_research_outputs_weblinks(instance, weblinks)
@@ -221,16 +219,17 @@ class CordisTransformOrm:
 
         return instance
 
-    # ToDo Create according junction in data model, currently you just pick the first one lol.
-    # def _create_project_fundingprogrammes(
-    #     self, project: Projects, fundingprogrammes: List[FundingProgrammes]
-    # ):
-    #     for fundingprogramme in fundingprogrammes:
-    #         unique_key = {
-    #             "project_id": project.id,
-    #             "fundingprogramme_id": fundingprogramme.id,
-    #         }
-    #         get_or_create(self.session, ProjectsFundingProgrammes, unique_key, **unique_key)
+    def _create_project_fundingprogrammes(
+        self, project: Projects, fundingprogrammes: List[FundingProgrammes]
+    ):
+        for fundingprogramme in fundingprogrammes:
+            unique_key = {
+                "project_id": project.id,
+                "fundingprogramme_id": fundingprogramme.id,
+            }
+            get_or_create(
+                self.session, ProjectsFundingProgrammes, unique_key, **unique_key
+            )
 
     def _create_project_topics(self, project: Projects, topics: List[Topics]):
         """Create ProjectsTopics relationships"""
@@ -240,12 +239,30 @@ class CordisTransformOrm:
             get_or_create(self.session, ProjectsTopics, unique_key, **args)
 
     def _create_project_institutions(
-        self, project: Projects, institutions: List[Institutions]
+        self,
+        project: Projects,
+        obj_institutions: List[Institution],
+        institutions: List[Institutions],
     ):
         """Create ProjectsInstitutions relationships"""
-        for institution in institutions:
+        for pos, (obj_institution, institution) in enumerate(
+            zip(obj_institutions, institutions)
+        ):
+            if obj_institution.name != institution.name:
+                raise Exception(
+                    "Trying to match institutions that dont belong together"
+                )
             unique_key = {"project_id": project.id, "institution_id": institution.id}
-            get_or_create(self.session, ProjectsInstitutions, unique_key)
+            args = {
+                "institution_position": pos,
+                "ec_contribution": obj_institution.ec_contribution,
+                "net_ec_contribution": obj_institution.net_ec_contribution,
+                "total_cost": obj_institution.total_cost,
+                "type": obj_institution.type,
+                "organization_id": obj_institution.organization_id,
+                "rcn": obj_institution.rcn,
+            }
+            get_or_create(self.session, ProjectsInstitutions, unique_key, **args)
 
     def _create_project_weblinks(self, project: Projects, weblinks: List[Weblinks]):
         """Create ProjectsWeblinks relationships"""
