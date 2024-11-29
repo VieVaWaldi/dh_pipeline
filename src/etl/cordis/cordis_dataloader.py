@@ -43,11 +43,11 @@ def run_cordis_dataloader(source_path: Path, batch_size: int):
 
 
 if __name__ == "__main__":
-    cordis_path = Path("/vast/lu72hip/data/pile/extractors/cordis_culturalORheritage")
-    run_cordis_dataloader(cordis_path, batch_size=100)
-
     config = get_config()
     logging_path: Path = (
         get_root_path() / config["logging_path"] / "dataloader" / "cordis"
     )
     setup_logging(logging_path, "dataloader")
+
+    cordis_path = Path("/vast/lu72hip/data/pile/extractors/cordis_culturalORheritage")
+    run_cordis_dataloader(cordis_path, batch_size=100)
