@@ -2,7 +2,7 @@
 
 #SBATCH --job-name=etl_Cordis
 #SBATCH --partition=long
-#SBATCH --time=240:00:00
+#SBATCH --time=12:00:00
 #SBATCH --output=/home/lu72hip/DIGICHer/DIGICHer_Pipeline/data/runs/etl_cordis_%j.log
 
 # Initialize PostgreSQL
@@ -30,7 +30,7 @@ echo "PostgreSQL status:"
 pg_ctl status -D $PGDATA
 
 # Run the ETL script
-python src/etl/cordis_etl.py
+python src/etl/cordis/cordis_dataloader.py
 
 # Cleanup: Stop PostgreSQL
 pg_ctl stop -D $PGDATA -m fast

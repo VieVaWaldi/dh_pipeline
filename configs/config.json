@@ -18,7 +18,7 @@
     "db": {
       "url": "lu72hip@localhost",
       "port": "5433",
-      "db_name": "test_digicher"
+      "db_name": "db_digicher"
     }
   }
 }

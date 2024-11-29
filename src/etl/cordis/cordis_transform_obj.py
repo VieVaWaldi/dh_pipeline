@@ -179,7 +179,9 @@ class CordisTransformObj:
         for org_data in self.ensure_list(self._get_nested(data, ORG_PATH)):
             if org_data.get("legalName") is None:
                 continue
-            coordinates = self._parse_geolocation(self._get_nested(org_data, "address.geolocation"))
+            coordinates = self._parse_geolocation(
+                self._get_nested(org_data, "address.geolocation")
+            )
             institution = Institution(
                 name=org_data.get("legalName"),
                 sme=self._parse_bool(org_data.get("@sme")),
@@ -327,7 +329,9 @@ class CordisTransformObj:
         for org_data in self.ensure_list(self._get_nested(result_data, org_path)):
             if org_data.get("legalName") is None:
                 continue
-            coordinates = self._parse_geolocation(self._get_nested(org_data, "address.geolocation"))
+            coordinates = self._parse_geolocation(
+                self._get_nested(org_data, "address.geolocation")
+            )
             institution = Institution(
                 name=org_data.get("legalName"),
                 sme=self._parse_bool(org_data.get("@sme")),
@@ -340,6 +344,12 @@ class CordisTransformObj:
                 url=self._get_nested(org_data, "address.url"),
                 short_name=org_data.get("shortName"),
                 vat_number=org_data.get("vatNumber"),
+                ec_contribution=None,
+                net_ec_contribution=None,
+                total_cost=None,
+                type=None,
+                organization_id=None,
+                rcn=None,
                 people=[],  # Result institutions don't have associated people
             )
             institutions.append(institution)

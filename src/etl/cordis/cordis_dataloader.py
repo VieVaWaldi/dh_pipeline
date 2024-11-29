@@ -53,6 +53,6 @@ if __name__ == "__main__":
     setup_logging(logging_path, "dataloader")
 
     cordis_path = Path(
-        "/Users/wehrenberger/Code/DIGICHer/DIGICHer_Pipeline/data/pile/_checkpoint/cordis_culturalORheritage"
+        "/vast/lu72hip/data/pile/extractors/cordis_culturalORheritage/"
     )
     run_cordis_dataloader(cordis_path, batch_size=100)
