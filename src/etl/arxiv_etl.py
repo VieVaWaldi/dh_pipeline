@@ -30,13 +30,13 @@ def run_arxiv_etl(source_path: Path, batch_size: int):
 def create_db_session() -> sessionmaker:
     """Create and return a database session factory."""
     # ToDo: Get from .env config
-    database_url = "postgresql://wehrenberger@localhost:5432/test_digicher"
+    database_url = "postgresql://lu72hip@localhost:5432/test_digicher"
     engine = create_engine(database_url)
     return sessionmaker(bind=engine)
 
 
 if __name__ == "__main__":
     arxiv_path = Path(
-        "/Users/wehrenberger/Code/DIGICHer/DIGICHer_Pipeline/data/pile/_checkpoint/arxiv_allCOLONcomputingPLUSANDPLUSLBallCOLONhumanitiesPLUSORPLUSallCOLONheritageRB"
+        "/vast/lu72hip/data/pile/extractors/arxiv_allCOLONcomputingPLUSANDPLUSLBallCOLONhumanitiesPLUSORPLUSallCOLONheritageRB"
     )
     run_arxiv_etl(arxiv_path, batch_size=10)

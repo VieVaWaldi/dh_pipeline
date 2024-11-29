@@ -150,6 +150,8 @@ class CordisExtractor:
         """Extracts research outputs from the project data."""
         results = []
         for result_data in self.ensure_list(self._get_nested(data, RESULT_PATH)):
+            if result_data.get("id") is None:
+                continue
             result = ResearchOutput(
                 id_original=result_data.get("id"),
                 type=result_data.get("@type"),
@@ -170,6 +172,8 @@ class CordisExtractor:
         """Extracts institutions from the project data."""
         institutions = []
         for org_data in self.ensure_list(self._get_nested(data, ORG_PATH)):
+            if org_data.get("legalName") is None:
+                continue
             institution = Institution(
                 name=org_data.get("legalName"),
                 sme=self._parse_bool(org_data.get("@sme")),
@@ -192,6 +196,8 @@ class CordisExtractor:
         people = []
         person_path = "relations.associations.person"
         for person_data in self.ensure_list(self._get_nested(org_data, person_path)):
+            if person_data.get("first_name") is None:
+                continue
             person = Person(
                 title=person_data.get("title"),
                 first_name=person_data.get("firstNames"),
@@ -211,6 +217,8 @@ class CordisExtractor:
         if authors_str:
             # Authors are comma-separated in the source
             for author_name in authors_str.split(","):
+                if author_name is None:
+                    continue
                 authors.append(
                     Person(
                         name=author_name.strip(),
@@ -226,6 +234,8 @@ class CordisExtractor:
         """Extracts funding programmes from the project data."""
         programmes = []
         for prog_data in self.ensure_list(self._get_nested(data, PROGRAMME_PATH)):
+            if prog_data.get("code") is None:
+                continue
             programme = FundingProgramme(
                 code=prog_data.get("code"),
                 title=prog_data.get("title"),
@@ -241,6 +251,8 @@ class CordisExtractor:
         """Extracts topics (categories) from the project data."""
         topics = []
         for cat_data in self.ensure_list(self._get_nested(data, CATEGORIES_PATH)):
+            if cat_data.get("title") is None:
+                continue
             topic = Topic(
                 name=cat_data.get("title"),
                 code=cat_data.get("code"),
@@ -255,6 +267,8 @@ class CordisExtractor:
         topics = []
         cat_path = "relations.categories.category"
         for cat_data in self.ensure_list(self._get_nested(result_data, cat_path)):
+            if cat_data.get("title") is None:
+                continue
             topic = Topic(
                 name=cat_data.get("title"),
                 code=cat_data.get("code"),
@@ -276,6 +290,8 @@ class CordisExtractor:
         """Extracts weblinks from the project data."""
         weblinks = []
         for link_data in self.ensure_list(self._get_nested(data, f"{PRE}.webLink")):
+            if link_data.get("physUrl") is None:
+                continue
             weblink = Weblink(
                 url=link_data.get("physUrl"), title=link_data.get("title")
             )
@@ -288,6 +304,8 @@ class CordisExtractor:
         for link_data in self.ensure_list(
             self._get_nested(result_data, "relations.associations.webLink")
         ):
+            if link_data.get("physUrl") is None:
+                    continue
             weblink = Weblink(
                 url=link_data.get("physUrl"), title=link_data.get("title")
             )
@@ -299,6 +317,8 @@ class CordisExtractor:
         institutions = []
         org_path = "relations.associations.organization"
         for org_data in self.ensure_list(self._get_nested(result_data, org_path)):
+            if org_data.get("legalName") is None:
+                    continue
             institution = Institution(
                 name=org_data.get("legalName"),
                 sme=self._parse_bool(org_data.get("@sme")),
