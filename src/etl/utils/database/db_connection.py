@@ -1,3 +1,5 @@
+import logging
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -15,7 +17,8 @@ def create_db_session() -> sessionmaker:
                 "connect_timeout": 5,
             },
         )
+        logging.info(f"Succesfully connected to: {database_url}")
         return sessionmaker(bind=engine)
     except Exception as e:
-        print(f"Failed to connect to database: {str(e)}")
+        logging.error(f"Failed to connect to database: {str(e)}")
         raise
