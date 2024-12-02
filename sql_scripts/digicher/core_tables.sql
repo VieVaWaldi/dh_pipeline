@@ -4,22 +4,17 @@
 
 -- MIA sources
 
-select * from people; -- 270k
+select count(*) from people; -- 270k
 -- MIA title, phone 
-select * from topics; -- 929 for euroSciVoc +170ish extra
-    -- FIX, only euroSciVoc
-select * from weblinks; -- 45k
-select * from dois;
-	-- MIA dois
-select * from researchoutputs; -- 140k
-    -- MIA publication date, doi
--- FIX type publication for arxiv, core
+select * from topics; -- 929
+select count(*) from weblinks; -- 45k
+select count(*)from dois; -- 73k
+select count(*) from researchoutputs; -- 140k
+-- ADD type publication for arxiv, core
 select * from institutions; -- 31k
-    -- FIX sme: false
-select * from fundingprogrammes; -- 3k
-select * from projects; -- 12k
-    -- MIA doi, funding
-
+-- FIX geoLocation is swapped
+select count(*) from fundingprogrammes; -- 3k
+select * from projects; -- 12k / 6k with doi
 
 -----------------------------------------------
 -- JUNCTIONS							      --
@@ -44,4 +39,6 @@ select * from projects_topics; -- 70k
 select * from projects_weblinks; -- 1.7k
 select * from projects_researchOutputs; -- 140k
 select * from projects_institutions; -- 79k
-select count(*) from projects_fundingprogrammes; -- 79k
+select count(*) from projects_fundingprogrammes; -- 29k
+
+

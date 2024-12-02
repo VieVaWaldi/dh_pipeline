@@ -4,7 +4,7 @@ import os
 import shutil
 import zipfile
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, Optional, List
 
 from common_utils.error_handling.error_handling import log_and_raise_exception
 
@@ -135,6 +135,30 @@ def count_files(path: Path, file_type: str = ".xml") -> int:
             if file.endswith(file_type):
                 count += 1
     return count
+
+
+def find_pdfs_in_directory(file_path: Path) -> Optional[List[Path]]:
+    """
+    Given a Path to a file, finds all PDF files in the same directory.
+
+    Args:
+        file_path (Path): Path to a file
+
+    Returns:
+        Optional[List[Path]]: List of Paths to PDF files found in the directory,
+                            or None if no PDFs are found or path is invalid
+    """
+    try:
+        directory = file_path.parent
+
+        if not file_path.is_file():
+            return None
+
+        pdf_files = list(directory.glob("*.pdf"))
+        return pdf_files if pdf_files else None
+
+    except Exception:
+        return None
 
 
 if __name__ == "__main__":

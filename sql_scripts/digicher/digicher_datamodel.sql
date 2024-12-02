@@ -177,7 +177,6 @@ CREATE TABLE Projects (
     id SERIAL PRIMARY KEY,
     id_original TEXT UNIQUE NOT NULL,
     doi_id INTEGER UNIQUE REFERENCES Dois(id), -- REF DOIS
-    --    fundingprogramme_id INTEGER UNIQUE -- REMOVED
     acronym TEXT,
     title TEXT NOT NULL,
     status TEXT,
