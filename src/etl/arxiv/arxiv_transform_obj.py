@@ -66,7 +66,11 @@ class ArxivTransformObj:
         for author_data in self.ensure_list(doc.get("ns0:author", [])):
             affiliations = []
             for affiliation in self.ensure_list(author_data.get("ns1:affiliation", [])):
-                affiliations.append(affiliation.get("text"))
+                # ToDo understand why:
+                if isinstance(affiliation, str):
+                    affiliations.append(affiliation)
+                else:
+                    affiliations.append(affiliation.get("text"))
             if name := author_data.get("ns0:name"):
                 authors.append(ArxivAuthor(name=name, affiliations=affiliations))
         return authors

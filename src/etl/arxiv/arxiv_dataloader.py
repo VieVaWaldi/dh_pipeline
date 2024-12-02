@@ -49,10 +49,10 @@ def run_arxiv_dataloader(source_path: Path, batch_size: int, dry_run: bool = Tru
                 logging.info(f"Error ingesting batch: {str(e)}")
                 raise
 
-        if not dry_run:
-            session.commit()
-        else:
+        if dry_run:
             session.rollback()
+        else:
+            session.commit()
     ModelCreationMonitor.log_stats()
 
     print("\n=== PDF File Statistics ===")
@@ -65,7 +65,7 @@ def run_arxiv_dataloader(source_path: Path, batch_size: int, dry_run: bool = Tru
 if __name__ == "__main__":
     config = get_config()
     logging_path: Path = (
-        get_root_path() / config["logging_path"] / "dataloader" / "cordis"
+        get_root_path() / config["logging_path"] / "dataloader" / "arxiv"
     )
     setup_logging(logging_path, "dataloader")
 
