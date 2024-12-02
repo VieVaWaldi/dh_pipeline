@@ -27,10 +27,10 @@ def run_arxiv_dataloader(source_path: Path, batch_size: int, dry_run: bool = Tru
             pdf_files = find_pdfs_in_directory(path)
             if pdf_files is None or len(pdf_files) == 0:
                 tmp_pdf_info["Was None"] += 1
-            if len(pdf_files) == 1:
+            elif len(pdf_files) == 1:
                 # pdf_text = pdf_to_text(pdf_files[0])
                 tmp_pdf_info["Was 1"] += 1
-            if len(pdf_files) > 1:
+            else:
                 tmp_pdf_info["Was more than 1"] += 1
 
             try:
