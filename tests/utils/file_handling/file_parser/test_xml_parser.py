@@ -1,12 +1,12 @@
 import unittest
 
-from common_utils.file_handling.file_handling import get_root_path
-from common_utils.file_handling.file_parsing.xml_parser import (
+from core.file_handling import get_root_path
+from core.file_handling.file_parsing.xml_parser import (
     extract_element_as_dict,
     extract_xml_as_dict,
     get_all_elements_text_recursively,
 )
-from common_utils.web_requests.web_requests import get_base_url
+from core.web_requests import get_base_url
 
 
 class TestXMLParser(unittest.TestCase):
@@ -15,7 +15,7 @@ class TestXMLParser(unittest.TestCase):
         self.data_dir = (
             get_root_path()
             / "tests"
-            / "common_utils"
+            / "utils"
             / "file_handling"
             / "file_parsing"
             / "test_xml"

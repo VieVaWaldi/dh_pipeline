@@ -2,14 +2,14 @@ import logging
 from abc import ABC, abstractmethod
 from pathlib import Path
 
-from common_utils.config.config_loader import get_config
-from common_utils.file_handling.file_handling import (
-    ensure_path_exists,
+from core.file_handling.file_handling import (
     get_root_path,
+    ensure_path_exists,
     raise_error_if_directory_does_not_exists,
 )
-from common_utils.logging.logger import setup_logging
-from extractors.extractor_interface import clean_extractor_name
+from utils.config.config_loader import get_config
+from utils.logging.logger import setup_logging
+from interfaces import clean_extractor_name
 
 
 class IAnalysisJob(ABC):

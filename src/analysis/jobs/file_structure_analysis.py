@@ -6,7 +6,22 @@ from pathlib import Path
 from typing import Dict
 
 from analysis.utils.analysis_interface import IAnalysisJob
-from common_utils.file_handling.file_handling import get_file_size
+
+
+def get_file_size(file_path: Path) -> int:
+    """
+    Get the size of a file in bytes.
+    """
+    try:
+        return os.path.getsize(file_path)
+    except FileNotFoundError:
+        raise FileNotFoundError(f"The file at {file_path} does not exist.")
+    except PermissionError:
+        raise PermissionError(f"Permission denied when trying to access {file_path}.")
+    except Exception as e:
+        raise Exception(
+            f"An error occurred when getting the size of {file_path}: {str(e)}"
+        )
 
 
 class FileStructureAnalysis(IAnalysisJob):
