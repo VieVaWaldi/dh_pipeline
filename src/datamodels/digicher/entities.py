@@ -58,7 +58,7 @@ class Topics(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(unique=True, nullable=False)
     standardised_name: Mapped[str] = mapped_column()
-    code: Mapped[str] = mapped_column()
+    level: Mapped[int] = mapped_column(nullable=False)
 
     researchoutputs: Mapped[List["ResearchOutputsTopics"]] = relationship(
         back_populates="topic"

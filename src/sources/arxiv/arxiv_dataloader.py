@@ -11,8 +11,8 @@ from core.file_handling.file_processing.pdf_ocr_reader import pdf_to_text
 from utils.logger.logger import setup_logging
 from sources.arxiv.arxiv_transform_obj import ArxivTransformObj
 from sources.arxiv.arxiv_transform_orm import ArxivTransformOrm
-from core.dataloader.create_db_session import create_db_session
-from core.dataloader.utils.get_or_create import ModelCreationMonitor
+from core.etl.dataloader.create_db_session import create_db_session
+from core.etl.dataloader import ModelCreationMonitor
 from core.sanitizers.sanitizer import DataSanitizer
 
 

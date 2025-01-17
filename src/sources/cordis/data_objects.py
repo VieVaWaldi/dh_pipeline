@@ -15,7 +15,7 @@ class Person:
 @dataclass
 class Topic:
     name: str
-    code: Optional[str]
+    level: int
 
 
 @dataclass

@@ -11,9 +11,15 @@ def clean_bool(value: Any) -> Optional[bool]:
 
 
 def clean_string(value: Optional[str]) -> Optional[str]:
+    """
+    Replaces \n, \t and multiple spaces with one space. Removes \r.
+    Returns None if string ends up being empty.
+    """
     if not value:
         return None
-    return value.strip().replace("\n", " ").replace("\r", "")
+    cleaned = value.strip().replace("\n", " ").replace("\r", "").replace("\t", " ")
+    cleaned = " ".join(filter(None, cleaned.split()))
+    return cleaned or None
 
 
 def clean_number(value: Optional[str]) -> Optional[int]:

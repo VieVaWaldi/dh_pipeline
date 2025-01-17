@@ -36,7 +36,6 @@ class ResearchOutputsTopics(Base):
     topic_id = mapped_column(
         Integer, ForeignKey("topics.id", ondelete="CASCADE"), primary_key=True
     )
-    is_primary = mapped_column(Boolean, default=True)
 
     publication: Mapped["ResearchOutputs"] = relationship(back_populates="topics")
     topic: Mapped["Topics"] = relationship(back_populates="researchoutputs")
@@ -103,7 +102,6 @@ class ProjectsTopics(Base):
     topic_id: Mapped[int] = mapped_column(
         ForeignKey("topics.id", ondelete="CASCADE"), primary_key=True
     )
-    is_primary: Mapped[bool] = mapped_column(default=True)
 
     project: Mapped["Projects"] = relationship(back_populates="topics")
     topic: Mapped["Topics"] = relationship(back_populates="projects")

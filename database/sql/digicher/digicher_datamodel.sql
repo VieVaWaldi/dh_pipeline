@@ -93,14 +93,11 @@ CREATE TABLE People (
 CREATE TABLE Topics (
     id SERIAL PRIMARY KEY,
     name TEXT UNIQUE NOT NULL,
-    standardised_name TEXT, -- Cordis: category.displayCode.#text
-    code TEXT,
-    --    display_code TEXT, -- REMOVED
-    --    description TEXT, -- REMOVED
-    --    cordis_classification TEXT, -- REMOVED
+    standardised_name TEXT,
+	level INTEGER NOT NULL,
+    -- code TEXT, -- REMOVED_2
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-    -- Primary or secondary topic are handled in the junction tables.
 );
 
 CREATE TABLE Weblinks (
@@ -211,8 +208,7 @@ CREATE TABLE ResearchOutputs_People (
 CREATE TABLE ResearchOutputs_Topics (
     publication_id INTEGER REFERENCES ResearchOutputs(id) ON DELETE CASCADE,
     topic_id INTEGER REFERENCES Topics(id) ON DELETE CASCADE,
-    -- Primary or secondary topic
-    is_primary BOOLEAN DEFAULT true,
+    -- is_primary BOOLEAN DEFAULT true, -- REMOVED_2
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (publication_id, topic_id)
 );
@@ -248,8 +244,7 @@ CREATE TABLE Institutions_ResearchOutputs (
 CREATE TABLE Projects_Topics (
     project_id INTEGER REFERENCES Projects(id) ON DELETE CASCADE,
     topic_id INTEGER REFERENCES Topics(id) ON DELETE CASCADE,
-    -- Primary or secondary topic
-    is_primary BOOLEAN DEFAULT true,
+    -- is_primary BOOLEAN DEFAULT true, -- REMOVED_2
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (project_id, topic_id)
 );
@@ -327,7 +322,6 @@ CREATE INDEX idx_pub_people_person ON ResearchOutputs_People(person_id);
 CREATE INDEX idx_pub_people_position ON ResearchOutputs_People(publication_id, person_position);
 CREATE INDEX idx_pub_topics_topic ON ResearchOutputs_Topics(topic_id);
 -- For finding primary topics
-CREATE INDEX idx_pub_topics_primary ON ResearchOutputs_Topics(topic_id, is_primary) WHERE is_primary = true;
 CREATE INDEX idx_pub_weblinks_weblink ON ResearchOutputs_Weblinks(weblink_id);
 CREATE INDEX idx_inst_people_person ON Institutions_People(person_id);
 CREATE INDEX idx_inst_pub_pub ON Institutions_ResearchOutputs(publication_id);
@@ -351,7 +345,6 @@ CREATE INDEX idx_fundingprogrammes_framework ON FundingProgrammes(framework_prog
 
 -- Projects_Topics
 CREATE INDEX idx_proj_topics_topic ON Projects_Topics(topic_id);
-CREATE INDEX idx_proj_topics_primary ON Projects_Topics(topic_id, is_primary) WHERE is_primary = true;
 
 -- Projects_Weblinks
 CREATE INDEX idx_proj_weblinks_weblink ON Projects_Weblinks(weblink_id);

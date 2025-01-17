@@ -1,8 +1,8 @@
-from typing import List, Tuple
+from typing import List
 
 from sqlalchemy.orm import Session
 
-from core.transformer.get_or_create import get_or_create
+from core.etl.transformer.get_or_create import get_or_create
 from datamodels.digicher.entities import (
     Projects,
     FundingProgrammes,
@@ -128,7 +128,7 @@ class CordisORMTransformer(IORMTransformer):
         orm_topics = []
         for topic in topics:
             unique_key = {"name": topic.name}
-            args = {"code": topic.code}
+            args = {"level": topic.level}
             instance, _ = get_or_create(self.session, Topics, unique_key, **args)
             orm_topics.append(instance)
         return orm_topics
@@ -237,8 +237,7 @@ class CordisORMTransformer(IORMTransformer):
         """Create ProjectsTopics relationships"""
         for idx, topic in enumerate(topics):
             unique_key = {"project_id": project.id, "topic_id": topic.id}
-            args = {"is_primary": (idx == 0)}
-            get_or_create(self.session, ProjectsTopics, unique_key, **args)
+            get_or_create(self.session, ProjectsTopics, unique_key)
 
     def _create_project_institutions(
         self,
@@ -294,8 +293,7 @@ class CordisORMTransformer(IORMTransformer):
         """Create ResearchOutputsTopics relationships"""
         for idx, topic in enumerate(topics):
             unique_key = {"publication_id": research_output.id, "topic_id": topic.id}
-            args = {"is_primary": (idx == 0)}
-            get_or_create(self.session, ResearchOutputsTopics, unique_key, **args)
+            get_or_create(self.session, ResearchOutputsTopics, unique_key)
 
     def _create_research_outputs_weblinks(
         self, research_output: ResearchOutputs, weblinks: List[Weblinks]

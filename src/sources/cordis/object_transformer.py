@@ -6,8 +6,9 @@ from core.sanitizers.sanitizer import (
     clean_float,
     clean_geolocation,
     clean_bool,
+    clean_string,
 )
-from core.transformer.utils import ensure_list, get_nested
+from core.etl.transformer.utils import ensure_list, get_nested
 from interfaces.i_object_transformer import IObjectTransformer
 from sources.cordis.data_objects import (
     CordisProject,
@@ -18,6 +19,7 @@ from sources.cordis.data_objects import (
     Topic,
     Weblink,
 )
+from utils.error_handling.error_handling import log_and_raise_exception
 
 PROJECT = "project"
 RELATIONS = "relations"
@@ -35,6 +37,15 @@ class CordisObjectTransformer(IObjectTransformer):
 
     def __init__(self):
         super().__init__()
+
+        self.lookup_main_topics = [
+            "medical and health sciences",
+            "natural sciences",
+            "engineering and technology",
+            "agricultural sciences",
+            "social sciences",
+            "humanities",
+        ]
 
     def transform(self, data: Dict[str, Any]) -> Tuple[CordisProject, bool]:
         project_data = data.get(PROJECT, {})
@@ -81,7 +92,7 @@ class CordisObjectTransformer(IObjectTransformer):
                 summary=result_data.get("description"),
                 comment=result_data.get("teaser"),
                 institutions=self.get_result_institutions(result_data),
-                topics=self.get_result_topics(result_data),
+                topics=self.get_topics(result_data),
                 people=self.get_result_people(result_data),
                 weblinks=self.get_result_weblinks(result_data),
             )
@@ -177,27 +188,18 @@ class CordisObjectTransformer(IObjectTransformer):
         """Extracts topics (categories) from the project data."""
         topics = []
         for cat_data in ensure_list(get_nested(data, CATEGORIES_PATH)):
-            if cat_data.get("title") is None:
+            if cat_data.get("@classification") != "euroSciVoc":
                 continue
-            classification = cat_data.get("@classification")
-            if not isinstance(classification, str) or classification != "euroSciVoc":
+            # if not @type == inFieldOfScience
+            if cat_data.get("displayCode") is None or cat_data.get("code") is None:
                 continue
-            topic = Topic(name=cat_data.get("title"), code=cat_data.get("code"))
-            topics.append(topic)
-        return topics
 
-    def get_result_topics(self, result_data: dict) -> List[Topic]:
-        """Extracts topics from a research output."""
-        topics = []
-        cat_path = "relations.categories.category"
-        for cat_data in ensure_list(get_nested(result_data, cat_path)):
-            if cat_data.get("title") is None:
-                continue
-            classification = cat_data.get("@classification")
-            if not isinstance(classification, str) or classification != "euroSciVoc":
-                continue
-            topic = Topic(name=cat_data.get("title"), code=cat_data.get("code"))
-            topics.append(topic)
+            levels, display_codes = self.sanitize_euroscivoc_topics(
+                cat_data["code"], cat_data["displayCode"]["#text"]
+            )
+            for level, name in zip(levels, display_codes):
+                topic = Topic(name=name, level=level)
+                topics.append(topic)
         return topics
 
     def get_doi(self, data: dict, path: str) -> str:
@@ -269,3 +271,36 @@ class CordisObjectTransformer(IObjectTransformer):
             first_call = ensure_list(calls)[0]
             return first_call.get(field)
         return None
+
+    """ Helper Methods """
+
+    def sanitize_euroscivoc_topics(
+        self, codes: str, display_codes: str
+    ) -> Tuple[List[int], List[str]]:
+        """
+        Specifically for EuroSciVoc Topics and assigns them levels depending on the code length.
+        - Level 0 is for the main topics
+        - Level 1 is for code remaining code length 2
+        - Level 2 is fore code length 3
+        - Level 3 is for all other codes
+        """
+
+        codes = clean_string(codes[1:]).split("/")
+        display_codes = clean_string(display_codes[1:]).split("/")
+
+        if len(codes) != len(display_codes):
+            log_and_raise_exception(
+                "Codes and display codes for euroSciVoc have a different length."
+            )
+
+        levels = []
+        for code, display in zip(codes, display_codes):
+            if display.lower() in self.lookup_main_topics:
+                levels.append(0)
+            elif len(code) == 2:
+                levels.append(1)
+            elif len(code) == 3:
+                levels.append(2)
+            else:
+                levels.append(3)
+        return levels, display_codes
