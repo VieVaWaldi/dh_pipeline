@@ -20,6 +20,10 @@ Installs the repo as an editable package and install all requirements:
 
 Open `.env_`, add keys and rename it to `.env`. Comments after keys create errors.
 
+## Database 
+
+This document explains how you can control the [PostgreSQL](database/README.md) server locally and on the cluster.
+
 ## Structure
 
 **Configuration**

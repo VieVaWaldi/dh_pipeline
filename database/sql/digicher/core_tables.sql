@@ -2,6 +2,9 @@
 -- CORE ENTITIES							  --
 ----------------------------------------------- 
 
+-- Version --
+SELECT version();
+
 -- Size --
 SELECT pg_size_pretty(pg_database_size('db_digicher'));
 
