@@ -1,6 +1,6 @@
 # import argparse
 # import json
-# import logging
+# import logger
 # import os
 # import time
 # import traceback
@@ -52,7 +52,7 @@
 #             checkpoint = self.get_new_checkpoint_from_data()
 #             self.save_checkpoint(checkpoint)
 #
-#             logging.info(">>> Successfully finished extraction")
+#             logger.info(">>> Successfully finished extraction")
 #             return total_hits != 0
 #         return False
 #
@@ -80,7 +80,7 @@
 #                 json_string = json.dumps(entry, indent=4, ensure_ascii=False)
 #                 f.write(json_string)
 #
-#         logging.info(
+#         logger.info(
 #             f"Saved {len(data)} entries as individual files in {self.data_path}",
 #         )
 #         return Path("")
@@ -215,4 +215,4 @@
 #     try:
 #         main()
 #     except Exception as e:
-#         logging.critical(f"Critical error: {e}\n{traceback.format_exc()}")
+#         logger.critical(f"Critical error: {e}\n{traceback.format_exc()}")

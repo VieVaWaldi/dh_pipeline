@@ -85,8 +85,8 @@ class Dois(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     doi: Mapped[str] = mapped_column(unique=True, nullable=False)
 
-    # One to One references
-    publication: Mapped["ResearchOutputs"] = relationship(back_populates="doi")
+    # One to Many references
+    publications: Mapped[List["ResearchOutputs"]] = relationship(back_populates="doi")
     project: Mapped["Projects"] = relationship(back_populates="doi")
 
 
@@ -99,7 +99,7 @@ class ResearchOutputs(Base):
     arxiv_id: Mapped[str] = mapped_column()
 
     doi_id: Mapped[int] = mapped_column(ForeignKey("dois.id"))
-    doi: Mapped["Dois"] = relationship(back_populates="publication")
+    doi: Mapped["Dois"] = relationship(back_populates="publications")
 
     title: Mapped[str] = mapped_column(nullable=False)
     publication_date: Mapped[datetime] = mapped_column()

@@ -8,7 +8,7 @@ LOG_LEVEL = logging.INFO
 
 class CustomFormatter(logging.Formatter):
     """
-    Custom formatter for logging to
+    Custom formatter for logger to
     - Pad all columns to a fixed width
     """
 
@@ -20,7 +20,7 @@ class CustomFormatter(logging.Formatter):
 
 def setup_logging(log_path: Path, log_name: str) -> None:
     """
-    Sets up and configures the logging module.
+    Sets up and configures the logger module.
     Call once at the beginning of each run.
     """
     ensure_path_exists(log_path)

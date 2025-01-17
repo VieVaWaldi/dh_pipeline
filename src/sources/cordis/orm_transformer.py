@@ -1,8 +1,8 @@
-from typing import List
+from typing import List, Tuple
 
 from sqlalchemy.orm import Session
 
-from core.dataloader.get_or_create import get_or_create
+from core.transformer.get_or_create import get_or_create
 from datamodels.digicher.entities import (
     Projects,
     FundingProgrammes,
@@ -25,6 +25,7 @@ from datamodels.digicher.junctions import (
     ProjectsWeblinks,
     ProjectsResearchOutputs,
 )
+from interfaces.i_orm_transformer import IORMTransformer
 from sources.cordis.object_transformer import (
     CordisProject,
     FundingProgramme,
@@ -36,12 +37,11 @@ from sources.cordis.object_transformer import (
 )
 
 
-class CordisTransformOrm:
+class CordisORMTransformer(IORMTransformer):
     """Transforms CordisProject into ORM models with proper relationships"""
 
-    def __init__(self, session: Session, sanitizer):
-        self.session = session
-        self.sanitizer = sanitizer
+    def __init__(self, session: Session):
+        super().__init__(session)
 
     def map_to_orm(self, cordis_project: CordisProject):
         """Main entry point to transform a CordisProject into ORM models"""
@@ -120,7 +120,7 @@ class CordisTransformOrm:
             return None
 
         unique_key = {"doi": doi}
-        instance, _ = get_or_create(self.session, Dois, unique_key)
+        instance, is_new = get_or_create(self.session, Dois, unique_key)
         return instance
 
     def _create_topics(self, topics: List[Topic]) -> List[Topics]:
@@ -210,8 +210,8 @@ class CordisTransformOrm:
 
         self.session.flush()
 
-        # Create relationships
         if doi is not None:
+            # Removing this removes the error
             instance.doi = doi
 
         self._create_research_outputs_people(instance, people)

@@ -22,7 +22,7 @@ def _get_config(config_name: str) -> Dict[str, Any]:
 
     config = load_json_file(config_file_path)
     if not config:
-        raise Exception("Error reading the logging file.")
+        raise Exception("Error reading the logger file.")
 
     load_dotenv()
     env = os.getenv("ENV")

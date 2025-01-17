@@ -9,7 +9,7 @@ from core.file_handling.file_handling import (
     write_file,
 )
 from utils.config.config_loader import get_config
-from utils.logging.logger import setup_logging
+from utils.logger.logger import setup_logging
 
 
 def clean_extractor_name(extractor_name: str):
@@ -28,7 +28,7 @@ def clean_extractor_name(extractor_name: str):
 class IExtractor(ABC):
     """
     Abstract Class all extractors have to inherit from.
-    Sets up all paths and logging.
+    Sets up all paths and logger.
     All extractors must follow this pattern:
     1. Create the end checkpoint for this run.
     2. Extract data until next checkpoint.

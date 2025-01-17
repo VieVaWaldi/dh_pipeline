@@ -1,4 +1,4 @@
-from datetime import datetime, date
+from datetime import datetime
 from typing import Optional, Any
 
 
@@ -53,7 +53,7 @@ def clean_date(date_str: Optional[str]) -> Optional[datetime]:
         return None
 
 
-def clean_geolocation(self, geolocation: str) -> Optional[list]:
+def clean_geolocation(geolocation: str) -> Optional[list]:
     """
     Parse geolocation string and return as [lon, lat] array.
     Returns None if coordinates are invalid.

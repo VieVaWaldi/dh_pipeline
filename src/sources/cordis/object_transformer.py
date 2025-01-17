@@ -1,4 +1,4 @@
-from typing import Dict, Any
+from typing import Dict, Any, Tuple
 from typing import List, Optional
 
 from core.sanitizers.sanitizer import (
@@ -8,6 +8,7 @@ from core.sanitizers.sanitizer import (
     clean_bool,
 )
 from core.transformer.utils import ensure_list, get_nested
+from interfaces.i_object_transformer import IObjectTransformer
 from sources.cordis.data_objects import (
     CordisProject,
     ResearchOutput,
@@ -30,12 +31,15 @@ PROGRAMME_PATH = f"{PRE}.programme"
 CATEGORIES_PATH = f"{RELATIONS}.categories.category"
 
 
-class CordisObjectTransformer:
+class CordisObjectTransformer(IObjectTransformer):
 
-    def get(self, data: Dict[str, Any]) -> CordisProject:
+    def __init__(self):
+        super().__init__()
+
+    def transform(self, data: Dict[str, Any]) -> Tuple[CordisProject, bool]:
         project_data = data.get(PROJECT, {})
 
-        return CordisProject(
+        cordis_project = CordisProject(
             id_original=project_data.get("id"),
             doi=self.get_doi(project_data, "identifiers.grantDoi"),
             title=project_data.get("title"),
@@ -56,6 +60,7 @@ class CordisObjectTransformer:
             topics=self.get_topics(project_data),
             weblinks=self.get_weblinks(project_data),
         )
+        return cordis_project, cordis_project.id_original is not None
 
     def get_research_outputs(self, data: dict) -> List[ResearchOutput]:
         """Extracts research outputs from the project data."""

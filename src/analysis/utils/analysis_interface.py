@@ -8,14 +8,14 @@ from core.file_handling.file_handling import (
     raise_error_if_directory_does_not_exists,
 )
 from utils.config.config_loader import get_config
-from utils.logging.logger import setup_logging
+from utils.logger.logger import setup_logging
 from interfaces import clean_extractor_name
 
 
 class IAnalysisJob(ABC):
     """
     Abstract Class all analysis jobs have to inherit from.
-    Sets up all paths and logging, enforces run and saving output.
+    Sets up all paths and logger, enforces run and saving output.
     """
 
     def __init__(self, analysis_name: str, query_name: str):

@@ -8,10 +8,11 @@ with open("requirements.txt") as f:
 
 setup(
     name="DIGICHER_Pipeline",
-    version="0.1",
-    packages=find_packages(where="src"),
-    package_dir={"": "src"},
+    version="0.2",
     install_requires=required,
+    packages=find_packages(where="src", exclude=["tests*"]),
+    package_dir={"": "src"},
+    python_requires=">=3.11",
     options={
         "build": {"build_base": "build/"},
         "bdist_egg": {"dist_dir": "dist/"},

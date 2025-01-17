@@ -27,7 +27,7 @@ from core.web_requests.web_requests import (
     download_file,
     get_base_url,
 )
-from interfaces.extractor_interface import IExtractor
+from interfaces.i_extractor import IExtractor
 
 
 class CordisExtractor(IExtractor):
@@ -203,7 +203,7 @@ class CordisExtractor(IExtractor):
 
         attachment_dir = record_path / "attachments"
         if attachment_dir.exists():
-            # logging.info(f"Attachment directory already exists for {record_path.stem}. Skipping download. ")
+            # logger.info(f"Attachment directory already exists for {record_path.stem}. Skipping download. ")
             return
         ensure_path_exists(attachment_dir)
 
@@ -256,11 +256,11 @@ def main():
     args = parser.parse_args()
 
     load_dotenv()
+
     config = get_query_config()["cordis"]
-
     run = config["runs"][args.run_id]
-
     query = run["query"]
+
     checkpoint_to_range = run["checkpoint_to_range"]
     download_attachments = run["download_attachments"]
 

@@ -43,6 +43,9 @@ def get_or_create(session: Session, model, unique_key: dict, **kwargs):
         model: The model class to query
         unique_key: Dict containing the unique identifier(s) to search by
         **kwargs: Additional fields to use when creating a new instance
+
+    Returns:
+        True if a new instance was creates OR False if the instance already exists
     """
     try:
         instance = session.scalar(select(model).filter_by(**unique_key))
