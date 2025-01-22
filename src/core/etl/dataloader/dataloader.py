@@ -1,5 +1,6 @@
 import logging
 from dataclasses import dataclass
+from datetime import datetime
 from pathlib import Path
 from typing import Type
 
@@ -28,6 +29,7 @@ class SourceConfig:
 
 
 def run_dataloader(source_config: SourceConfig):
+    start_time = datetime.now()
     session_factory = create_db_session()
     with session_factory() as session:
         logging.info(f"Starting document processing for {source_config.name}...")
@@ -59,6 +61,16 @@ def run_dataloader(source_config: SourceConfig):
                 raise
         session.commit()
     ModelCreationMonitor.log_stats()
+    log_run_time(start_time)
+
+
+def log_run_time(start_time: datetime):
+    end_time = datetime.now()
+    duration = end_time - start_time
+    hours = duration.total_seconds() / 3600
+    minutes = (duration.total_seconds() % 3600) / 60
+
+    logging.info(f"Total runtime: {int(hours)}h {int(minutes)}m")
 
 
 if __name__ == "__main__":
