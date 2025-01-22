@@ -4,11 +4,11 @@ from pathlib import Path
 from typing import Type
 
 from core.etl.dataloader.create_db_session import create_db_session
+from core.etl.transformer.get_or_create import ModelCreationMonitor
 from core.file_handling.file_handling import (
     get_root_path,
 )
 from core.file_handling.file_parsing.general_parser import yield_all_documents
-from core.etl.transformer.get_or_create import ModelCreationMonitor
 from interfaces.i_extractor import clean_extractor_name
 from interfaces.i_object_transformer import IObjectTransformer
 from interfaces.i_orm_transformer import IORMTransformer

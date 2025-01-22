@@ -1,4 +1,8 @@
+-----------------------------------------------
+-- Institution Topics                        --
+-----------------------------------------------
 -- Show all institutions and given the projects all topic codes this institution knows about
+
 CREATE MATERIALIZED VIEW institution_topics AS
 SELECT 
     i.id, 
@@ -15,10 +19,15 @@ GROUP BY i.id, i.name, i.address_geolocation;
 CREATE INDEX idx_institution_topic_code
 ON institution_topics(code);
 
+SELECT * FROM institution_topics
+limit 100;
+
+-----------------------------------------------
+-- DROP                                      --
+-----------------------------------------------
+
 DROP MATERIALIZED VIEW institution_topics;
 DROP INDEX idx_institution_topic_code;
 
 SELECT pg_size_pretty(pg_total_relation_size('institution_topics'));
 
-SELECT * FROM institution_topics
-limit 100;
