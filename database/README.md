@@ -31,7 +31,7 @@ Note: Port 5433 is configured in `$PGDATA/postgresql.conf`
 ```bash
 $ pg_ctl -D $PGDATA start
 $ pg_ctl -D $PGDATA stop
-$ lsof -i :5433 # Check status
+$ pg_ctl -D $PGDATA status
 ```
 
 ## Local SSH Tunnel

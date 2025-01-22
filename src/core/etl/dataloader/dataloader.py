@@ -32,7 +32,9 @@ def run_dataloader(source_config: SourceConfig):
     start_time = datetime.now()
     session_factory = create_db_session()
     with session_factory() as session:
-        logging.info(f"Starting document processing for {source_config.name}...")
+        logging.info(
+            f"Starting document processing for {source_config.name} with path {source_config.source_path}"
+        )
         doc_count = 0
 
         for doc_idx, (document, path) in enumerate(
@@ -77,8 +79,8 @@ if __name__ == "__main__":
     source = "cordis"
     config = get_config()
     data_path = (
-        get_root_path()
-        / config["data_path"]
+        # get_root_path() / # ONLY need root for dev, not prod
+        Path(config["data_path"])
         / (
             source
             + "_"

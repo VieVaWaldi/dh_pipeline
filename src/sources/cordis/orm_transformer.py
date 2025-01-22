@@ -235,7 +235,7 @@ class CordisORMTransformer(IORMTransformer):
 
     def _create_project_topics(self, project: Projects, topics: List[Topics]):
         """Create ProjectsTopics relationships"""
-        for idx, topic in enumerate(topics):
+        for topic in topics:
             unique_key = {"project_id": project.id, "topic_id": topic.id}
             get_or_create(self.session, ProjectsTopics, unique_key)
 
@@ -291,7 +291,7 @@ class CordisORMTransformer(IORMTransformer):
         self, research_output: ResearchOutputs, topics: List[Topics]
     ):
         """Create ResearchOutputsTopics relationships"""
-        for idx, topic in enumerate(topics):
+        for topic in topics:
             unique_key = {"publication_id": research_output.id, "topic_id": topic.id}
             get_or_create(self.session, ResearchOutputsTopics, unique_key)
 
