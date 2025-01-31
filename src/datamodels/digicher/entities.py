@@ -36,7 +36,7 @@ class Sources(Base):
     __table_args__ = (UniqueConstraint("source", "entity_table", "entity_id"),)
 
 
-class People(Base):
+class Burg(Base):
     __tablename__ = "people"
 
     id: Mapped[int] = mapped_column(primary_key=True)

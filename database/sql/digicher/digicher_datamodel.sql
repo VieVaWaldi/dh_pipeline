@@ -83,9 +83,9 @@ CREATE TABLE Sources (
 
 CREATE TABLE People (
     id SERIAL PRIMARY KEY,
-    name TEXT UNIQUE NOT NULL, -- Cordis: FirstName LastName
-    title TEXT, -- Cordis
-    telephone_number TEXT, -- Cordis
+    name TEXT UNIQUE NOT NULL,
+    title TEXT,
+    telephone_number TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
@@ -95,7 +95,6 @@ CREATE TABLE Topics (
     name TEXT UNIQUE NOT NULL,
     standardised_name TEXT,
 	level INTEGER NOT NULL,
-    -- code TEXT, -- REMOVED_2
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
@@ -278,7 +277,6 @@ CREATE TABLE Projects_Institutions (
     PRIMARY KEY (project_id, institution_id)
 );
 
--- ADDED
 CREATE TABLE Projects_FundingProgrammes (
     project_id INTEGER REFERENCES Projects(id) ON DELETE CASCADE,
     fundingprogramme_id INTEGER REFERENCES FundingProgrammes(id) ON DELETE CASCADE,

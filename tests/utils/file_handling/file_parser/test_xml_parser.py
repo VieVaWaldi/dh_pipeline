@@ -1,12 +1,12 @@
 import unittest
 
-from core.file_handling import get_root_path
+from core.file_handling.file_handling import get_root_path
 from core.file_handling.file_parsing.xml_parser import (
     extract_element_as_dict,
     extract_xml_as_dict,
     get_all_elements_text_recursively,
 )
-from core.web_requests import get_base_url
+from core.web_requests.web_requests import get_base_url
 
 
 class TestXMLParser(unittest.TestCase):

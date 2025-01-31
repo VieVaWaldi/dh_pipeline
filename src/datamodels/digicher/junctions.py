@@ -1,7 +1,6 @@
 from sqlalchemy import (
     Integer,
     ForeignKey,
-    Boolean,
 )
 from sqlalchemy.orm import mapped_column, relationship, Mapped
 
