@@ -10,7 +10,6 @@ CREATE MATERIALIZED VIEW mat_institutions_fundingprogrammes AS
 SELECT 
     i.id as institution_id,
 	array_agg(DISTINCT f.id) as funding_ids
-	-- array_agg(DISTINCT ARRAY[t.level, t.id]) as topics
 FROM institutions as i
 INNER JOIN projects_institutions as pi ON pi.institution_id = i.id
 INNER JOIN projects as p ON pi.project_id = p.id

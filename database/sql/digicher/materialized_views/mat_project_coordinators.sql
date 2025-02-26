@@ -2,17 +2,19 @@
 -- Project Coordinators				          --
 -----------------------------------------------
 
--- Projects have no geo location but an institution that is the primary coordinator.
+-- Projects have no geo location but an institution that is the primary coordinator has one.
 -- We use this coordinators geolocation for the project. We added the year for filtering.
--- For Cordis there are 12_329 projects and 12_313 projects with a coordinator.
+-- For Cordis there are 12_329 projects in total and 12_313 projects with a coordinator.
 
 CREATE MATERIALIZED VIEW mat_projects_coordinator AS
 SELECT 
   p.id AS project_id,
   p.start_date AS start_date,
   p.end_date AS end_date,
+  p.total_cost AS total_cost,
   i.id AS coordinator_id,
-  i.address_geolocation AS address_geolocation
+  i.address_geolocation AS address_geolocation,
+  i.address_country AS address_country
 FROM 
   Projects p
   INNER JOIN Projects_Institutions pi ON p.id = pi.project_id
