@@ -288,6 +288,15 @@ CREATE TABLE Projects_FundingProgrammes (
 -------------------------------------------------------------------
 --- Indexes                                                     ---
 
+-- WIP -- Must be reworked completely because we added without thinking about it too much --
+
+-- Indexes for Institution and project search --
+
+CREATE INDEX idx_institutions_name_lower ON institutions (lower(name));
+CREATE INDEX idx_projects_title_lower ON projects (lower(title));
+CREATE INDEX idx_projects_acronym_lower ON projects (lower(acronym));
+CREATE INDEX idx_projects_objective_lower ON projects (lower(objective));
+
 --- Basic Indexes for Core Tables                               ---
 
 -- These support UNIQUE constraints and common lookups

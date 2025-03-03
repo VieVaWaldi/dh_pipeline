@@ -1,4 +1,13 @@
-select * from mat_projects_coordinator limit 100;
+-- Fuzzy
+SELECT *
+FROM institutions a
+JOIN institutions b on a.id = b.id;
+
+-- WHERE levenshtein(i1.name, i2.name) <= 3
+-- AND i1.id != i2.id
+-- LIMIT 10
+
+
 
 -----------------------------------------------
 -- CORE ENTITIES							  --

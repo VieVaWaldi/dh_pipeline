@@ -7,9 +7,9 @@
 CREATE MATERIALIZED VIEW mat_institution_collaborations AS
 SELECT DISTINCT
     pi1.institution_id AS source_institution_id,
-    i2.id AS collaborator_id,
-    -- i2.name AS collaborator_name,
-    i2.address_geolocation AS collaborator_location
+    i2.id AS institution_id,
+	i2.address_geolocation AS address_geolocation,
+	i2.address_country AS address_country
 FROM
     Projects_Institutions pi1
     JOIN Projects_Institutions pi2 ON pi1.project_id = pi2.project_id
@@ -22,9 +22,9 @@ WHERE
 
 CREATE OR REPLACE FUNCTION get_institution_collaborators(input_institution_id INTEGER)
 	RETURNS TABLE (
-	    collaborator_id INTEGER,
-	    -- collaborator_name TEXT,
-	    collaborator_location float[]
+	    institution_id INTEGER,
+		address_geolocation float[],
+		address_country TEXT
 	)  
 	LANGUAGE plpgsql
 	AS 
@@ -32,23 +32,22 @@ CREATE OR REPLACE FUNCTION get_institution_collaborators(input_institution_id IN
 BEGIN
     RETURN QUERY
     SELECT 
-        ic.collaborator_id,
-        -- ic.collaborator_name,
-        ic.collaborator_location
+        mic.institution_id,
+        mic.address_geolocation,
+		mic.address_country
     FROM 
-        mat_institution_collaborations ic
+        mat_institution_collaborations mic
     WHERE 
-        ic.source_institution_id = input_institution_id;
+        mic.source_institution_id = input_institution_id;
 END;
 ';
-
 
 -----------------------------------------------
 -- SELECTS                                   --
 -----------------------------------------------
 
 SELECT * FROM mat_institution_collaborations;
-SELECT * FROM get_institution_collaborators(2);
+SELECT * FROM get_institution_collaborators(1);
 
 -----------------------------------------------
 -- INDEXES                                   --
