@@ -59,10 +59,11 @@ def clean_date(date_str: Optional[str]) -> Optional[datetime]:
         return None
 
 
-def clean_geolocation(geolocation: str) -> Optional[list]:
+def clean_geolocation(geolocation: str, swap_lat_lon: bool) -> Optional[list]:
     """
     Parse geolocation string and return as [lon, lat] array.
     Returns None if coordinates are invalid.
+    Cordis geolocations with (brackets) are swapped.
     """
     if not geolocation:
         return None
@@ -70,11 +71,11 @@ def clean_geolocation(geolocation: str) -> Optional[list]:
     cleaned = geolocation.replace("(", "").replace(")", "")
     try:
         lat, lon = map(lambda x: float(x.strip()), cleaned.split(","))
-        if not geolocation.startswith("("):
+        if swap_lat_lon and not geolocation.startswith("("):
             lat, lon = lon, lat
         if lat < -90 or lat > 90 or lon < -180 or lon > 180:
             return None
 
-        return [lon, lat]
+        return [lat, lon]
     except (ValueError, TypeError):
         return None

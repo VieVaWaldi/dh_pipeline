@@ -61,6 +61,7 @@ def run_dataloader(source_config: SourceConfig):
                 logging.error(f"Error details: {str(e)}")
                 logging.error(f"Document path: {path}")
                 raise
+        # Also commit for leftovers
         session.commit()
     ModelCreationMonitor.log_stats()
     log_run_time(start_time)
@@ -79,7 +80,7 @@ if __name__ == "__main__":
     source = "cordis"
     config = get_config()
     data_path = (
-        # get_root_path() / # ONLY need root for dev, not prod
+        get_root_path() / # ONLY need root for dev, not prod
         Path(config["data_path"])
         / (
             source

@@ -1,0 +1,604 @@
+i.id;oa.id;i.name;oa.name;i.geo;oa.geo;dist (m);matching_name
+21200;https://openalex.org/I2800971497;Klassik Stiftung Weimar;Klassik Stiftung Weimar;50.98065955, 11.332800182617179;50.9803, 11.32903;267.0;True
+21206;https://openalex.org/I4210108236;INSTITUTO TECNOLOGICO DEL EMBALAJE, TRANSPORTE Y LOGISTICA;Instituto Tecnologico Del Embalaje, Transporte Y Logistica;39.5039227, -0.4421013;39.50263, -0.44079;183.0;True
+21216;https://openalex.org/I4210144293;LEBENSMITTELVERSUCHSANSTALT;Austrian Competence Centre of Food Safety;48.1990666, 16.3779018;48.20849, 16.37208;1133.0;True
+21228;https://openalex.org/I4210140005;Black Cultural Archives;Black Cultural Archives;51.5073219, -0.1276474;51.50853, -0.12574;188.0;True
+21234;https://openalex.org/I1334283787;Swedish National Heritage Board;Swedish National Heritage Board;59.3251172, 18.0710935;59.32938, 18.06871;493.0;True
+21247;https://openalex.org/I4210086039;Huygen Installatie Adviseurs;Huygen Installatie Adviseurs;50.8415119, 5.6965291;50.84833, 5.68889;929.0;True
+21253;https://openalex.org/I60158472;CONCORDIA UNIVERSITY;Concordia University;45.4721177, -73.6069064;45.50884, -73.58781;4346.0;True
+21257;https://openalex.org/I69094615;UNIVERSIDAD SAN FRANCISCO DE QUITO;Universidad San Francisco de Quito;-0.2201641, -78.5123274;-0.22985, -78.52495;1769.0;True
+21260;https://openalex.org/I4210113234;TTS Italia;TTS Italia;42.0056739, 12.4922106;41.89193, 12.51133;12746.0;True
+21281;https://openalex.org/I4210091679;European Conference of Transport Research Institutes;European Conference of Transport Research Institutes;50.8370204, 4.3704946;50.85045, 4.34878;2134.0;True
+21290;https://openalex.org/I1324611689;CENTER FOR THE STUDY OF DEMOCRACY;Center for the Study of Democracy;42.6978634, 23.3221789;42.69751, 23.32415;166.0;True
+21301;https://openalex.org/I4210165875;NTNU SAMFUNNSFORSKNING AS;NTNU Samfunnsforskning;63.4083938, 10.4647886;63.43049, 10.39506;4251.0;True
+21309;https://openalex.org/I4210100923;MUNSTER TECHNOLOGICAL UNIVERSITY;Munster Technological University;51.8839904, -8.53398985310417;51.89797, -8.47061;4619.0;True
+21311;https://openalex.org/I4210117450;AZIENDA OSPEDALIERA UNIVERSITARIA FEDERICO II;Federico II University Hospital;40.8359336, 14.2487826;40.85216, 14.26811;2429.0;True
+21317;https://openalex.org/I4210148138;SERVICIO MURCIANO DE SALUD;Servicio Murciano de Salud;38.0064837, -1.1474109;37.98704, -1.13004;2644.0;True
+21320;https://openalex.org/I2802200126;OCEAN NETWORKS CANADA;Ocean Networks Canada Society;43.074410666666665, -79.38892734583334;48.4359, -123.35155;3413999.0;False
+21323;https://openalex.org/I136324864;Polar Research Institute of China;Polar Research Institute of China;;31.22222, 121.45806;;True
+21324;https://openalex.org/I141472210;University of Alaska;University of Alaska Fairbanks;;64.83778, -147.71638;;False
+21381;https://openalex.org/I4210103951;AVON WILDLIFE TRUST;Avon Wildlife Trust;51.45297995, -2.609425710158588;51.45523, -2.59665;920.0;True
+21384;https://openalex.org/I2799496958;GLASGOW CITY COUNCIL;Glasgow City Council;55.856656, -4.2435816;55.86515, -4.25763;1289.0;True
+21429;https://openalex.org/I70983195;SYRACUSE UNIVERSITY;Syracuse University;43.0810141, -76.1565252;43.04812, -76.14742;3732.0;True
+21439;https://openalex.org/I4210114638;MAX WEBER STIFTUNG DEUTSCHE GEISTESWISSENSCHAFTLICHE INSTITUTE IM AUSLAND;Max Weber Stiftung - Deutsche Geisteswissenschaftliche Institute im Ausland;50.6861956, 7.16030945;50.73438, 7.09549;7038.0;False
+21448;https://openalex.org/I4210121785;MANNKIND CORPORATION;MannKind Corporation (United States);;34.44361, -118.60953;;False
+21453;https://openalex.org/I102149020;UNIVERSITY OF NORTH CAROLINA AT CHARLOTTE;University of North Carolina at Charlotte;35.312224, -80.7084736;35.22709, -80.84313;15461.0;True
+21454;https://openalex.org/I106645853;Changchun University of Science and Technology;Changchun University of Science and Technology;;43.88, 125.32278;;True
+21455;https://openalex.org/I90610280;SOUTH CHINA UNIVERSITY OF TECHNOLOGY;South China University of Technology;;23.11667, 113.25;;True
+21456;https://openalex.org/I204983213;HARBIN INSTITUTE OF TECHNOLOGY;Harbin Institute of Technology;;45.75, 126.65;;True
+21458;https://openalex.org/I162868743;Tianjin University;Tianjin University;;39.14222, 117.17667;;True
+21459;https://openalex.org/I147554453;UNIVERSITY OF BEDFORDSHIRE;University of Bedfordshire;51.89107295, -0.423030307620178;51.87967, -0.41748;1324.0;True
+21471;https://openalex.org/I84027002;LEEDS BECKETT UNIVERSITY;Leeds Beckett University;53.7974185, -1.543794;53.79648, -1.54785;286.0;True
+21498;https://openalex.org/I4210131650;KOREA ELECTRONICS TECHNOLOGY INSTITUTE;Korea Electronics Technology Institute;;37.43861, 127.13778;;True
+21515;https://openalex.org/I4210126288;DIGITAL CATAPULT;Digital Catapult;51.5073219, -0.1276474;51.50853, -0.12574;188.0;True
+21520;https://openalex.org/I78715868;University of Arkansas;University of Arkansas at Fayetteville;35.0525759, -78.878292;36.06258, -94.15743;1385283.0;False
+21521;https://openalex.org/I4210111819;THE RESEARCH FOUNDATION OF STATE UNIVERSITY OF NEW YORK;Research Foundation for the State University of New York;42.6497699210526, -73.7523546052632;42.65258, -73.75623;445.0;False
+21523;https://openalex.org/I169615421;MIDDLE TENNESSEE STATE UNIVERSITY;Middle Tennessee State University;36.442042, -77.084853;35.84562, -86.39027;837872.0;True
+21525;https://openalex.org/I12176630;UNIVERSITAS TANJUNGPURA;Tanjungpura University;;-0.03194, 109.325;;True
+21528;https://openalex.org/I163902620;MOUNT ALLISON UNIVERSITY;Mount Allison University;45.8985128, -64.371401;45.89868, -64.36836;236.0;True
+21537;https://openalex.org/I4210109975;PROVINCIA AUTONOMA DI TRENTO;Provincia Autonoma di Trento;46.0721923, 11.1212361;46.06787, 11.12108;481.0;True
+21539;https://openalex.org/I63135867;University of Cincinnati;University of Cincinnati;39.1006666, -84.51948;39.12711, -84.51439;2973.0;True
+21542;https://openalex.org/I4210124339;PALAIS DES BEAUX ARTS;Centre for Fine Arts;50.84373495, 4.35977919630637;50.85045, 4.34878;1074.0;False
+21543;https://openalex.org/I4210130525;SIDRA MEDICAL AND RESEARCH CENTER;Sidra Medical and Research Center;25.3014957, 51.49966739882234;25.28545, 51.53096;3617.0;True
+21545;https://openalex.org/I193670377;UNIVERSITY OF KARACHI;University of Karachi;24.9415205, 67.0458485;24.8608, 67.0104;9662.0;True
+21552;https://openalex.org/I2800423888;INSTITUTO BUTANTAN;Instituto Butantan;-23.5710711, -46.70931;-23.5475, -46.63611;7908.0;True
+21553;https://openalex.org/I1309827724;INTERNATIONAL VACCINE INSTITUTE;International Vaccine Institute;;37.566, 126.9784;;True
+21554;https://openalex.org/I1311191458;LA JOLLA INSTITUTE FOR ALLERGY AND IMMUNOLOGY;La Jolla Institute for Immunology;;32.71571, -117.16472;;True
+21560;https://openalex.org/I4210118101;ALDEBARAN;SoftBank Robotics (France);48.8285551, 2.2740041;48.85341, 2.3488;6132.0;False
+21563;https://openalex.org/I158012942;UNIVERSITY OF RICHMOND;University of Richmond;37.57586225, -77.5412993715841;37.55376, -77.46026;7554.0;True
+21569;https://openalex.org/I87445476;XI'AN JIAOTONG UNIVERSITY;Xi'an Jiaotong University;;34.25833, 108.92861;;True
+21575;https://openalex.org/I159948400;JINAN UNIVERSITY;Jinan University;;23.11667, 113.25;;True
+21580;https://openalex.org/I69072986;UNIVERSITY OF MAURITIUS;University of Mauritius;-20.232698149999997, 57.496781;-20.21904, 57.51083;2111.0;True
+21581;https://openalex.org/I82889322;CATHOLIC UNIVERSITY OF EASTERN AFRICA;Catholic University of Eastern Africa;-1.3016977, 36.769366486554645;-1.28333, 36.81667;5641.0;True
+21583;https://openalex.org/I29920723;UNIVERSITATEA DE STAT DIN MOLDOVA;Moldova State University;46.9832137, 28.9397964;47.00556, 28.8575;6718.0;True
+21587;https://openalex.org/I12153360;SHOTA RUSTAVELI STATE UNIVERSITY;Batumi Shota Rustaveli State University;41.6509502, 41.6360085;41.64228, 41.63392;980.0;False
+21595;https://openalex.org/I4210139460;INNOVIRIS;Innoviris;50.82787664999999, 4.355637753670975;50.85045, 4.34878;2556.0;True
+21600;https://openalex.org/I4210155724;CENTRE HOSPITALIER UNIVERSITAIRE DE RENNES;Centre Hospitalier Universitaire de Rennes;48.1113387, -1.6800197;48.11198, -1.67429;431.0;True
+21607;https://openalex.org/I177877127;THE UNIVERSITY OF WESTERN AUSTRALIA;The University of Western Australia;;-31.95224, 115.8614;;True
+21608;https://openalex.org/I4210166758;BRADFORD TEACHING HOSPITALS NHS FOUNDATION TRUST;Bradford Teaching Hospitals NHS Foundation Trust;53.8062484, -1.7872088;53.79391, -1.75206;2685.0;True
+21616;https://openalex.org/I1337769664;UNITED NATIONS HIGH COMMISSIONER FOR REFUGEES;Office of the United Nations High Commissioner for Refugees;46.2207835, 6.1408966;46.20222, 6.14569;2097.0;True
+21654;https://openalex.org/I2656126;UNIVERSIDAD DE LA HABANA;University of Havana;22.8888959, -82.5962371;23.13302, -82.38304;34828.0;True
+21655;https://openalex.org/I35953669;Universidad Nacional de General Sarmiento;National University of General Sarmiento;-34.5221383, -58.70003498121548;-34.61315, -58.37723;31242.0;True
+21658;https://openalex.org/I41156924;Victoria University;Victoria University of Wellington;;-41.28664, 174.77557;;False
+21660;https://openalex.org/I1294297726;Exploratorium;Exploratorium;;37.77493, -122.41942;;True
+21664;https://openalex.org/I1299209451;CARDIFF AND VALE UNIVERSITY HEALTH BOARD;Cardiff and Vale University Health Board;51.4816546, -3.1791934;51.48, -3.18;192.0;True
+21665;https://openalex.org/I2800132241;HELSE STAVANGER HF;Stavanger University Hospital;58.9522491, 5.7324792;58.97005, 5.73332;1980.0;True
+21675;https://openalex.org/I111277659;CHONNAM NATIONAL UNIVERSITY;Chonnam National University;;35.15472, 126.91556;;True
+21681;https://openalex.org/I31419693;KYUNGPOOK NATIONAL UNIVERSITY;Kyungpook National University;;35.87028, 128.59111;;True
+21688;https://openalex.org/I189210763;YUNNAN UNIVERSITY;Yunnan University;;25.03889, 102.71833;;True
+21721;https://openalex.org/I47367911;UNITED KINGDOM ATOMIC ENERGY AUTHORITY;United Kingdom Atomic Energy Authority;51.6714842, -1.2779714;51.67109, -1.28278;334.0;True
+21734;https://openalex.org/I4405252537;CENTRAL EUROPEAN RESEARCH INFRASTRUCTURE CONSORTIUM EUROPEAN RESEARCH INFRASTRUCTURE CONSORTIUM;Central European Research Infrastructure Consortium;45.6500335, 13.7706559;45.64953, 13.77678;479.0;False
+21738;https://openalex.org/I4210106796;POLISH UNIVERSITY ABROAD;Polish University Abroad;51.4935253, -0.23743670925372462;51.50853, -0.12574;7909.0;True
+21739;https://openalex.org/I4210108222;AKADEMIA SZTUKI W SZCZECINIE;Szczecin Academy of Arts;53.42614575, 14.554144798931109;53.42894, 14.55302;320.0;True
+21747;https://openalex.org/I4210112951;PERSEE;Centre Procédés, Energies Renouvelables et Systèmes Energétiques;46.58356, 5.69471;43.58127, 7.12487;352200.0;False
+21748;https://openalex.org/I4210133607;ELEMENT ENERGY;Element Energy (United Kingdom);50.6378675, 3.0697767;52.2, 0.11667;268488.0;False
+21751;https://openalex.org/I4210117881;CHINA ACADEMY OF URBAN PLANNING AND DESIGN;China Academy of Urban Planning and Design;;24.47979, 118.08187;;True
+21754;https://openalex.org/I116953780;TONGJI UNIVERSITY;Tongji University;;31.22222, 121.45806;;True
+21756;https://openalex.org/I80281795;UNIVERSITY OF OTAGO;University of Otago;;-45.87416, 170.50362;;True
+21766;https://openalex.org/I4210162625;TROPIQ HEALTH SCIENCES;TropIQ Health Sciences;51.84260195, 5.8385196119892;51.8425, 5.85278;980.0;True
+21770;https://openalex.org/I874055015;TEESSIDE UNIVERSITY;Teesside University;54.5723357, -1.2291577;54.57623, -1.23483;567.0;True
+21776;https://openalex.org/I4210162841;MARITSA VEGETABLE CROPS RESEARCH INSTITUTE;Maritsa Vegetable Crops Research Institute;42.1419118, 24.7498385;42.15, 24.75;899.0;True
+21777;https://openalex.org/I4210105723;INSTITUTE OF MOLECULAR BIOLOGY AND BIOTECHNOLOGY;FORTH Institute of Molecular Biology and Biotechnology;42.1419118, 24.7498385;35.32787, 25.14341;758453.0;False
+21778;https://openalex.org/I2801641283;EESTI KIRJANDUSMUUSEUM;Estonian Literary Museum;58.37397, 26.71747;58.38062, 26.72509;863.0;True
+21796;https://openalex.org/I4210087769;SOFTWARE AG;Software AG (Italy);49.65613355, 8.5615419;41.89193, 12.51133;915740.0;False
+21811;https://openalex.org/I4210145009;SCIENSANO;Sciensano (Belgium);50.82433, 4.3817642;50.85045, 4.34878;3715.0;False
+21822;https://openalex.org/I201448701;UNIVERSITY OF WASHINGTON;University of Washington;;47.60621, -122.33207;;True
+21827;https://openalex.org/I4210159574;PNO CONSULTANTS;PNO Consultants (Netherlands);48.897818, 2.3114602;52.03634, 4.32501;376927.0;False
+21836;https://openalex.org/I4210109164;Teleflex;Teleflex (United States);;40.044, -75.38769;;False
+21841;https://openalex.org/I4210110330;DEPARTMENT OF HEALTH? SOCIAL SERVICES AND PUBLIC SAFETY;Department of Health Social Services and Public Safety;54.59920345, -5.830224015498956;54.59682, -5.92541;6137.0;False
+21842;https://openalex.org/I4210113138;GAC;Guangzhou Automobile Group (China);48.8250508, 2.273457;23.11667, 113.25;9505277.0;False
+21846;https://openalex.org/I4210090918;BUNDESMINISTERIUM DES INNERN;Federal Ministry of the Interior;52.5242125, 13.347073;52.52437, 13.41053;4293.0;True
+21851;https://openalex.org/I133837150;UNIVERSITY OF HUDDERSFIELD;University of Huddersfield;53.6466645, -1.7822482;53.64904, -1.78416;293.0;True
+21853;https://openalex.org/I889077771;INTERNATIONAL CENTRE FOR THE STUDY OF THE PRESERVATION AND RESTORATION OF CULTURAL PROPERTY;International Centre for the Study of the Preservation and Restoration of Cultural Property;41.9174565, 12.550193132459807;41.89193, 12.51133;4290.0;True
+21867;https://openalex.org/I4210096643;COMPAGNIA DI SAN PAOLO;Compagnia di San Paolo;45.0645761, 7.6730825;45.07049, 7.68682;1263.0;True
+21881;https://openalex.org/I4068193;UNIVERZITET U BEOGRADU;University of Belgrade;44.8183857, 20.4571614;44.80401, 20.46513;1718.0;True
+21888;https://openalex.org/I4387152978;STICHTING EIFL.NET;EIFL;52.0381199, 5.0791451;54.68916, 25.2798;1367292.0;True
+21891;https://openalex.org/I4210103299;AND CONSULTING GROUP;Pioneers Research and Consulting Group (Switzerland);50.83857005, 4.375756406648373;46.51127, 6.49854;505732.0;False
+21892;https://openalex.org/I2906629628;ATENEO PONTIFICIO REGINA APOSTOLORUM;Pontifical Athenaeum Regina Apostolorum;41.879132, 12.3945282089887;41.89193, 12.51133;9773.0;True
+21896;https://openalex.org/I4210130643;MENINGITIS RESEARCH FOUNDATION;Meningitis Research Foundation;51.4538022, -2.5972985;51.45523, -2.59665;165.0;True
+21914;https://openalex.org/I4210112525;HRVATSKI VETERINARSKI INSTITUT;Croatian Veterinary Institute;45.79135665, 15.957038664086301;45.81444, 15.97798;3037.0;False
+21923;https://openalex.org/I4210144488;Institut National des Sciences et Technologies de la Mer;Institut National des Sciences et Technologies de la Mer;33.8439408, 9.400138;36.81897, 10.16579;338017.0;True
+21929;https://openalex.org/I4210106246;COCONUT INDUSTRY BOARD;Coconut Industry Board;17.977064, -76.7642832;17.99702, -76.79358;3811.0;True
+21931;https://openalex.org/I4210123114;INSTITUTO DE INVESTIGACIONES EN FRUTICULTURA TROPICAL;Instituto de Investigaciones en Fruticultura Tropical;23.1379911, -82.3658562;23.13302, -82.38304;1842.0;True
+21932;https://openalex.org/I4210097172;COLEGIO DE POSTGRADUADOS;Colegio de Postgraduados;;19.45711, -98.90835;;True
+21950;https://openalex.org/I4210146646;DFRC AG;Data Fusion Research Center;47.1731809, 8.5132702;47.17242, 8.51745;327.0;True
+21996;https://openalex.org/I4210110783;BERGEN KOMMUNE;Bergen Kommune;60.3921075, 5.3280035;60.39299, 5.32415;233.0;True
+21998;https://openalex.org/I4210128791;OSLO KOMMUNE;Oslo Kommune;60.0518829, 10.6799603;59.91273, 10.74609;15904.0;True
+22007;https://openalex.org/I4210154634;BERLINER WASSERBETRIEBE;Berliner Wasserbetriebe (Germany);52.5158333, 13.4104844;52.52437, 13.41053;949.0;False
+22013;https://openalex.org/I4210100748;MINISTERO DELLA GIUSTIZIA;Ministry of Justice;41.893032, 12.4752722;41.89193, 12.51133;2987.0;True
+22021;https://openalex.org/I4210121321;FONDAZIONE ANT ITALIA ONLUS;ANT Foundation Italy Onlus;44.5205789, 11.3534603;44.49381, 11.33875;3197.0;True
+22030;https://openalex.org/I4210099739;PROTEUS;Proteus (New Zealand);48.6966578, 2.2973253;-45.87416, 170.50362;19072947.0;False
+22040;https://openalex.org/I107603542;COURTAULD INSTITUTE OF ART;Courtauld Institute of Art;51.5116948, -0.117442;51.50853, -0.12574;674.0;True
+22050;https://openalex.org/I4210161189;PROBAYES;ProbaYes (France);45.2135757, 5.8063112;45.22537, 5.8017;1360.0;False
+22086;https://openalex.org/I4210148002;INNOVATION FOR AGRICULTURE;Institute for Research and Innovation in Irrigated Agriculture;52.3450526, -1.5816027;-3.71722, -38.54306;7134812.0;False
+22102;https://openalex.org/I144552512;NIAB;Nuclear Institute for Agriculture and Biology;52.221651, 0.09176977659523285;31.41554, 73.08969;6183312.0;False
+22109;https://openalex.org/I4210144814;ISTITUTO ZOOPROFILATTICO SPERIMENTALE DELL'ABRUZZO E DEL MOLISE G CAPORALE;Istituto Zooprofilattico Sperimentale dell'Abruzzo e del Molise G. Caporale;36.79878575, 14.818226893108552;42.66123, 13.69901;658844.0;False
+22122;https://openalex.org/I4210101466;LANDWIRTSCHAFTSKAMMER NIEDERSACHSEN;Landwirtschaftskammer Niedersachsen;53.151799, 8.2075867;53.14118, 8.21467;1272.0;True
+22134;https://openalex.org/I4210093021;INSTYTUT ROZWOJU WSI I ROLNICTWA POLSKIEJ AKADEMII NAUK;Institute of Rural and Agricultural Development;52.2344802, 21.0188215;52.22977, 21.01178;710.0;True
+22138;https://openalex.org/I3018988418;CENTRE HOSPITALIER UNIVERSITAIRE DE NICE;Centre Hospitalier Universitaire de Nice;43.72580105, 7.235540832707972;43.70313, 7.26608;3518.0;True
+22149;https://openalex.org/I4210122703;CENTRO NACIONAL DE SANIDAD AGROPECUARIA;Centro Nacional de Sanidad Agropecuaria;22.8890013, -82.334382894669;22.96139, -82.15111;20423.0;True
+22167;https://openalex.org/I4210133932;CHINA NATIONAL CENTER FOR FOOD SAFETY RISK ASSESSMENT;China National Center for Food Safety Risk Assessment;;39.9075, 116.39723;;True
+22172;https://openalex.org/I4210126939;ZHEJIANG ACADEMY OF AGRICULTURAL SCIENCES;ZheJiang Academy of Agricultural Sciences;;30.29365, 120.16142;;True
+22179;https://openalex.org/I4210094930;CHINESE ACADEMY OF INSPECTION & QUARANTINE;Chinese Academy of Inspection and Quarantine;;39.9075, 116.39723;;False
+22185;https://openalex.org/I14243506;HONG KONG POLYTECHNIC UNIVERSITY;Hong Kong Polytechnic University;;22.27832, 114.17469;;True
+22186;https://openalex.org/I4210161151;BEIJING CENTER FOR DISEASE PREVENTION AND CONTROL;Beijing Center for Disease Prevention and Control;;39.9075, 116.39723;;True
+22187;https://openalex.org/I132369690;TIANJIN UNIVERSITY OF SCIENCE AND TECHNOLOGY;Tianjin University of Science and Technology;;39.14222, 117.17667;;True
+22195;https://openalex.org/I4210158313;WELSH LOCAL GOVERNMENT ASSOCIATION;Welsh Local Government Association;51.4816546, -3.1791934;51.48, -3.18;192.0;True
+22196;https://openalex.org/I2800196917;GLOUCESTERSHIRE COUNTY COUNCIL;Gloucestershire County Council;51.866355, -2.24870576408709;51.86568, -2.2431;392.0;True
+22198;https://openalex.org/I4388891872;HELSINGIN KAUPUNKI;City of Helsinki;60.1713198, 24.9414566;60.16952, 24.93545;388.0;True
+22257;https://openalex.org/I848706;SUNGKYUNKWAN UNIVERSITY;Sungkyunkwan University;;37.566, 126.9784;;True
+22269;https://openalex.org/I4210156332;Chinese Research Academy of Environmental Sciences;Chinese Research Academy of Environmental Sciences;;39.9075, 116.39723;;True
+22301;https://openalex.org/I4210093106;ISTITUTO PER GLI STUDI DI POLITICA INTERNAZIONALE;Institute for International Political Studies;45.4667744, 9.187187783080706;45.46427, 9.18951;332.0;True
+22302;https://openalex.org/I2799593479;Education Scotland;Education Scotland;55.8859826, -3.52200918192825;55.90288, -3.52261;1879.0;True
+22305;https://openalex.org/I167147083;ODI;Overseas Development Institute;51.5045892, -0.10420757435486427;51.50853, -0.12574;1553.0;False
+22306;https://openalex.org/I153718931;UNIVERSITY OF OTTAWA;University of Ottawa;45.421106, -75.690308;45.41117, -75.69812;1262.0;True
+22314;https://openalex.org/I2801103342;EBU-UER;European Broadcasting Union;50.8411007, 4.3667149;46.20222, 6.14569;532156.0;False
+22329;https://openalex.org/I4210164244;Radioactive Waste Repository Authority;Radioactive Waste Repository Authority;50.0870141, 14.432363;50.08804, 14.42076;836.0;True
+22330;https://openalex.org/I4210118308;RADIOACTIVE WASTE MANAGEMENT LIMITED;Public Limited Company for Radioactive Waste Management;54.6143136, -2.94209672343934;47.49835, 19.04045;1718181.0;False
+22344;https://openalex.org/I4210109057;FRAMATOME;Framatome (Germany);48.89249165, 2.2418952187712513;49.59099, 11.00783;640718.0;False
+22351;https://openalex.org/I62921916;UNIVERSIDADE FEDERAL RURAL DE PERNAMBUCO;Universidade Federal Rural de Pernambuco;-8.0641931, -34.8781517;-8.05389, -34.88111;1191.0;True
+22356;https://openalex.org/I4104125;UNIVERSIDADE FEDERAL DE SANTA CATARINA.;Universidade Federal de Santa Catarina;-27.5893834, -48.5224004;-27.59667, -48.54917;2760.0;False
+22370;https://openalex.org/I4407990238;VERTICAL;Vertical Farm Institute;50.7008155, 3.1581824;48.20849, 16.37208;992978.0;False
+22379;https://openalex.org/I72816309;DREXEL UNIVERSITY;Drexel University;39.9576839, -75.1879488;39.95238, -75.16362;2156.0;True
+22438;https://openalex.org/I4210145357;CHERRY BIOTECH;Cherry Biotech (France);48.11690815, -1.69744898175924;48.11198, -1.67429;1805.0;False
+22449;https://openalex.org/I4210122463;NEAPOLIS UNIVERSITY;Neapolis University Pafos;34.7485571, 32.4249001;34.77679, 32.42451;3140.0;False
+22456;https://openalex.org/I4210120766;INSTITUTE OF DEVELOPMENT STUDIES;Institute of Development Studies;50.86794365, -0.0878561276016315;50.82838, -0.13947;5699.0;True
+22457;https://openalex.org/I111236770;UNIVERSITY OF VERMONT AND STATE AGRICULTURAL COLLEGE;University of Vermont;44.4723989, -73.2114941;44.47588, -73.21207;390.0;True
+22462;https://openalex.org/I2802152550;Island Institute;Earth Island Institute;44.1723869, -69.1209239;37.87159, -122.27275;4435207.0;False
+22466;https://openalex.org/I4387155757;EUROPEAN MARINE BIOLOGICAL RESOURCE CENTRE EUROPEAN RESEARCH INFRASTRUCTURE CONSORTIUM;European Marine Biological Resource Centre;48.8475204, 2.3540465;48.85341, 2.3488;759.0;False
+22475;https://openalex.org/I181631907;UNIVERSITY OF IBADAN;University of Ibadan;7.3777462, 3.8972497;7.37756, 3.90591;955.0;True
+22482;https://openalex.org/I4210154502;LEBANESE AGRICULTURAL RESEARCH INSTITUTE;Lebanese Agricultural Research Institute;33.8640994, 36.01116101171689;33.89332, 35.50157;47156.0;True
+22483;https://openalex.org/I110525433;ISLAMIC AZAD UNIVERSITY;Islamic Azad University, Tehran;35.3126047, 46.9978639;35.69439, 51.42151;402644.0;False
+22528;https://openalex.org/I35841627;European Bank for Reconstruction and Development;European Bank for Reconstruction and Development;51.51502725, -0.09910751295360741;51.50853, -0.12574;1980.0;True
+22532;https://openalex.org/I188127544;AMNESTY INTERNATIONAL;Amnesty International;47.4983815, 19.0404707;51.50853, -0.12574;1449115.0;True
+22542;https://openalex.org/I4210165896;FUJIFILM VisualSonics;FujiFilm VisualSonics (Canada);52.3727598, 4.8936041;43.70643, -79.39864;5978099.0;False
+22552;https://openalex.org/I4210093466;Audionamix;Audionamix (France);48.8566101, 2.3514992;48.85341, 2.3488;407.0;False
+22560;https://openalex.org/I4210088452;Culture and Sport Glasgow;Glasgow Life;55.8601236, -4.2393619;55.86515, -4.25763;1270.0;True
+22564;https://openalex.org/I103187081;SMITHSONIAN INSTITUTION;Smithsonian Institution;38.9059164, -77.0369296959705;38.89511, -77.03637;1203.0;True
+22565;https://openalex.org/I4210096003;Nunatta Katersugaasivia Allagaateqarfialu;Greenland National Museum & Archives;64.1764304, -51.7465889;64.18347, -51.72157;1443.0;True
+22574;https://openalex.org/I1289895318;Norwegian Institute of International Affairs;Norwegian Institute of International Affairs;59.9133301, 10.7389701;59.91273, 10.74609;402.0;True
+22576;https://openalex.org/I4210142623;British Institute in Eastern Africa;British Institute in Eastern Africa;-1.3031689499999999, 36.826061224105075;-1.28333, 36.81667;2441.0;True
+22580;https://openalex.org/I2801779827;Centre for Development and Enterprise;Centre for Development and Enterprise;-26.214795000000002, 27.919477916666665;-26.20227, 28.04363;12464.0;True
+22584;https://openalex.org/I4399657941;Institut des Sciences des Sociétés;Institut des Sciences des Sociétés;12.0753083, -1.6880314;12.36566, -1.53388;36373.0;True
+22588;https://openalex.org/I154526488;National Institute of Medical Research;Inserm;-6.8160837, 39.2803583;48.85341, 2.3488;7155368.0;False
+22596;https://openalex.org/I1341412227;IBM;IBM (United States);43.1561681, -75.8449946;41.12648, -73.71402;285996.0;False
+22599;https://openalex.org/I1320320070;Food & Drug Administration;United States Food and Drug Administration;38.9959081, -77.0288918;38.99067, -77.02609;631.0;False
+22620;https://openalex.org/I4210098835;John Benjamins;John Benjamins Publishing Company (Netherlands);52.3727598, 4.8936041;52.37403, 4.88969;301.0;True
+22623;https://openalex.org/I198945027;Central European University;Central European University;47.4983815, 19.0404707;48.20849, 16.37208;214173.0;True
+22624;https://openalex.org/I4210156707;Fondazione IRCCS;Fondazione IRCCS Istituto Nazionale dei Tumori;45.4667971, 9.1904984;45.46427, 9.18951;291.0;False
+22625;https://openalex.org/I4210100947;Royal Dutch Kentalis;Royal Dutch Kentalis;51.6391001, 5.3515392;51.64167, 5.35278;298.0;True
+22628;https://openalex.org/I10902133;University Jaume I;Universitat Jaume I;39.4699014, -0.3759513;39.98567, -0.04935;63790.0;False
+22630;https://openalex.org/I161548249;University of Bangor;Bangor University;53.2277187, -4.1268822;53.22752, -4.12936;166.0;False
+22637;https://openalex.org/I4210101141;LUXEMBOURG INSTITUTE OF HEALTH;Luxembourg Institute of Health;49.6169578, 6.1011305;49.62056, 6.07333;2042.0;True
+22648;https://openalex.org/I4210086335;WATCH;World Water Watch;41.894802, 12.4853384;45.52345, -122.67621;9326675.0;False
+22660;https://openalex.org/I4210089872;Isthmus;Universidad del Istmo;48.8343574, 2.3086834;8.9936, -79.51973;8658995.0;False
+22671;https://openalex.org/I188922065;UNIWERSYTET EKONOMICZNY W KATOWICACH;University of Economics in Katowice;50.2598987, 19.0215852;50.25841, 19.02754;455.0;True
+22704;https://openalex.org/I4210110766;DIPLOMATISCHE AKADEMIE WIEN;Diplomatic Academy of Vienna;48.19426965, 16.370379261425626;48.20849, 16.37208;1586.0;True
+22708;https://openalex.org/I4210154362;LEBANON SUPPORT;Lebanon Support;33.8756851, 35.5211486;33.89332, 35.50157;2667.0;True
+22767;https://openalex.org/I49439280;KYRGYZ NATIONAL UNIVERSITY NAMED AFTER JUSUP BALASAGYN;Kyrgyz National University;42.8823142, 74.587223;42.87, 74.59;1388.0;True
+22770;https://openalex.org/I80338172;JAHON IQTISODIYOTI VA DIPLOMATIYA UNIVERSITETI;University of World Economy and Diplomacy;41.3181644, 69.2957419;41.26465, 69.21627;8916.0;True
+22796;https://openalex.org/I79765343;VAASAN YLIOPISTO;University of Vaasa;63.1023624, 21.6017681;63.096, 21.61577;998.0;True
+22866;https://openalex.org/I4210086105;ABSISKEY;Absiskey (France);47.4590448, -0.5518411;47.47156, -0.55202;1392.0;False
+22868;https://openalex.org/I125989756;SKOLKOVO INSTITUTE OF SCIENCE AND TECHNOLOGY;Skolkovo Institute of Science and Technology;55.4792046, 37.3273304;55.68784, 37.36836;23342.0;True
+22870;https://openalex.org/I4210149026;HOSPITAL UNIVERSITARIO DE FUENLABRADA;Hospital Universitario de Fuenlabrada;40.282476, -3.7923422;40.28419, -3.79415;245.0;True
+22878;https://openalex.org/I4210121143;VERACYTE;Veracyte (United States);43.2961743, 5.3699525;37.65466, -122.40775;9587099.0;False
+22887;https://openalex.org/I85459889;GALAPAGOS;Galapagos (Belgium);51.0531272, 4.4558724;51.02574, 4.47762;3404.0;False
+22894;https://openalex.org/I4400009055;FACULTY OF MEDICINE, UNIVERSITY OF BELGRADE;University of Belgrade – Faculty of Medicine;44.8178131, 20.4568974;44.80401, 20.46513;1667.0;False
+22900;https://openalex.org/I4387153501;CENTRE TECHNIQUE INDUSTRIEL DE LA PLASTURGIE ET DES COMPOSITES;Centre Technique Industriel de la Plasturgie et des Composites;46.2500367, 5.6306215;46.24237, 5.62843;869.0;True
+22940;https://openalex.org/I4210122448;PROTIP MEDICAL;Protip Medical (France);48.5774841, 7.7497131;48.58392, 7.74553;779.0;False
+22945;https://openalex.org/I4210135375;NUTRITION SCIENCES;Nutrition Sciences (Belgium);50.6407351, 4.66696;51.05, 3.71667;80761.0;False
+23395;https://openalex.org/I173268674;TEXAS A&M UNIVERSITY SYSTEM;Texas A&M University System;;30.62798, -96.33441;;True
+22964;https://openalex.org/I41047195;UNIVERSIDAD MILITAR NUEVA GRANADA;Military University Nueva Granada;4.5980772, -74.0761028;4.60971, -74.08175;1437.0;True
+22971;https://openalex.org/I4210095705;VÄSTRA GÖTALANDSREGIONEN;Region Västra Götaland;58.3815182, 12.321201359433964;58.38075, 12.3234;154.0;True
+22974;https://openalex.org/I2800071053;CORNWALL COUNCIL;Cornwall Council;50.2607041, -5.0668007;50.26526, -5.05436;1019.0;True
+23008;https://openalex.org/I4210103742;UNIVERSIDAD DE LAS ARTES;Universidad de las Artes;-2.1898771, -79.8877153;-2.19616, -79.88621;718.0;True
+23028;https://openalex.org/I126158947;UNIVERSIDADE FEDERAL DA BAHIA;Universidade Federal da Bahia;-12.9822498, -38.4812771;-12.97563, -38.49096;1282.0;True
+23048;https://openalex.org/I4210101494;WOLAITA SODO UNIVERSITY;Wolaita Sodo University;6.8333581, 37.749679;7.06667, 37.7;26516.0;True
+23057;https://openalex.org/I183519381;CAPITAL MEDICAL UNIVERSITY;Capital Medical University;;39.9075, 116.39723;;True
+23058;https://openalex.org/I4210092852;MANCHESTER UNIVERSITY NHS FOUNDATION TRUST;Manchester University NHS Foundation Trust;53.4737777, -2.2422762;53.48095, -2.23743;860.0;True
+23064;https://openalex.org/I4210148231;FONDAZIONE POLIAMBULANZA;Fondazione Poliambulanza Istituto Ospedaliero;45.5399392, 10.2204897;45.53558, 10.21472;661.0;False
+23066;https://openalex.org/I4210122552;REGION SYDDANMARK;Psykiatrien i Region Syddanmark;55.704788, 9.524795;55.50591, 9.73054;25614.0;False
+23091;https://openalex.org/I3130570791;THEOLOGISCHE UNIVERSITEIT APELDOORN;Theological University of Apeldoorn;52.2211757, 5.9641255;52.21, 5.96944;1294.0;True
+23094;https://openalex.org/I4387154542;FONDAZIONE PER LE SCIENZE RELIGIOSE GIOVANNI XXIII;Fondazione per le Scienze Religiose Giovanni XXIII;44.4940949, 11.3557188;44.49381, 11.33875;1346.0;True
+23097;https://openalex.org/I4210133995;THE CHRISTIE NHS FOUNDATION TRUST;The Christie NHS Foundation Trust;53.3473397, -2.2891047;53.48095, -2.23743;15246.0;True
+23124;https://openalex.org/I3123915005;UNIVERSITAT INTERNACIONAL DE CATALUNYA;Universitat Internacional de Catalunya;41.5473143, 2.4336371;41.38879, 2.15899;28886.0;True
+23167;https://openalex.org/I4210087103;Instituto de Investigaciones Agropecuarias;Instituto de Investigaciones Agropecuarias;-33.4377968, -70.6504451;-33.45694, -70.64827;2138.0;True
+23175;https://openalex.org/I4210094231;BORESKOV INSTITUTE OF CATALYSIS, SIBERIAN BRANCH OF RUSSIAN ACADEMY OF SCIENCES;Boreskov Institute of Catalysis;54.372625, 82.07151028594274;55.0415, 82.9346;92768.0;False
+23178;https://openalex.org/I4210116218;ISTITUTO ZOOPROFILATTICO SPERIMENTALE DELLA LOMBARDIA E DELL'EMILIA ROMAGNA BRUNO UBERTINI;"Istituto Zooprofilattico Sperimentale della Lombardia e dell'Emilia Romagna ""Bruno Ubertini""";45.5223797, 10.2211595;45.53558, 10.21472;1551.0;False
+23182;https://openalex.org/I1309171123;LIVSMEDELSVERKET;National Food Administration;59.8690108, 17.6310107;59.85882, 17.63889;1216.0;True
+23186;https://openalex.org/I4210091895;RUOKAVIRASTO;Finnish Food Authority;62.69110655, 22.83332097896403;62.79446, 22.82822;11495.0;True
+23190;https://openalex.org/I4210129176;BULGARIAN FOOD SAFETY AGENCY;Bulgarian Food Safety Agency;42.6978634, 23.3221789;42.15, 24.75;132082.0;True
+23204;https://openalex.org/I3132919069;BEIT BERL COLLEGE;Beit Berl College;32.20252595, 34.9267030673905;32.175, 34.90694;3581.0;True
+23210;https://openalex.org/I4210166509;GS1 GERMANY GMBH;GS1 Germany;50.9424548, 6.89831877641256;50.93333, 6.95;3761.0;True
+23217;https://openalex.org/I57206974;NEW YORK UNIVERSITY;New York University;40.7305991, -73.9865811;40.71427, -74.00597;2443.0;True
+23221;https://openalex.org/I42775652;LINK CAMPUS UNIVERSITY;Link Campus University;41.8933203, 12.4829321;41.89193, 12.51133;2356.0;True
+23231;https://openalex.org/I4392738063;THE AGA KHAN UNIVERSITY (INTERNATIONAL) IN THE UNITED KINGDOM;The Aga Khan University (International) in the United Kingdom;51.53756405, -0.12478815070751458;51.50853, -0.12574;3229.0;True
+23246;https://openalex.org/I4210106675;INVENIO;Invenio Imaging (United States);44.7737872, -0.5595029;37.45383, -122.18219;9158795.0;False
+23290;https://openalex.org/I131249849;OREGON STATE UNIVERSITY;Oregon State University;;44.56457, -123.26204;;True
+23304;https://openalex.org/I4210111661;AGENCE NATIONALE DE LA PROMOTION DE LA RECHERCHE SCIENTIFIQUE;National Agency for Promotion of Research and Innovation;33.8439408, 9.400138;36.81897, 10.16579;338017.0;True
+23305;https://openalex.org/I2799622659;MINISTRY OF LABOUR AND SOCIAL AFFAIRS;Federal Ministry of Labour and Social Affairs;37.943030300000004, 23.709253715998006;52.52437, 13.41053;1806666.0;False
+23320;https://openalex.org/I2801439107;Centre for Planning and Economic Research;Centre for Planning and Economic Research;37.9780804, 23.7348632;37.98376, 23.72784;882.0;True
+23348;https://openalex.org/I4210147398;ISARA;Institut Supérieur d'Agriculture Rhône-Alpes;45.7278086, 4.8364672;45.74846, 4.84671;2430.0;False
+23359;https://openalex.org/I2799611809;KOREA RESEARCH INSTITUTE OF STANDARDS AND SCIENCE;Korea Research Institute of Standards and Science;;36.34913, 127.38493;;True
+23366;https://openalex.org/I4210143497;INNATE PHARMA;Innate Pharma (France);43.230403, 5.4369461;43.29695, 5.38107;8673.0;False
+23369;https://openalex.org/I4210132595;CAMBRIDGESHIRE COUNTY COUNCIL;Cambridgeshire County Council;52.3273029, -0.183204;52.2, 0.11667;24837.0;True
+23383;https://openalex.org/I2891944421;TRANSPORT FOR GREATER MANCHESTER;Transport for Greater Manchester;53.4791301, -2.2441009;53.48095, -2.23743;486.0;True
+23402;https://openalex.org/I250757736;CENTRAL INSTITUTE OF AVIATION MOTORS;Baranov Central Institute of Aviation Motor Development;55.4792046, 37.3273304;55.75222, 37.61556;35344.0;True
+23406;https://openalex.org/I164120614;MIMAR SINAN FINE ARTS UNIVERSITY;Mimar Sinan Güzel Sanatlar Üniversitesi;41.0096334, 28.9651646;41.01384, 28.94966;1382.0;True
+23407;https://openalex.org/I4210103074;CULTURE COVENTRY;Culture Coventry;52.407297650000004, -1.50616593414356;52.40656, -1.51217;415.0;True
+23410;https://openalex.org/I133821349;MANDALAY UNIVERSITY;Mandalay University;;21.97473, 96.08359;;True
+23411;https://openalex.org/I19722;ATENEO DE MANILA UNIVERSITY;Ateneo de Manila University;;14.6488, 121.0509;;True
+23414;https://openalex.org/I33849332;UNIVERSITY OF MALAYA;University of Malaya;;3.1412, 101.68653;;True
+23416;https://openalex.org/I4210149184;CENTRE FOR WOMEN'S DEVELOPMENT STUDIES;Centre for Women's Development Studies;28.6337077, 77.2055869;28.62137, 77.2148;1640.0;True
+23417;https://openalex.org/I3130082100;INSTITUTE FOR FINANCIAL MANAGEMENT AND RESEARCH;IFMR Graduate School of Business;13.0801721, 80.2838331;13.08784, 80.27847;1032.0;True
+23473;https://openalex.org/I4210103238;WWF ITALIA;WWF Italia;45.6604777, 10.1114899;41.89193, 12.51133;461161.0;True
+23522;https://openalex.org/I4210150582;CENTER FOR URBAN HISTORY OF EAST CENTRAL EUROPE;Center for Urban History of East Central Europe;49.841952, 24.0315921;49.83826, 24.02324;726.0;True
+23536;https://openalex.org/I5209920;TECHNISCHE HOCHSCHULE OSTWESTFALEN-LIPPE;Ostwestfalen-Lippe University of Applied Sciences and Arts;52.0159887, 8.9050392;52.02786, 8.89901;1383.0;True
+23549;https://openalex.org/I4399598397;FACULTY OF CIVIL ENGINEERING;University of Belgrade - Faculty of Civil Engineering;44.80563475, 20.4763871060799;44.80401, 20.46513;906.0;False
+23568;https://openalex.org/I157485424;ADVANCED SCIENCE AND TECHNOLOGY INSTITUTE;Korea Advanced Institute of Science and Technology;;36.34913, 127.38493;;False
+23645;https://openalex.org/I4210131471;MINISTRSTVO ZA NOTRANJE ZADEVE;Ministry of the Interior;46.0819215, 14.4666097;46.05108, 14.50513;4538.0;True
+23666;https://openalex.org/I4210120310;SERVICIO CANARIO DE LA SALUD;Servicio Canario de la Salud;28.4597823, -16.2536378;28.46824, -16.25462;945.0;True
+23677;https://openalex.org/I4210163704;BIOSPACE LAB;Biospace Lab (France);49.1278723, 2.1712619;49.13202, 2.17099;462.0;False
+23682;https://openalex.org/I4387152698;ATLANTIC TECHNOLOGICAL UNIVERSITY;Atlantic Technological University;54.9528826, -7.7278842;53.0, -8.0;217878.0;True
+23692;https://openalex.org/I4210139114;WORLD OBESITY FEDERATION;World Obesity Federation;51.5073219, -0.1276474;51.50853, -0.12574;188.0;True
+23695;https://openalex.org/I2801851002;PRESS;Harvard University Press;59.9131685, 10.7520904;42.3751, -71.10561;5619076.0;False
+23696;https://openalex.org/I1308126019;National Oceanic and Atmospheric Administration;National Oceanic and Atmospheric Administration;;38.89511, -77.03637;;True
+23708;https://openalex.org/I4210089365;CONSORTIUM OF EUROPEAN TAXONOMIC FACILITIES;Consortium of European Taxonomic Facilities;50.8365465, 4.3765602;50.85045, 4.34878;2489.0;True
+23717;https://openalex.org/I4210120510;INFORMATION TECHNOLOGY FOR MARKET LEADERSHIP;Information Technology for Market Leadership (Greece);37.9437811, 23.7514713;37.98376, 23.72784;4904.0;False
+25034;https://openalex.org/I4210111818;INSTITUTE FOR GLOBAL ENVIRONMENTAL STRATEGIES;Institute for Global Environmental Strategies;;35.27651, 139.57733;;True
+25037;https://openalex.org/I4210107616;INSTITUTE OF ECONOMIC FORECASTING OF THE RUSSIAN ACADEMY OF SCIENCES;Institute of Economic Forecasting;55.4792046, 37.3273304;55.75222, 37.61556;35344.0;True
+25038;https://openalex.org/I204553293;China University of Petroleum-Beijing;China University of Petroleum, Beijing;;39.9075, 116.39723;;False
+25054;https://openalex.org/I142401562;ELECTRONICS AND TELECOMMUNICATIONS RESEARCH INSTITUTE;Electronics and Telecommunications Research Institute;;36.34913, 127.38493;;True
+25374;https://openalex.org/I4210109992;MAJANDUS JA KOMMUNIKATSIOONIMINISTEERIUM;Ministry of Economic Affairs and Communications;59.43507495, 24.7439805038462;59.43696, 24.75353;579.0;False
+25378;https://openalex.org/I4210102902;SHEFFIELD TEACHING HOSPITALS NHS FOUNDATION TRUST;Sheffield Teaching Hospitals NHS Foundation Trust;53.377231, -1.493825;53.38297, -1.4659;1959.0;True
+25385;https://openalex.org/I4210089493;TYÖ- JA ELINKEINOMINISTERIÖ;Ministry of Economic Affairs and Employment;60.163419, 24.9446336;60.16952, 24.93545;848.0;True
+25421;https://openalex.org/I4210095212;Ente Ospedaliero Cantonale;Ente Ospedaliero Cantonale;46.1918617, 9.0204562;46.19278, 9.01703;283.0;True
+25440;https://openalex.org/I2799535320;UNIVERSIDAD CATÓLICA DEL MAULE;Catholic University of the Maule;-35.4333909, -71.6325265;-35.4264, -71.65542;2215.0;True
+25463;https://openalex.org/I35961687;UNIVERSIDAD DE ANTIOQUIA;Universidad de Antioquia;6.2580221, -75.5841691;6.25184, -75.56359;2376.0;True
+25471;https://openalex.org/I4210128097;FORSCHUNGSZENTRUM BORSTEL LEIBNIZ LUNGENZENTRUM;Research Center Borstel - Leibniz Lung Center;53.61600405, 9.977881400148377;53.9675, 9.79963;40801.0;False
+25486;https://openalex.org/I4210117436;Blueprint Genetics;Blueprint Genetics (Finland);60.1674086, 24.9425683;60.16952, 24.93545;458.0;False
+25545;https://openalex.org/I42097590;INSTITUTE FOR EUROPEAN ENVIRONMENTAL POLICY;Institute for European Environmental Policy;50.84579615, 4.3576019712109435;50.85045, 4.34878;807.0;True
+25562;https://openalex.org/I4210137464;KMETIJSKO GOZDARSKA ZBORNICA SLOVENIJE;Chamber of Agriculture and Forestry of Slovenia;46.0698814, 14.4879571;46.6625, 16.16639;144661.0;True
+25565;https://openalex.org/I4210095279;AGRIDEA;AGRIDEA;46.8066288, 7.1615585;46.516, 6.63282;51696.0;True
+25616;https://openalex.org/I1319490839;MINISTRY OF EDUCATION SCIENCE AND TECHNOLOGY;Ministry of Education, Culture, Sports, Science and Technology;-1.2832532, 36.8172449;35.6895, 139.69171;11251330.0;False
+25619;https://openalex.org/I4210164059;CONSORZIO NAZIONALE INTERUNIVERSITARIO PER LA NANOELETTRONICA;Consorzio Nazionale Interuniversitario per la Nanoelettronica;44.4892423, 11.3566199;44.49381, 11.33875;1506.0;True
+25639;https://openalex.org/I75390827;BEIJING UNIVERSITY OF CHEMICAL TECHNOLOGY;Beijing University of Chemical Technology;;39.9075, 116.39723;;True
+25654;https://openalex.org/I4387152482;FONDATION DE L'ECOLE NORMALE SUPERIEURE;Fondation de l'Ecole Normale Superieure;48.8422951, 2.3442717;48.85341, 2.3488;1280.0;True
+25657;https://openalex.org/I72951846;WASHINGTON STATE UNIVERSITY;Washington State University;;46.73127, -117.17962;;True
+25664;https://openalex.org/I32699454;JOINT INSTITUTE FOR NUCLEAR RESEARCH;Joint Institute for Nuclear Research;53.7903474, 35.4600169;56.74049, 37.18648;345768.0;True
+25723;https://openalex.org/I4210135359;INSTITUT EKONOMSKIH NAUKA;Institute of Economic Sciences;44.8178787, 20.4568089;44.80401, 20.46513;1676.0;True
+25729;https://openalex.org/I4403386655;ROBERT BOSCH STIFTUNG GMBH;Bosch Health Campus;48.779886399999995, 9.161702788673143;48.78232, 9.17702;1154.0;False
+25750;https://openalex.org/I99981631;INSTITUT FOR MENNESKERETTIGHEDER;Danish Institute for Human Rights;55.67572, 12.594118;55.67594, 12.56553;1793.0;True
+25754;https://openalex.org/I4210092393;SNIFFER;Scotland and Northern Ireland Forum for Environmental Research;55.94759245, -3.210132955376694;55.95206, -3.19648;985.0;False
+25776;https://openalex.org/I4210117805;MINISTERUL AFACERILOR INTERNE;Ministry of Internal Affairs;44.4361414, 26.1027202;44.43225, 26.10626;516.0;True
+25781;https://openalex.org/I4210124346;FINANSMINISTERIET;Ministry of Finance;55.675637, 12.581769;60.16952, 24.93545;882067.0;True
+25786;https://openalex.org/I4210147710;MINISTRSTVO ZA JAVNO UPRAVO;Ministry of Public Administration;46.0394367, 14.4719094;46.05108, 14.50513;2872.0;True
+25876;https://openalex.org/I148366613;NATIONAL YANG-MING UNIVERSITY;National Yang Ming Chiao Tung University;;24.80361, 120.96861;;False
+25850;https://openalex.org/I4210120988;OXURION;Oxurion (Belgium);50.866456150000005, 4.674291121114081;50.87959, 4.70093;2372.0;False
+25869;https://openalex.org/I1331384533;UNIVERSITY OF HAWAII;University of Hawaii System;;21.30694, -157.85834;;True
+25871;https://openalex.org/I126826664;UNIVERSITAS UDAYANA;Udayana University;;-8.65, 115.21667;;True
+25872;https://openalex.org/I186765156;Universitas Negeri Papua;State University of Papua;;-0.86291, 134.06403;;True
+25873;https://openalex.org/I2800477803;EIJKMAN INSTITUTE FOR MOLECULAR BIOLOGY;Eijkman Institute for Molecular Biology;;-6.21462, 106.84513;;True
+25874;https://openalex.org/I18014758;Simon Fraser University;Simon Fraser University;;49.26636, -122.95263;;True
+25891;https://openalex.org/I188329596;UNIVERSITY OF CANBERRA;University of Canberra;;-35.28346, 149.12807;;True
+25897;https://openalex.org/I4210164485;FONDAZIONE IRCCS ISTITUTO NEUROLOGICO CARLO BESTA;Fondazione IRCCS Istituto Neurologico Carlo Besta;45.4771341, 9.2306552;45.46427, 9.18951;3513.0;True
+25919;https://openalex.org/I4210163566;UNIVERSITETI METROPOLITAN TIRANA;Universiteti Metropolitan Tirana;41.31588575, 19.900912164461147;41.3275, 19.81889;6970.0;True
+25924;https://openalex.org/I2802375293;EUROPEAN RESPIRATORY SOCIETY;European Respiratory Society;46.5179258, 6.6311917;46.516, 6.63282;248.0;True
+25928;https://openalex.org/I254113865;CEREBRAL PALSY ALLIANCE;Cerebral Palsy Alliance;;-33.76655, 151.24982;;True
+25929;https://openalex.org/I4210163915;EUROPEAN SOCIETY FOR ORGAN TRANSPLANTATION;European Society for Organ Transplantation;52.3855215, 4.8929204;45.40797, 11.88586;928176.0;True
+25932;https://openalex.org/I181547552;BAYLOR COLLEGE OF MEDICINE;Baylor College of Medicine;;29.76328, -95.36327;;True
+25934;https://openalex.org/I4210138201;3E;3E (Belgium);50.8786592, 4.4204328;50.85045, 4.34878;5927.0;False
+25940;https://openalex.org/I1334287468;NOTTINGHAM UNIVERSITY HOSPITALS NHS TRUST;Nottingham University Hospitals NHS Trust;52.943748299999996, -1.1860823827863525;52.9536, -1.15047;2625.0;True
+25943;https://openalex.org/I4210125225;INSTITUTUL DE PNEUMOFTIZIOLOGIE MARIUS NASTA;"Institutul de Pneumoftiziologie ""Marius Nasta""";44.40737, 26.0920319;44.43225, 26.10626;2988.0;False
+25946;https://openalex.org/I4210134464;Instituto Nacional de Saúde;Instituto Nacional de Saúde;-25.96901255, 32.5859250974858;-25.96553, 32.58322;472.0;True
+25949;https://openalex.org/I3131880250;UNIVERSIDAD NACIONAL DE LA PATAGONIA AUSTRAL;National University of Austral Patagonia;-51.6232921, -69.216028;-51.62261, -69.21813;164.0;True
+25953;https://openalex.org/I59986765;UNIVERSIDAD EXTERNADO DE COLOMBIA;Universidad Externado de Colombia;4.549928, -74.084363;4.60971, -74.08175;6654.0;True
+25954;https://openalex.org/I4210101907;LILONGWE UNIVERSITY OF AGRICULTURE AND NATURAL RESOURCES;Lilongwe University of Agriculture and Natural Resources;-14.04141045, 33.735370838170624;-13.96692, 33.78725;9997.0;True
+25959;https://openalex.org/I33501960;UNIVERSIDADE FEDERAL DE SANTA MARIA;Universidade Federal de Santa Maria;-29.723206150000003, -53.720453363783385;-29.68417, -53.80694;9414.0;True
+25965;https://openalex.org/I4210128007;NATIONAL INSTITUTE OF ANIMAL SCIENCE;National Institute of Animal Science;;35.84509, 127.14752;;True
+25967;https://openalex.org/I76214153;Lanzhou University;Lanzhou University;;36.05701, 103.83987;;True
+25970;https://openalex.org/I4210090253;EUROPEAN RESEARCH INFRASTRUCTURE ON HIGHLY PATHOGENIC AGENTS;European Research Infrastructure on Highly Pathogenic Agents;50.84579615, 4.3576019712109435;48.85341, 2.3488;264222.0;True
+25977;https://openalex.org/I4387155606;OPENAIRE AMKE;OpenAIRE Non-Profit Civil Partnership;38.045574349999995, 23.805270162605616;38.05, 23.8;675.0;True
+25982;https://openalex.org/I4210107804;NEXANS FRANCE;Nexans (France);48.8991539, 2.2387905;48.85341, 2.3488;9518.0;False
+25989;https://openalex.org/I170201317;UNIVERSITY OF PITTSBURGH;University of Pittsburgh;40.4440596886561, -79.956180490203;40.44062, -79.99589;3382.0;True
+25992;https://openalex.org/I162346809;INSTITUT NATIONAL DES LANGUES ET CIVILISATIONS ORIENTALES;Institut National des Langues et Civilisations Orientales;48.827088, 2.3756326;48.85341, 2.3488;3525.0;True
+26010;https://openalex.org/I294845491;TECHNICAL UNIVERSITY OF MOMBASA;Technical University of Mombasa;-4.0421228, 39.6662054;-4.05466, 39.66359;1424.0;True
+26023;https://openalex.org/I15881080;UNIVERSIDAD NACIONAL DE CUYO;Universidad Nacional de Cuyo;-32.8915818, -68.8737731415666;-32.89084, -68.82717;4352.0;True
+26031;https://openalex.org/I4210144481;Landstinget Dalarna;Landstinget Dalarna;60.598745750000006, 15.611062421966164;60.60357, 15.62597;975.0;True
+26040;https://openalex.org/I4210099017;DEPARTAMENT DE DRETS SOCIALS;Departament de Benestar i Drets Socials;41.40954515, 2.218251407317612;39.56939, 2.65024;207851.0;False
+26049;https://openalex.org/I4210135118;KOSOVAR CENTRE FOR SECURITY STUDIES;Kosovar Centre for Security Studies;42.6286184, 21.1129879;42.67272, 21.16688;6593.0;True
+26065;https://openalex.org/I200719446;VANDERBILT UNIVERSITY;Vanderbilt University;36.155644, -86.7897383;36.16589, -86.78444;1235.0;True
+26073;https://openalex.org/I4210102722;PROJECT ARTS CENTRE;Project Arts Centre;53.3451476, -6.266429;53.33306, -6.24889;1778.0;True
+26080;https://openalex.org/I302099661;TAIDEYLIOPISTO;University of the Arts Helsinki;63.2467777, 25.9209164;60.16952, 24.93545;346084.0;True
+26093;https://openalex.org/I59028903;Ocean University of China;Ocean University of China;;36.06488, 120.38042;;True
+26096;https://openalex.org/I26999989;UNIVERSITY OF THE FREE STATE;University of the Free State;-29.116395, 26.215496;-29.12107, 26.214;540.0;True
+26122;https://openalex.org/I4210103157;MAAELU TEADMUSKESKUS;Centre of Estonian Rural Research and Knowledge;58.7623235, 26.397759;58.74667, 26.39389;1755.0;True
+26147;https://openalex.org/I4210136950;HOCHSCHULE AALEN - TECHNIK UND WIRTSCHAFT;Hochschule Aalen;48.8381003, 10.0733562157913;48.83777, 10.0933;1460.0;True
+26169;https://openalex.org/I162210093;INTERNATIONAL RICE RESEARCH INSTITUTE;International Rice Research Institute;;14.17025, 121.24181;;True
+26176;https://openalex.org/I4210110112;INSTITUT ZA ONKOLOGIJU I RADIOLOGIJU SRBIJE;Institut za onkologiju i radiologiju Srbije;44.7976801, 20.4653984;44.80401, 20.46513;704.0;True
+26193;https://openalex.org/I4210161081;INTENSIVE CARE NATIONAL AUDIT AND RESEARCH CENTRE;Intensive Care National Audit & Research Centre;51.5073219, -0.1276474;51.50853, -0.12574;188.0;False
+26227;https://openalex.org/I57093077;SWINBURNE UNIVERSITY OF TECHNOLOGY;Swinburne University of Technology;;-37.814, 144.96332;;True
+26242;https://openalex.org/I4387154322;AKADEMIA E STUDIMEVE ALBANOLOGJIKE;Akademia e Studimeve Albanologjike;41.31588575, 19.900912164461147;41.3275, 19.81889;6970.0;True
+26277;https://openalex.org/I8961855;UNIVERSIDAD NACIONAL;Universidad Nacional Autónoma de México;10.177781249999999, -84.05918418070075;19.42847, -99.12766;1916856.0;False
+26285;https://openalex.org/I11957088;MICHIGAN TECHNOLOGICAL UNIVERSITY;Michigan Technological University;47.1099114, -88.55115132910507;47.12187, -88.56901;1896.0;True
+26288;https://openalex.org/I4210163414;CARE France;Eye Tech Care (France);48.8909741, 2.37358;45.74846, 4.84671;395997.0;False
+26290;https://openalex.org/I1339876250;INSTITUT NATIONAL DE LA STATISTIQUE;Institut National de la Statistique et des Etudes Economiques;12.639523472044987, -8.00282981117312;48.85341, 2.3488;4138168.0;False
+26349;https://openalex.org/I2801708245;Belfast City Council;Belfast City Council;54.59528245, -5.929513473272849;54.59682, -5.92541;315.0;True
+26354;https://openalex.org/I116419501;UNIVERSIDAD MAYOR;Universidad Mayor;-33.4213495, -70.6050312;-33.45694, -70.64827;5635.0;True
+26355;https://openalex.org/I4210149873;Ministerium für Umwelt, Landwirtschaft, Natur- und Verbraucherschutz des Landes Nordrhein-Westfalen;Ministry for Environment, Agriculture, Conservation and Consumer Protection;51.2504966, 6.7728428;51.22172, 6.77616;3208.0;True
+26365;https://openalex.org/I2802974247;DEVON COUNTY COUNCIL;Devon County Council;50.715007400000005, -3.518218806388213;50.7236, -3.52751;1158.0;True
+26368;https://openalex.org/I4407990238;VERTICAL FARM INSTITUTE;Vertical Farm Institute;48.1969148, 16.4020644;48.20849, 16.37208;2568.0;True
+26369;https://openalex.org/I4407990238;VERTICAL FARM INSTITUTE GMBH;Vertical Farm Institute;48.205654, 16.3499206;48.20849, 16.37208;1672.0;True
+26381;https://openalex.org/I2801317047;LOUTH COUNTY COUNCIL;Louth County Council;54.0031095, -6.3856922036659745;54.0, -6.41667;2054.0;True
+26422;https://openalex.org/I4210085944;FUNDACION AGENCIA ARAGONESA PARA LA INVESTIGACION Y EL DESARROLLO;Fundacion Agencia Aragonesa para la Investigacion y el Desarrollo;41.6521342, -0.8809428;41.65606, -0.87734;529.0;True
+26430;https://openalex.org/I4210107998;AFRICAN FORUM FOR AGRICULTURAL ADVISORY SERVICES;African Forum for Agricultural Advisory Services;0.3177137, 32.5813539;0.31628, 32.58219;185.0;True
+26442;https://openalex.org/I2802184509;Cyprus police;Cyprus Police;35.1554534, 33.3475976726927;35.17531, 33.3642;2674.0;True
+26472;https://openalex.org/I4387152804;Technological University of the Shannon: Midlands Midwest;Technological University of the Shannon: Midlands Midwest;52.6799862, -8.6510125;53.42278, -7.93722;95383.0;True
+26474;https://openalex.org/I4210145796;EUROPEAN HEAT PUMP ASSOCIATION;European Heat Pump Association;50.840628, 4.3728138;50.85045, 4.34878;2010.0;True
+26499;https://openalex.org/I3121987637;UNIVERSIDAD NACIONAL DEL LITORAL;National University of the Littoral;-31.6346852, -60.705146083868;-31.64881, -60.70868;1606.0;True
+26502;https://openalex.org/I112260969;Ontario Institute for Cancer Research;Ontario Institute for Cancer Research;43.653963, -79.387207;43.70643, -79.39864;5906.0;True
+26590;https://openalex.org/I4400008963;FACULTY OF TECHNOLOGY AND METALLURGY UNIVERSITY OF BELGRADE;University of Belgrade – Faculty of Technology and Metallurgy;44.6103314, 20.7262288;44.80401, 20.46513;29826.0;False
+26600;https://openalex.org/I14245010;UNIVERZITET U KRAGUJEVCU;University of Kragujevac;44.0082482, 20.9140472;44.01667, 20.91667;960.0;True
+26603;https://openalex.org/I4210094706;CLUB YOUNG SCIENTISTS;Club Young Scientists;42.6978634, 23.3221789;42.69751, 23.32415;166.0;True
+26607;https://openalex.org/I1316675753;UNIVERSIDADE DO ESTADO DA BAHIA;Universidade do Estado da Bahia;-12.973757899999999, -38.50901789289739;-12.97563, -38.49096;1968.0;True
+26609;https://openalex.org/I4210150540;MINISTRY OF EDUCATION AND SCIENCE OF GEORGIA;Ministry of Education and Science of Georgia;41.6934591, 44.8014495;41.69411, 44.83368;2677.0;True
+26620;https://openalex.org/I4210114431;DE VLINDERSTICHTING;Dutch Butterfly Conservation;51.9663991, 5.6554954;51.97, 5.66667;864.0;True
+26650;https://openalex.org/I4210153004;AMADEU ANTONIO STIFTUNG;Amadeu Antonio Foundation;49.5484051, 8.6703494971762;52.52437, 13.41053;468169.0;True
+26679;https://openalex.org/I21431960;BRITISH SCHOOL AT ATHENS;British School at Athens;51.5064143, -0.1316971;37.98376, 23.72784;2391833.0;True
+26689;https://openalex.org/I4210135778;GENERALDIREKTION KULTURELLES ERBE RHEINLAND-PFALZ;Generaldirektion Kulturelles Erbe Rheinland-Pfalz;50.36823505, 7.616540452361186;49.98419, 8.2791;63638.0;True
+26696;https://openalex.org/I4210119633;Fundación para la Gestión de la Investigación Biomédica de Cádiz;Fundación Para la Gestión de la Investigación Biomédica de Cádiz;36.5298292, -6.2925679;36.52672, -6.2891;464.0;True
+26702;https://openalex.org/I4210132483;NORGES NATURVERNFORBUND;Naturvernforbundet;59.9167307, 10.7500614;59.91273, 10.74609;497.0;True
+26727;https://openalex.org/I4210106352;EAT FOUNDATION;EAT;60.0518829, 10.6799603;59.91273, 10.74609;15904.0;True
+26804;https://openalex.org/I4210135894;NEXTWORKS;Nextworks (Italy);43.7075084, 10.3814469;43.70853, 10.4036;1784.0;False
+26805;https://openalex.org/I4392738070;ACCELLERAN;Accelleran NV (Belgium);51.1436107, 4.99117254658485;51.22047, 4.40026;42065.0;True
+26816;https://openalex.org/I4210093546;DIMOS ATHINAION;Dimos Athinaion Epicheirisi Michanografisis (Greece);38.2653828, 21.7618384;37.98376, 23.72784;174798.0;False
+26849;https://openalex.org/I268303160;WARSZAWSKI UNIWERSYTET MEDYCZNY;Medical University of Warsaw;52.2337172, 21.0714156104111;52.22977, 21.01178;4085.0;True
+26853;https://openalex.org/I1291836623;Mount Sinai Hospital;Mount Sinai Hospital;43.657602, -79.38983;43.70643, -79.39864;5475.0;True
+26856;https://openalex.org/I4387152291;BRIGHTON AND SUSSEX UNIVERSITY HOSPITALS NHS TRUST;Brighton and Sussex University Hospitals NHS Trust;50.8194761, -0.1183606;50.82838, -0.13947;1783.0;True
+26875;https://openalex.org/I4210163835;CONSORZIO INTERUNIVERSITARIO PER L'OTTIMIZZAZIONE E LA RICERCA OPERATIVA;Consorzio Interuniversitario Per L'Ottimizzazione E La Ricerca Operativa;44.3853243, 11.3416015;44.49381, 11.33875;12065.0;True
+26876;https://openalex.org/I4210152251;HOVE;City College Brighton and Hove;48.8467812, 2.3771505;50.82838, -0.13947;284789.0;False
+26886;https://openalex.org/I2799973717;INSTITUTE FOR EDUCATION;IHE Delft Institute for Water Education;35.9306782, 14.4685565;52.00667, 4.35556;1957863.0;False
+26888;https://openalex.org/I4387155831;LEVINSKY-WINGATE ACADEMIC COLLEGE;Levinsky-Wingate Academic College;32.0523573, 34.7626219;32.08088, 34.78057;3594.0;True
+26964;https://openalex.org/I112412981;NATIONAL UNIVERSITY OF KYIV-MOHYLA ACADEMY;National University of Kyiv Mohyla Academy;50.4662308, 30.5212438;50.45466, 30.5238;1299.0;False
+26972;https://openalex.org/I2269089;SYKEHUSET INNLANDET HF;Innlandet Hospital Trust;60.8827149, 10.9497194;60.88095, 10.93948;588.0;True
+26992;https://openalex.org/I216306336;UNIVERZITA J. SELYEHO;J. Selye University;47.93525475, 18.12111089298373;47.76356, 18.12263;19092.0;True
+27015;https://openalex.org/I47720641;HUAZHONG UNIVERSITY OF SCIENCE AND TECHNOLOGY;Huazhong University of Science and Technology;;30.58333, 114.26667;;True
+27036;https://openalex.org/I2802886945;MINISTERO DELL'ECONOMIA E DELLE FINANZE;Ministero dell'Economia e delle Finanze;41.9885079, 13.0684388;41.89193, 12.51133;47314.0;True
+27044;https://openalex.org/I4210162862;EUROPEAN SOCIETY FOR BLOOD AND MARROW TRANSPLANTATION;European Society for Blood and Marrow Transplantation;52.1677327, 4.4799799;48.85341, 2.3488;398113.0;True
+27046;https://openalex.org/I2802607932;EUROPEAN HEMATOLOGY ASSOCIATION;European Hematology Association;52.0736729, 4.3181918;52.07667, 4.29861;1379.0;True
+27065;https://openalex.org/I4210090451;INSTITUTUL NATIONAL DE SANATATE PUBLICA;Institutul National de Sanatate Publica;44.4361414, 26.1027202;44.43225, 26.10626;516.0;True
+27068;https://openalex.org/I4210086369;INEM;Institut Necker Enfants Malades;38.7077507, -9.1365919;48.85341, 2.3488;1453688.0;False
+27071;https://openalex.org/I191208505;XIAMEN UNIVERSITY;Xiamen University;;24.47979, 118.08187;;True
+27072;https://openalex.org/I4392738168;INSTITUTUL DE STUDII SUD EST EUROPENE;Institutul de Studii Sud-Est Europene;44.4217202, 26.0698484;44.43225, 26.10626;3119.0;False
+27078;https://openalex.org/I169495764;UNIWERSYTET JANA KOCHANOWSKIEGO W KIELCACH;Jan Kochanowski University;50.8484839, 20.7274942;50.87033, 20.62752;7426.0;True
+27098;https://openalex.org/I2800598758;NEDERLANDSE TAALUNIE;Dutch Language Union;52.0826152, 4.3073233;52.07667, 4.29861;890.0;True
+27100;https://openalex.org/I170583851;UNIWERSYTET OPOLSKI;University of Opole;50.6696082, 17.9260175174599;50.67211, 17.92533;282.0;True
+27143;https://openalex.org/I4210133653;CENTRO EM REDE DE INVESTIGACAO EM ANTROPOLOGIA;Centre for Research in Anthropology;38.7077926, -9.1365061;38.71667, -9.13333;1025.0;True
+27203;https://openalex.org/I4210112666;GSM ASSOCIATION;GSMA (United States);47.3746279, 8.5239867;33.749, -84.38798;7522973.0;False
+27205;https://openalex.org/I4210135341;MISSIONS PUBLIQUES;Missions Publiques;48.8699021, 2.3461909;48.85341, 2.3488;1844.0;True
+27207;https://openalex.org/I4210120219;KHARKIV NATIONAL UNIVERSITY OF INTERNAL AFFAIRS;Kharkiv National University of Internal Affairs;49.9902794, 36.2303893;49.98081, 36.25272;1913.0;True
+27214;https://openalex.org/I4210143728;SOUTH AFRICAN NATIONAL ENERGY DEVELOPMENT INSTITUTE;South African National Energy Development Institute;-26.214795000000002, 27.919477916666665;-26.20227, 28.04363;12464.0;True
+27219;https://openalex.org/I4210132029;MINISTRY OF SCIENTIFIC RESEARCH AND INNOVATION;Ministry of Scientific Research and Innovation;3.8689867, 11.5213344;3.86667, 11.51667;578.0;True
+27225;https://openalex.org/I161372803;STRATHMORE UNIVERSITY;Strathmore University;-1.3074559, 36.8147211;-1.28333, 36.81667;2691.0;True
+27229;https://openalex.org/I4210129636;ADDIS ABABA SCIENCE AND TECHNOLOGY UNIVERSITY;Addis Ababa Science and Technology University;8.9013695, 38.8003557;9.02497, 38.74689;14946.0;True
+27239;https://openalex.org/I4210114171;ARESS;Agenzia Regionale Sanitaria della Puglia;6.415369500000001, 2.3062283633626413;41.12066, 16.86982;4120533.0;False
+27240;https://openalex.org/I216286881;BOTSWANA INTERNATIONAL UNIVERSITY OF SCIENCE & TECHNOLOGY;Botswana International University of Science and Technology;-22.536888, 27.123513;-22.54605, 27.12507;1031.0;False
+27242;https://openalex.org/I344018163;DEDAN KIMATHI UNIVERSITY OF TECHNOLOGY;Dedan Kimathi University of Technology;-0.3167549, 36.93100635543915;-0.42013, 36.94759;11642.0;True
+27297;https://openalex.org/I4400009003;SIGNATOPE GMBH;Signatope GmbH (Germany);48.482305, 9.1857682;48.49144, 9.20427;1700.0;True
+27299;https://openalex.org/I2801203653;CENTRE HOSPITALIER NATIONAL D'OPHTALMOLOGIE DES QUINZE-VINGTS;Centre hospitalier national d'ophtalmologie des Quinze-Vingts;48.8512712, 2.3722273;48.85341, 2.3488;1731.0;True
+27328;https://openalex.org/I1443707;JIMMA UNIVERSITY;Jimma University;7.6794053, 36.8535084741544;7.67344, 36.83441;2207.0;True
+27330;https://openalex.org/I4210104433;NATIONAL INSTITUTE FOR PUBLIC HEALTH;National Institute for Public Health and the Environment;;52.11, 5.18056;;False
+27365;https://openalex.org/I4210155949;EUROPEAN PUBLIC HEALTH ASSOCIATION;European Public Health Association;52.0975474, 5.108915;52.09083, 5.12222;1176.0;True
+27382;https://openalex.org/I39481719;INSTITUT NATIONAL DE LA RECHERCHE SCIENTIFIQUE;Institut National de la Recherche Scientifique;46.8130354, -71.2239361;46.81228, -71.21454;720.0;True
+27394;https://openalex.org/I99043593;MACQUARIE UNIVERSITY;Macquarie University;;-33.86785, 151.20732;;True
+27425;https://openalex.org/I80947539;FUZHOU UNIVERSITY;Fuzhou University;;26.06139, 119.30611;;True
+27427;https://openalex.org/I205237279;NANKAI UNIVERSITY;Nankai University;;39.14222, 117.17667;;True
+27429;https://openalex.org/I168356945;KYOTO SANGYO UNIVERSITY;Kyoto Sangyo University;;35.02107, 135.75385;;True
+27471;https://openalex.org/I4210144188;DESERT RESEARCH CENTER;Desert Research Center;30.048819, 31.243666;30.06263, 31.24967;1641.0;True
+27477;https://openalex.org/I4210140100;UNIVERSITATEA DE STAT DIN TIRASPOL;Universitatea de Stat din Tiraspol;47.0383557, 28.8082307;47.00556, 28.8575;5220.0;True
+27478;https://openalex.org/I4210160951;Odessa State Environmental University;Odessa State Environmental University;46.4017636, 30.7473249;46.48572, 30.74383;9339.0;True
+27482;https://openalex.org/I4210113084;RUSSIAN PRESIDENTIAL ACADEMY OF NATIONAL ECONOMY AND PUBLIC ADMINISTRATION, NORTH-WEST INSTITUTE OF MANAGEMENT;North-West Institute of Management;59.915162800000004, 30.315056501072068;59.93863, 30.31413;2610.0;False
+27505;https://openalex.org/I4210132668;AXIOM;Axiom (United States);47.1980425, 0.9172683;41.79586, -87.97562;6680614.0;False
+27570;https://openalex.org/I99729588;INDIAN INSTITUTE OF TECHNOLOGY BHUBANESWAR;Indian Institute of Technology Bhubaneswar;20.1540594, 85.7086509;20.27241, 85.83385;18543.0;True
+27586;https://openalex.org/I95650031;EESTI KUNSTIAKADEEMIA;Estonian Academy of Arts;59.441675149999995, 24.717414652100878;59.43696, 24.75353;2108.0;True
+27598;https://openalex.org/I2799899675;CENTRAL CONSERVATORY OF MUSIC;Central Conservatory of Music;;39.9075, 116.39723;;True
+27604;https://openalex.org/I4210090935;DEFENCE RESEARCH INSTITUTE;Defence Institute of High Altitude Research;48.82969105, 2.2328406170627186;34.16504, 77.58402;6217011.0;False
+27610;https://openalex.org/I1285200648;MINISTRY OF INTERNAL AFFAIRS;Ministry of Internal Affairs and Communications;41.6988653, 44.8884179;35.6895, 139.69171;7815599.0;False
+27614;https://openalex.org/I4210122802;WINCHESTER SCIENCE CENTRE;Winchester Science Centre;51.0612766, -1.3131692;51.06513, -1.3187;577.0;True
+27623;https://openalex.org/I4210121164;SKOGSSTYRELSEN;Swedish Forest Agency;57.7973822, 14.1414185;57.78145, 14.15618;1976.0;True
+27639;https://openalex.org/I2800181931;NATURSTYRELSEN;Danish Nature Agency;55.707441, 9.275848;55.70927, 9.5357;16280.0;True
+27641;https://openalex.org/I2799953214;EMSCHERGENOSSENSCHAFT;Emschergenossenschaft;51.44617235, 7.020153424802404;51.48165, 7.21648;14161.0;True
+27642;https://openalex.org/I2800498130;SCOTTISH NATURAL HERITAGE;Scottish Natural Heritage;57.465852100000006, -4.272272036112965;55.95206, -3.19648;180673.0;True
+27702;https://openalex.org/I1326116301;NATURAL ENGLAND;Natural England;53.9590555, -1.0815361;53.95763, -1.08271;176.0;True
+27714;https://openalex.org/I4210115529;RES PUBLICA;Res Publica (Norway);48.810139, 2.330612;59.91273, 10.74609;1347100.0;False
+27727;https://openalex.org/I4210118768;Ministero delle Infrastrutture e dei Trasporti;Ministry of Infrastructures and Transport;41.9987752, 12.6252566;41.89193, 12.51133;15163.0;True
+27733;https://openalex.org/I4392738307;FUNDACION CENTRO DE SERVICIOS Y PROMOCION FORESTAL Y DE SU INDUSTRIA DE CASTILLA Y LEON;Cesefor;41.7633842, -2.4642041;41.76401, -2.46883;390.0;True
+27738;https://openalex.org/I4400009024;UNIVERSITY OF BELGRADE-FACULTY OF FORESTRY;University of Belgrade – Faculty of Forestry;44.7828455, 20.4226320212463;44.80401, 20.46513;4097.0;False
+27745;https://openalex.org/I3130875797;LUCA SCHOOL OF ARTS;LUCA School of Arts;50.8613215, 4.366682977432493;50.85045, 4.34878;1744.0;True
+27774;https://openalex.org/I79833322;POMORSKI UNIWERSYTET MEDYCZNY W SZCZECINIE;Pomeranian Medical University;53.4230725, 14.554409568229918;53.42894, 14.55302;659.0;True
+27775;https://openalex.org/I4210118302;INFECTIOUS DISEASES, AIDS AND CLINICAL IMMUNOLOGY RESEARCH CENTER;AIDS and Clinical Immunology Research Center;41.61697375, 42.8439677;41.69411, 44.83368;165523.0;True
+27795;https://openalex.org/I4388891843;WWF VERDENSNATURFONDEN;WWF Danmark;55.700104, 12.534926;55.67594, 12.56553;3301.0;True
+27808;https://openalex.org/I4210119576;ODISEE;University College Odisee;50.8489498, 4.3564427;50.85045, 4.34878;563.0;False
+27821;https://openalex.org/I4387930277;NATIONAL TRAINING CENTER;International Research and Training Center;42.712049, 23.321083017956774;50.45466, 30.5238;1020786.0;False
+27824;https://openalex.org/I4210139325;ASSOCIATION FRANCOPHONE POUR LES SOINS ONCOLOGIQUES DE SUPPORT;Association Francophone pour les Soins Oncologiques de Support;44.8123425, -0.5481434;44.80759, -0.55144;589.0;True
+27845;https://openalex.org/I3109867330;Innovasjon Norge;Innovation Norway (Norway);59.9112341, 10.7392022;59.91273, 10.74609;418.0;True
+27880;https://openalex.org/I4210125238;UNIWERSYTET MORSKI W GDYNI;Gdynia Maritime University;54.57919135, 18.519857454950444;54.51889, 18.53188;6750.0;True
+27920;https://openalex.org/I4387155239;ESC DIJON BOURGOGNE;ESC Dijon Bourgogne, École supérieure de commerce de Dijon-Bourgogne;47.3278977, 5.0415661;47.31667, 5.01667;2254.0;True
+27935;https://openalex.org/I4387153750;PONTIFICIO ISTITUTO BIBLICO;Pontifical Biblical Institute;41.8988222, 12.4837404;41.89193, 12.51133;2409.0;True
+27936;https://openalex.org/I12524447;Seton Hall University;Seton Hall University;;40.74899, -74.26126;;True
+27938;https://openalex.org/I57092466;BAHIR DAR UNIVERSITY;Bahir Dar University;11.5972676, 37.39578475;11.59364, 37.39077;679.0;True
+27939;https://openalex.org/I4210097192;Forum For Social Studies;Forum For Social Studies;9.0, 38.75;9.02497, 38.74689;2797.0;True
+27940;https://openalex.org/I102179633;THE NEW SCHOOL;New School;40.73547915, -73.9970708835668;40.71427, -74.00597;2475.0;False
+27951;https://openalex.org/I2802813508;EUROPEAN FEDERATION FOR WELDING JOINING AND CUTTING;European Welding Federation;50.9051936, 4.4061338;50.85045, 4.34878;7297.0;False
+27957;https://openalex.org/I189575948;SOUTH VALLEY UNIVERSITY;South Valley University;26.1615051, 32.7182974;26.16418, 32.72671;891.0;True
+27958;https://openalex.org/I12789410;AHMADU BELLO UNIVERSITY;Ahmadu Bello University;11.130493000000001, 7.700276248793804;11.11128, 7.7227;3248.0;True
+27965;https://openalex.org/I3131883934;UNIVERSIDADE AGOSTINHO NETO;Agostinho Neto University;-9.51803445, 13.53567602042315;-8.83682, 13.23432;82656.0;True
+27966;https://openalex.org/I4210152282;UNIVERSIDAD NACIONAL DE GUINEA ECUATORIAL;National University of Equatorial Guinea;3.7397935, 8.7201414;3.75578, 8.78166;7054.0;True
+27967;https://openalex.org/I128559575;UNIVERSITY OF RUHUNA;University of Ruhuna;6.0534414, 80.5630043;6.0461, 80.2103;39009.0;True
+27973;https://openalex.org/I83041830;TECHNISCHE HOCHSCHULE DEGGENDORF;Deggendorf Institute of Technology;48.8297604, 12.9551441;48.84085, 12.96068;1298.0;True
+27980;https://openalex.org/I4210167182;LUFTFARTSVERKET;Luftfartsverket (Sweden);58.5905937, 16.1858926;58.59419, 16.1826;443.0;False
+27992;https://openalex.org/I11947397;FUNDAMENTAL RESEARCH;Tata Institute of Fundamental Research;50.830137300000004, 4.444777739787238;19.07283, 72.88261;6870610.0;False
+27994;https://openalex.org/I4387155278;MAANMITTAUSLAITOS;Maanmittauslaitos;60.1998039, 24.9430199;60.16952, 24.93545;3393.0;True
+28008;https://openalex.org/I2802781690;Österreichische Nationalbibliothek;Austrian National Library;48.2068178, 16.3673757;48.20849, 16.37208;395.0;True
+28022;https://openalex.org/I4210114743;Monmouthshire County Council;Monmouthshire County Council;51.70196595, -2.9011866235674932;51.58661, -2.75736;16218.0;True
+28044;https://openalex.org/I130767617;VIDZEMES AUGSTSKOLA;Vidzeme University of Applied Sciences;57.5140181, 24.71603;57.54108, 25.42751;42582.0;True
+28045;https://openalex.org/I4210102653;INSTITUTO POLITECNICO DE SETUBAL;Instituto Politecnico de Setubal;38.51736365, -8.89634062930799;38.5244, -8.8882;1055.0;True
+28063;https://openalex.org/I4210104942;CEREGE;Centre de Recherche et d’Enseignement de Géosciences de l’Environnement;43.491418, 5.33329;43.5283, 5.44973;10247.0;False
+28081;https://openalex.org/I2801420202;Norsk Teknisk Museum;Norsk Teknisk Museum;59.966428, 10.782707;59.91273, 10.74609;6310.0;True
+28094;https://openalex.org/I338023381;ALEXANDER VON HUMBOLDT-STIFTUNG;Alexander von Humboldt Foundation;50.6874397, 7.165804062116042;50.73438, 7.09549;7194.0;True
+28101;https://openalex.org/I4387153000;FONDATION DES SCIENCES DU PATRIMOINE;Fondation des Sciences du Patrimoine;49.0313689, 2.0697727;48.85341, 2.3488;28405.0;True
+28104;https://openalex.org/I4210156966;MAYOR'S OFFICE FOR POLICING AND CRIME;Mayor's Office for Policing and Crime;51.5073219, -0.1276474;51.50853, -0.12574;188.0;True
+28113;https://openalex.org/I4210124808;CROSS-BORDER RESEARCH ASSOCIATION;Cross-Border Research Association;46.534381, 6.5410474;46.51127, 6.49854;4145.0;True
+28123;https://openalex.org/I4210101029;SERVICE PUBLIC FEDERAL FINANCES;Service Public Federal Finances;50.8584406, 4.3557975;50.85045, 4.34878;1016.0;True
+28158;https://openalex.org/I145311141;Alnylam Pharmaceuticals;Alnylam Pharmaceuticals (United States);42.365062, -71.081662;42.3751, -71.10561;2262.0;False
+28171;https://openalex.org/I4210159887;YAROSLAV MUDRYI NATIONAL LAW UNIVERSITY;Yaroslav Mudryi National Law University;49.4871968, 31.2718321;49.98081, 36.25272;362086.0;True
+28172;https://openalex.org/I4403928271;SOURCE INTERNATIONAL ONLUS;Source International ETS;43.7274467, 10.5142734;43.76372, 10.43856;7298.0;True
+28197;https://openalex.org/I4210087977;LIETUVOS RESPUBLIKOS APLINKOS MINISTERIJA;Ministry of Environment of the Republic of Lithuania;54.6870458, 25.2829111;54.68916, 25.2798;309.0;True
+28198;https://openalex.org/I4210092608;SOUTH ATLANTIC ENVIRONMENTAL RESEARCH INSTITUTE;South Atlantic Environmental Research Institute;51.49911755, -0.133139662192783;-51.69382, -57.85701;12685395.0;True
+28226;https://openalex.org/I4399598386;MARIE CURIE ALUMNI ASSOCIATION;Marie Curie Alumni Association;50.8457119, 4.3687936;50.85045, 4.34878;1501.0;True
+28238;https://openalex.org/I2800033600;EUROPEAN SOCIETY FOR MEDICAL ONCOLOGY;European Society for Medical Oncology;46.0083064, 8.951719;46.01008, 8.96004;672.0;True
+28263;https://openalex.org/I106165777;UNIVERSITY OF CENTRAL FLORIDA;University of Central Florida;28.5423999, -81.3794368;28.53834, -81.37924;452.0;True
+28270;https://openalex.org/I4210125264;R2M SOLUTION;R2M Solution (Italy);43.6661456, 7.0492115;37.49223, 15.07041;963560.0;False
+28288;https://openalex.org/I385545280;INTERNATIONAL UNION OF PURE AND APPLIED CHEMISTRY;International Union of Pure and Applied Chemistry;36.0181316, -78.8751582;35.99403, -78.89862;3411.0;True
+28300;https://openalex.org/I1290230355;CALIFORNIA DEPARTMENT OF TOXIC SUBSTANCES CONTROL;California Department of Toxic Substances Control;;38.58157, -121.4944;;True
+28303;https://openalex.org/I3045169105;SOUTHERN UNIVERSITY OF SCIENCE AND TECHNOLOGY;Southern University of Science and Technology;;22.54554, 114.0683;;True
+28317;https://openalex.org/I4210138883;EUROPEAN AQUACULTURE SOCIETY;European Aquaculture Society;51.2317961, 2.931882;51.21551, 2.927;1843.0;True
+28367;https://openalex.org/I4210114321;MINISTERO DELLA DIFESA;Ministry of Defence;41.9031971, 12.4920776528633;41.89193, 12.51133;2027.0;True
+28371;https://openalex.org/I177181097;DURBAN UNIVERSITY OF TECHNOLOGY;Durban University of Technology;-29.780556, 31.035833;-29.8579, 31.0292;8624.0;True
+28373;https://openalex.org/I24185976;SICHUAN UNIVERSITY;Sichuan University;;30.66667, 104.06667;;True
+28375;https://openalex.org/I161296585;Tokyo University of Science;Tokyo University of Science;;35.6895, 139.69171;;True
+28378;https://openalex.org/I4210093798;Museum of Fine Arts, Houston;Museum of Fine Arts, Houston;32.5384797, -83.5832382;29.76328, -95.36327;1161971.0;True
+28412;https://openalex.org/I4390039319;DA VINCI LABS;Da Vinci Labs (France);47.485367, 0.8930147;47.39484, 0.70398;17420.0;True
+28488;https://openalex.org/I4210161256;IMPACT;Impact;50.991288850000004, 3.842148629369313;45.41117, -75.69812;5635727.0;True
+28490;https://openalex.org/I44675526;SHANGHAI OCEAN UNIVERSITY;Shanghai Ocean University;;31.22222, 121.45806;;True
+28498;https://openalex.org/I4210141806;MAYO COUNTY COUNCIL;Mayo County Council;53.8538011, -9.29954106467946;53.85, -9.3;424.0;True
+28514;https://openalex.org/I4407990139;THE CLIMATE ACADEMY;Institute of Climate-Smart Agriculture of the National Academy of Agrarian Sciences of Ukraine;50.8328262, 4.3990719;46.48572, 30.74383;1982845.0;False
+28538;https://openalex.org/I4210157864;THE KOREAN HISTORY EDUCATION SOCIETY;The Korean History Education Society;;37.566, 126.9784;;True
+28550;https://openalex.org/I3131746957;TAJIK STATE UNIVERSITY OF COMMERCE;Tajik State University of Commerce;38.5762709, 68.7863573;38.53575, 68.77905;4550.0;True
+28594;https://openalex.org/I83328450;Miami University;Miami University;39.5103448, -84.7303852;39.507, -84.74523;1327.0;True
+28598;https://openalex.org/I2801051648;China-Japan Friendship Hospital;China-Japan Friendship Hospital;;39.9075, 116.39723;;True
+28601;https://openalex.org/I153265617;SEBHA UNIVERSITY;Sebha University;27.035081952536608, 14.434368532760084;27.03766, 14.42832;664.0;True
+28607;https://openalex.org/I4210130933;Institut National Agronomique de Tunisie;Institut National Agronomique de Tunisie;36.800108, 10.184794;36.81897, 10.16579;2695.0;True
+28638;https://openalex.org/I4210141295;University Network of Excellence in Nuclear Engineering;University Network of Excellence in Nuclear Engineering;43.2560802, -79.8728583;43.25011, -79.84963;1995.0;True
+28646;https://openalex.org/I130701444;GEORGIA INSTITUTE OF TECHNOLOGY;Georgia Institute of Technology;33.7490987, -84.3901849;33.749, -84.38798;204.0;True
+28653;https://openalex.org/I200267027;UNIVERSIDAD JUÁREZ DEL ESTADO DE DURANGO;Universidad Juárez del Estado de Durango;;24.02032, -104.65756;;True
+28662;https://openalex.org/I76661892;FEDERAL UNIVERSITY OF TECHNOLOGY, MINNA;Federal University of Technology Minna;9.6187093, 6.5475752;9.61524, 6.54776;386.0;False
+28685;https://openalex.org/I4210102454;DUNDEE CITY COUNCIL;Dundee City Council;56.4593653, -2.9735213;56.46913, -2.97489;1089.0;True
+28740;https://openalex.org/I139173083;LIETUVOS SPORTO UNIVERSITETAS;Lithuanian Sports University;54.8983474, 23.934575521475264;54.90272, 23.90961;1669.0;True
+28762;https://openalex.org/I4210152427;SENSE ABOUT SCIENCE;Sense about Science;51.5227374, -0.1060177;51.50853, -0.12574;2088.0;True
+28784;https://openalex.org/I69601649;VIA UNIVERSITY COLLEGE;VIA University College;56.19294, 10.181167;56.15674, 10.21076;4422.0;True
+28794;https://openalex.org/I2799869615;HOGERE ZEEVAARTSCHOOL;Antwerp Maritime Academy;51.2410563, 4.397841195988027;51.22047, 4.40026;2295.0;False
+28813;https://openalex.org/I4210166499;HENAN POLYTECHNIC UNIVERSITY;Henan Polytechnic University;;35.23972, 113.23306;;True
+28822;https://openalex.org/I98435010;LVIV POLYTECHNIC NATIONAL UNIVERSITY;Lviv Polytechnic National University;49.4871968, 31.2718321;49.83826, 24.02324;522969.0;True
+28828;https://openalex.org/I4210098514;DANUBE COMMISSION;International Commission for the Protection of the Danube River;47.5083943, 19.1008869;48.20849, 16.37208;217951.0;False
+28853;https://openalex.org/I4210136291;"""RIGA MUNICIPAL AGENCY """"RIGA ENERGY AGENCY""""""";Riga Energy Agency;56.9716562, 24.1665986020787;56.946, 24.10589;4657.0;False
+28870;https://openalex.org/I11892038;UNIVERSITY OF NIGERIA;University of Nigeria;6.863999099999999, 7.3630873649316815;6.85783, 7.39577;3673.0;True
+28872;https://openalex.org/I2800435653;BICC - BONN INTERNATIONAL CENTRE FOR CONFLICT STUDIES GGMBH;BICC - Bonn International Centre for Conflict Studies;50.72409655, 7.064676886726659;50.73438, 7.09549;2452.0;True
+28873;https://openalex.org/I8636806;University of Sousse;University of Sousse;35.8172381, 10.639892;35.82539, 10.63699;943.0;True
+28894;https://openalex.org/I2800271050;CORK COUNTY COUNCIL;Cork County Council;51.8926877, -8.50836178591408;51.89797, -8.47061;2656.0;True
+28902;https://openalex.org/I4210137348;AFRICAN MIGRATION AND DEVELOPMENT POLICY CENTRE;African Migration and Development Policy Centre;-1.3031689499999999, 36.826061224105075;-1.28333, 36.81667;2441.0;True
+28904;https://openalex.org/I3132355903;Elizade University;Elizade University;7.350672, 5.113331;7.09316, 4.83528;41961.0;True
+28937;https://openalex.org/I265584191;REDEEMER'S UNIVERSITY;Redeemer's University;7.6781633, 4.4600885;6.45407, 3.39467;179858.0;True
+28947;https://openalex.org/I41121874;HOCHSCHULE HEILBRONN;Heilbronn University;49.1232528, 9.2098688;49.13995, 9.22054;2012.0;True
+28985;https://openalex.org/I4210159884;IASIS;Iasis Molecular Sciences (United States);37.7719875, 20.8979423;47.65966, -117.42908;9656490.0;False
+28990;https://openalex.org/I32915989;University of the Ryukyus;University of the Ryukyus;;26.33583, 127.80139;;True
+29020;https://openalex.org/I1315672318;STATENS VEGVESEN;Norwegian Public Roads Administration;59.9082546, 10.8143163;59.91273, 10.74609;3836.0;True
+29029;https://openalex.org/I4210106480;REGION HANNOVER;Klinikum Region Hannover;52.3664, 9.7455667;52.37052, 9.73322;955.0;False
+29071;https://openalex.org/I4210159903;COAL;Institute of Coal Chemistry;48.8748984, 2.352652;37.86944, 112.56028;8179141.0;False
+29131;https://openalex.org/I4210090898;MINISTRY OF TOURISM;Ministry of Natural Resources and Tourism;37.9226935, 23.750136050000002;-6.82349, 39.26951;5228979.0;False
+29157;https://openalex.org/I4387155487;MARY IMMACULATE COLLEGE;Mary Immaculate College;52.6495849, -8.6412321;52.66472, -8.62306;2082.0;True
+29190;https://openalex.org/I4210165014;INSTITUTO POLITÉCNICO DE PORTALEGRE;Polytechnic Institute of Portalegre;39.5185343, -7.6489575;39.29379, -7.43122;31217.0;True
+29236;https://openalex.org/I4210161486;LANDWIRTSCHAFTSKAMMER NORDRHEIN-WESTFALEN;Landwirtschaftskammer Nordrhein-Westfalen;51.9874571, 7.6339919;51.96236, 7.62571;2848.0;True
+29257;https://openalex.org/I98559091;UNIWERSYTET RZESZOWSKI;Rzeszów University;50.030163349999995, 22.015769930740777;50.04132, 21.99901;1724.0;True
+29259;https://openalex.org/I4403386581;EUROPEAN FEDERATION FOR SERVICES TO INDIVIDUALS;European Federation for Services to Individuals;50.83879505, 4.375304132256188;50.85045, 4.34878;2269.0;True
+29280;https://openalex.org/I4210115336;THE AFRICAN ACADEMY OF SCIENCES;Institute for African Studies;-1.2832533, 36.8172449;55.75222, 37.61556;6342470.0;False
+29297;https://openalex.org/I4210139890;UC LEUVEN;University Colleges Leuven-Limburg;50.8465079, 4.7257912;50.87959, 4.70093;4071.0;False
+29310;https://openalex.org/I1320355602;DANMARKS STATISTIK;Statistics Denmark;55.710515, 12.563192;55.67594, 12.56553;3847.0;True
+29318;https://openalex.org/I4210109455;FMV;Fundación Marques de Valdecilla;51.3178913, 4.344099049601363;43.46472, -3.80444;1065727.0;False
+29367;https://openalex.org/I4829542;Hochschule RheinMain;RheinMain University of Applied Sciences;50.0805687, 8.2169347;50.08258, 8.24932;2322.0;True
+29368;https://openalex.org/I4210104676;Office of Public Works;The Office of Public Works;53.5564925, -6.7948364;53.555, -6.79167;267.0;False
+29371;https://openalex.org/I68207295;Universidade Estadual de Ponta Grossa;Universidade Estadual de Ponta Grossa;-25.0909298, -50.1510198;-25.095, -50.16194;1189.0;True
+29387;https://openalex.org/I2802955047;STOCKHOLMS STAD;Stockholm Municipality;59.3325648, 18.0480469;59.32938, 18.06871;1224.0;True
+29399;https://openalex.org/I4210131328;WESTERN DEVELOPMENT COMMISSION;Western Development Commission;53.9020915, -8.578779758483897;53.90134, -8.57507;257.0;True
+29402;https://openalex.org/I4210144540;EXECUTIVE AGENCY MARITIME ADMINISTRATION;Executive Agency Maritime Administration;42.69397315, 23.3254571564533;42.69751, 23.32415;408.0;True
+29474;https://openalex.org/I85686399;SOPRONI EGYETEM;University of Sopron;47.6801104, 16.5780816;47.68501, 16.59049;1077.0;True
+29475;https://openalex.org/I3129431789;POLISSIA NATIONAL UNIVERSITY;Polissia National University;49.4871968, 31.2718321;50.26487, 28.67669;205072.0;True
+29476;https://openalex.org/I4210120279;ASSOCIAZIONE ITALIANA PER L'AGRICOLTURA BIOLOGICA;Associazione Italiana per l'Agricoltura Biologica;37.9306249, 15.9174518;45.46427, 9.18951;1006027.0;True
+29479;https://openalex.org/I4210143963;MAIZE RESEARCH INSTITUTE ZEMUN POLJE;Maize Research Institute Zemun Polje;44.8178131, 20.4568974;44.80401, 20.46513;1667.0;True
+29590;https://openalex.org/I4210142133;FONDATION MALADIES RARES;Fondation Maladies Rares;48.827419, 2.3145182;48.85341, 2.3488;3827.0;True
+29600;https://openalex.org/I39661318;BARD COLLEGE;Bard College;42.0204038, -73.91004905107604;41.92704, -73.99736;12644.0;True
+29601;https://openalex.org/I80276326;University of Guam;University of Guam;;13.44761, 144.80109;;True
+29603;https://openalex.org/I23946033;UNIVERSITY OF TEHRAN;University of Tehran;35.7006177, 51.4013785;35.69439, 51.42151;1945.0;True
+29610;https://openalex.org/I4210097870;AJUNTAMENT DE BARCELONA;Ajuntament de Barcelona;41.3825596, 2.1771353;41.38879, 2.15899;1665.0;True
+29618;https://openalex.org/I1174212;UNIVERSITY OF SOUTHERN CALIFORNIA;University of Southern California;;34.05223, -118.24368;;True
+29619;https://openalex.org/I107720978;AIN SHAMS UNIVERSITY;Ain Shams University;30.048819, 31.243666;30.06263, 31.24967;1641.0;True
+29639;https://openalex.org/I146416000;University of Kansas;University of Kansas;;38.97167, -95.23525;;True
+29647;https://openalex.org/I4210134792;V Mane Fils;Mane (France);43.6900642, 6.9795706;43.7, 6.98333;1145.0;False
+29685;https://openalex.org/I4392738188;EIT FOOD;EIT Food;50.86225335, 4.67256531528277;50.87959, 4.70093;2771.0;True
+29694;https://openalex.org/I4210137742;I4CE - INSTITUTE FOR CLIMATE ECONOMICS;I4CE – Institute for Climate Economics;48.8612884, 2.3231801;48.85341, 2.3488;2069.0;False
+29713;https://openalex.org/I4210103874;Chicago Film Archives;Chicago Film Archives;41.5583701, -87.2744806;41.85003, -87.65005;44987.0;True
+29717;https://openalex.org/I2802865875;FLAME UNIVERSITY;Flame University;18.6452489, 73.92318563785392;18.51957, 73.85535;15698.0;True
+29732;https://openalex.org/I4210104959;COLAS;Colas (Canada);48.8314808, 2.2776601;45.50884, -73.58781;5502426.0;False
+29741;https://openalex.org/I2801048784;EUROPEAN HEALTH MANAGEMENT ASSOCIATION;European Health Management Association;50.8179568, 4.4053664;50.85045, 4.34878;5371.0;True
+29749;https://openalex.org/I4210136626;Muzeum romské kultury;Museum of Romani Culture;49.2006149, 16.6236347;49.19522, 16.60796;1287.0;True
+29776;https://openalex.org/I4210145463;AKADEMIA WSB;WSB University;50.3264325, 19.1917385;50.33394, 19.20479;1247.0;True
+29777;https://openalex.org/I10889393;JADE HOCHSCHULE WILHELMSHAVEN/OLDENBURG/ELSFLETH;Jade University of Applied Sciences;53.54950575, 8.088682931250222;53.52998, 8.11253;2683.0;True
+29780;https://openalex.org/I1288675226;MINISTRY OF THE ENVIRONMENT;Ministry of the Environment, Conservation and Parks;60.1690855, 24.9490548;43.70643, -79.39864;6595666.0;False
+29782;https://openalex.org/I4210094408;HAVS- OCH VATTENMYNDIGHETEN;Swedish Agency for Marine and Water Management;57.69291975, 11.854907442754964;57.70716, 11.96679;6834.0;True
+29798;https://openalex.org/I202483615;NATIONAL TECHNICAL UNIVERSITY OF UKRAINE IGOR SIKORSKY KYIV POLYTECHNIC INSTITUTE;National Technical University of Ukraine “Igor Sikorsky Kyiv Polytechnic Institute”;50.4501071, 30.5240501;50.45466, 30.5238;507.0;False
+29836;https://openalex.org/I1297244568;American Physical Society;American Physical Society;33.6534427, -84.4493725;38.98067, -76.93692;896017.0;True
+29842;https://openalex.org/I4210152391;Avera McKennan;Avera McKennan Hospital & University Health Center;;43.54997, -96.70033;;False
+29858;https://openalex.org/I4210140326;CENTRE FOR POLICY RESEARCH;Centre for Economic Policy Research;28.6012504, 77.1890766;51.50853, -0.12574;6710732.0;False
+29876;https://openalex.org/I131762061;GEORGIAN TECHNICAL UNIVERSITY;Georgian Technical University;41.7247038, 44.77758889830629;41.69411, 44.83368;5766.0;True
+29878;https://openalex.org/I4210165358;HOCHSCHULE GEISENHEIM;Hochschule Geisenheim University;49.9844127, 7.9613317;49.9847, 7.96835;503.0;True
+29882;https://openalex.org/I4210112682;WINETECH;Winetech (South Africa);-28.8166236, 24.991639;-33.73378, 18.97523;790807.0;False
+29883;https://openalex.org/I161318765;University of California, Los Angeles;University of California, Los Angeles;;34.05223, -118.24368;;True
+29885;https://openalex.org/I27765905;North-West University;North-West University;-26.6912537, 27.0930546;-26.71667, 27.1;2909.0;True
+29930;https://openalex.org/I169556180;ION;GSI Helmholtz Centre for Heavy Ion Research;50.876408350000005, 3.432898960430588;49.87167, 8.65027;386403.0;False
+29946;https://openalex.org/I4210111287;LIETUVOS RESPUBLIKOS SVEIKATOS APSAUGOS MINISTERIJA;Ministry of Health of the Republic of Lithuania;54.682893199999995, 25.287895438116177;54.68916, 25.2798;870.0;True
+29995;https://openalex.org/I4387153336;BEAMS;Facility for Rare Isotope Beams;48.8611238, 2.3498901;42.73698, -84.48387;6390082.0;False
+30004;https://openalex.org/I4401200335;BLOOM Association;BLOOM;48.8745486, 2.3534081;48.85341, 2.3488;2375.0;True
+30073;https://openalex.org/I4388446360;Zadar County;Institute of Public Health Zadar;44.117214849999996, 15.221068942258931;44.11578, 15.22514;362.0;False
+30080;https://openalex.org/I309496635;HOCHSCHULE WEIHENSTEPHAN-TRIESDORF;Weihenstephan-Triesdorf University of Applied Sciences;48.4008273, 11.7439565;48.40351, 11.74876;463.0;True
+30186;https://openalex.org/I4387153169;NARODOWA AGENCJA WYMIANY AKADEMICKIEJ;Narodowa Agencja Wymiany Akademickiej;52.2562211, 21.0315243;52.22977, 21.01178;3234.0;True
+30188;https://openalex.org/I36603565;IRISH UNIVERSITIES ASSOCIATION;Irish Universities Association;53.3497645, -6.2602731;53.33306, -6.24889;2005.0;True
+30199;https://openalex.org/I157773358;Sun Yat-Sen University;Sun Yat-sen University;;23.11667, 113.25;;True
+30207;https://openalex.org/I38517508;TECHNISCHE HOCHSCHULE WILDAU;Technical University of Applied Sciences Wildau;52.3178262, 13.628815;52.31667, 13.63333;333.0;True
+30210;https://openalex.org/I146563203;UNIVERSITY OF INTERNATIONAL BUSINESS AND ECONOMICS;University of International Business and Economics;;39.9075, 116.39723;;True
+30212;https://openalex.org/I221899656;KARATINA UNIVERSITY;Karatina University;-0.4363013, 37.1512429;-0.42013, 36.94759;22716.0;True
+30213;https://openalex.org/I76842071;UNIVERSIDAD ICESI;Icesi University;3.4517923, -76.5324943;3.43722, -76.5225;1964.0;True
+30220;https://openalex.org/I24027795;UNIVERSITY OF JOHANNESBURG;University of Johannesburg;-26.205, 28.049722;-26.20227, 28.04363;679.0;True
+30248;https://openalex.org/I4210118719;ESTACA;École Supérieure des Techniques Aéronautiques et de Construction Automobile;48.7876535, 2.0409271;48.76636, 2.03405;2421.0;False
+30266;https://openalex.org/I2990557008;INSTITUTO CARO Y CUERVO;Caro and Cuervo Institute;4.6318418999999995, -74.06840840193513;4.60971, -74.08175;2871.0;True
+30268;https://openalex.org/I4210105143;UNIVERSIDAD DE CIENCIAS Y ARTES DE CHIAPAS;Universidad de Ciencias y Artes de Chiapas;;16.75973, -93.11308;;True
+30271;https://openalex.org/I4210151769;UNIVERSITAS MUHAMMADIYAH PONTIANAK;Universitas Muhammadiyah Pontianak;;-0.03194, 109.325;;True
+30276;https://openalex.org/I169744251;DAMANHOUR UNIVERSITY;Damanhour University;31.0374982, 30.4710625;31.03408, 30.46823;466.0;True
+30282;https://openalex.org/I192274371;SURREY COUNTY COUNCIL;Surrey County Council;51.25164045, -0.18646821513076053;51.50853, -0.12574;28874.0;True
+30306;https://openalex.org/I1336856363;MUSEUM+;Natural History Museum;50.0854421, 14.4058345;51.50853, -0.12574;1031738.0;False
+30308;https://openalex.org/I66890659;Saint Mary's University;Saint Mary's University;44.63102256521739, -63.58237233043478;44.64269, -63.57688;1368.0;True
+30309;https://openalex.org/I184813773;California State University, East Bay;California State University, East Bay;;37.66882, -122.0808;;True
+30327;https://openalex.org/I51361536;UNIVERSIDAD DE EL SALVADOR;University of El Salvador;13.692948093213836, -89.21820783137152;13.68935, -89.18718;3376.0;True
+30331;https://openalex.org/I255141171;UNIVERSIDAD DE MATANZAS;University of Matanzas;22.44967065, -81.51081604398391;23.04111, -81.5775;66120.0;False
+30355;https://openalex.org/I51153154;SUSTAINABLE DEVELOPMENT FOUNDATION;Novartis Foundation;51.53031015, -0.29876870313382164;47.55839, 7.57327;718812.0;False
+30381;https://openalex.org/I176790772;MURDOCH UNIVERSITY;Murdoch University;;-31.95224, 115.8614;;True
+30382;https://openalex.org/I4210130751;LANDSCHAFTSVERBAND WESTFALEN-LIPPE;Landschaftsverband Westfalen-Lippe;51.9624216, 7.635936862699104;51.96236, 7.62571;701.0;True
+30392;https://openalex.org/I217937681;QIMR Berghofer Medical Research Institute;QIMR Berghofer Medical Research Institute;;-27.46794, 153.02809;;True
+30398;https://openalex.org/I4210108130;ARTELYS;Artelys (France);48.8759316, 2.3303682;48.85341, 2.3488;2844.0;False
+30402;https://openalex.org/I1336273203;NATIONAL BUREAU OF INVESTIGATION;National Bureau of Investigation;60.29061765, 25.05418613648944;60.29414, 25.04099;826.0;True
+30414;https://openalex.org/I109541847;LIFEARC;LifeArc;51.5073219, -0.1276474;51.50853, -0.12574;188.0;True
+30415;https://openalex.org/I1289243028;Oak Ridge National Laboratory;Oak Ridge National Laboratory;35.93006535, -84.31240032151328;36.01036, -84.26964;9722.0;True
+30431;https://openalex.org/I27357992;Dalian University of Technology;Dalian University of Technology;;38.91222, 121.60222;;True
+30447;https://openalex.org/I4210124779;NATIONAL AERONAUTICS AND SPACE ADMINISTRATION;National Aeronautics and Space Administration;38.89061055, -77.00904420083995;38.89511, -77.03637;2417.0;True
+30483;https://openalex.org/I4210109399;KOTEBE UNIVERSITY OF EDUCATION;Kotebe University of Education;9.0451163, 38.78348380318287;9.02497, 38.74689;4601.0;True
+30484;https://openalex.org/I4210151321;STATE SCIENTIFIC INSTITUTION INSTITUTE OF EDUCATIONAL ANALYTICS;"State Scientific Institution ""Institute of Educational Analytics""";50.4500336, 30.5241361;50.45466, 30.5238;515.0;False
+30488;https://openalex.org/I4210101344;EESTI RAHVA MUUSEUM;Estonian National Museum;58.39677485, 26.743679673509316;58.38062, 26.72509;2098.0;True
+30493;https://openalex.org/I4401200375;ISTITUTO ITALIANO DI STUDI GERMANICI;Istituto Italiano di Studi Germanici;41.8850381, 12.4650889;41.89193, 12.51133;3904.0;True
+30510;https://openalex.org/I4210134261;Alzheimer Nederland;Alzheimer Nederland;52.1530605, 5.3722055;52.155, 5.3875;1065.0;True
+30511;https://openalex.org/I2802188416;FOA;Fiber Optic Association;55.678335, 12.5635473;34.01949, -118.49138;9015241.0;False
+30587;https://openalex.org/I4210118865;MINISTRY OF INTERNAL AFFAIRS OF UKRAINE;National Guard Military Academy of Ukraine;50.4500336, 30.5241361;49.98081, 36.25272;410832.0;False
+30590;https://openalex.org/I4210093300;STIFTUNG DEUTSCHES TECHNIKMUSEUM BERLIN;German Museum of Technology;52.4979314, 13.3761199;52.52437, 13.41053;3750.0;True
+30596;https://openalex.org/I4210113556;INSTITUT ZA SAVREMENU ISTORIJU;Institut za savremenu istoriju;44.780491, 20.455916217231945;44.80401, 20.46513;2714.0;True
+30615;https://openalex.org/I103402955;PETRO MOHYLA BLACK SEA NATIONAL UNIVERSITY;Petro Mohyla Black Sea National University;49.4871968, 31.2718321;46.97625, 31.99296;284264.0;True
+30621;https://openalex.org/I1336683368;Imperial War Museum;Imperial War Museum;51.504721950000004, -0.11727805164928422;51.50853, -0.12574;723.0;True
+30639;https://openalex.org/I4210144259;EUROPEAN HEALTH TELEMATICS ASSOCIATION;European Health Telematics Association;50.841204, 4.3743555;50.85045, 4.34878;2069.0;True
+30643;https://openalex.org/I2802331213;PARIS SCHOOL OF BUSINESS;Paris School of Business;48.8255145, 2.3670688;48.85341, 2.3488;3378.0;True

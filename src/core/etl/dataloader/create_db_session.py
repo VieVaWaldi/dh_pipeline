@@ -17,6 +17,7 @@ def create_db_session() -> sessionmaker:
                 "connect_timeout": 5,
             },
         )
+        print(f"Succesfully connected to: {database_url}")
         logging.info(f"Succesfully connected to: {database_url}")
         return sessionmaker(bind=engine)
     except Exception as e:

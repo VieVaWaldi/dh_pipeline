@@ -12,8 +12,6 @@ from datamodels.digicher.entities import (
     Institutions,
     Weblinks,
     ResearchOutputs,
-)
-from datamodels.digicher.junctions import (
     InstitutionsResearchOutputs,
     InstitutionsPeople,
     ResearchOutputsWeblinks,

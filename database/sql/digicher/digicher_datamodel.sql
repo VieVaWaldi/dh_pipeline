@@ -66,6 +66,23 @@
 -- --> NO. Eg projects list their own references already ...
 -- NO Backtracking! Would be reference hell!
 
+
+
+
+----- Where else do we need this fuzzy matching?
+
+
+CREATE EXTENSION IF NOT EXISTS fuzzystrmatch;
+CREATE INDEX idx_project_title_lower ON projects (lower(title));
+CREATE INDEX idx_projects_normalized_title ON projects (regexp_replace(lower(title), '[^a-z0-9]', '', 'g'));
+
+-- REMOVE?: CREATE EXTENSION IF NOT EXISTS pg_trgm;
+-- REMOVE: CREATE INDEX idx_project_title_trgm ON projects USING gin (lower(title) gin_trgm_ops);
+
+EXPLAIN ANALYZE 
+SELECT * FROM projects 
+WHERE lower(title) % lower('search term');
+
 -------------------------------------------------------------------
 --- Core Tables                                                 ---
 

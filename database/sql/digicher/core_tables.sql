@@ -1,3 +1,21 @@
+select ro.title, ro.publication_date from researchoutputs as ro
+order by ro.publication_date desc;
+
+join topics as t on pt.topic_id = t.id
+where p.objective like '%cultural heritage%';
+
+select p.title, t.name, t.level from projects as p
+join projects_topics as pt on pt.project_id = p.id
+join topics as t on pt.topic_id = t.id
+where p.objective like '%cultural heritage%';
+
+select * from institutions
+where address_country = 'DE';
+
+select * from institutions
+where lower(name) like '%university college dublin%';
+
+
 -- Fuzzy
 SELECT *
 FROM institutions a
@@ -7,7 +25,7 @@ JOIN institutions b on a.id = b.id;
 -- AND i1.id != i2.id
 -- LIMIT 10
 
-
+{50.5807275,8.6766131}
 
 -----------------------------------------------
 -- CORE ENTITIES							  --
@@ -32,6 +50,8 @@ select count(*) from projects; 			-- 12k / 6k with doi
 -----------------------------------------------
 -- JUNCTIONS							      --
 ----------------------------------------------- 
+
+{53.33306,-6.24889}
 
 --- ResearchOutputs to Others ---
 

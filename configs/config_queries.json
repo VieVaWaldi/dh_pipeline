@@ -33,5 +33,20 @@
         "checkpoint_to_range": "2000"
       }
     ]
+  },
+  "openaire": {
+    "checkpoint": "pagination",
+    "runs": [
+      {
+        "query": "cultural",
+        "download_attachments": false,
+        "checkpoint_to_range": "0"
+      },
+      {
+        "query": "heritage",
+        "download_attachments": false,
+        "checkpoint_to_range": "0"
+      }
+    ]
   }
 }

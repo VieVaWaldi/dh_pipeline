@@ -58,30 +58,3 @@ FROM mat_institution_funding;
 
 REFRESH MATERIALIZED VIEW mat_institution_funding;
 DROP MATERIALIZED VIEW IF EXISTS mat_institution_funding;
-
------------------------------------------------
--- OLD VERSION                               --
------------------------------------------------
-
--- CREATE MATERIALIZED VIEW mat_institution_funding AS
--- SELECT
---     i.id as id,
---     i.address_geolocation as address_geolocation,
---     i.address_country as address_country,
---     COALESCE(SUM(pi.net_ec_contribution), 0) as total_eu_funding,  -- Handle NULLs
---     COUNT(DISTINCT pi.project_id)::text as number_of_projects,
---     CASE 
---         WHEN COUNT(DISTINCT pi.project_id) > 0 
---         THEN ROUND(SUM(COALESCE(pi.net_ec_contribution, 0)) / COUNT(DISTINCT pi.project_id), 2)::text
---         ELSE '0'
---     END as avg_project_funding
--- FROM 
---     Institutions i
---     LEFT JOIN Projects_Institutions pi ON i.id = pi.institution_id
--- WHERE 
---     i.address_geolocation IS NOT NULL
---     AND array_length(i.address_geolocation, 1) = 2
--- GROUP BY 
---     i.id, i.name, i.address_geolocation
--- ORDER BY 
---     total_eu_funding DESC NULLS LAST;
