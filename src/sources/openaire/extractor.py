@@ -43,7 +43,7 @@ class OpenAIREExtractor(IExtractor):
         self.base_research_products_url = (
             "https://api.openaire.eu/graph/researchProducts"
         )
-        self.page_size = 10  # Default page size for project queries
+        self.page_size = 50  # Default page size for project queries
 
     def extract_until_next_checkpoint(self, query: str) -> bool:
         """
@@ -119,7 +119,6 @@ class OpenAIREExtractor(IExtractor):
             "format": "json",
             "page": page,
             "size": self.page_size,
-            "startYear": 2022,
         }
 
         response = make_get_request(self.base_project_url, params)

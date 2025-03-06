@@ -60,7 +60,7 @@ class IExtractor(ABC):
 
         self.data_path = (
             base_data_path
-            / "extractors"
+            # / "extractors"
             / extractor_name
             / f"last_{checkpoint_name}_{self.last_checkpoint}/"
         )
