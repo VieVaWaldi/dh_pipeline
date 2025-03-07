@@ -1,10 +1,12 @@
 from abc import ABC, abstractmethod
+from pathlib import Path
 from typing import Any, Tuple
 
 
 class IObjectTransformer(ABC):
 
-    def __init__(self):  # , transformer_name: str
+    def __init__(self, path_to_file: Path = None):  # , transformer_name: str
+        self.path_to_file = path_to_file
         # config = get_config()
         #
         # self.logging_path: Path = (

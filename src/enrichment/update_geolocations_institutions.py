@@ -51,7 +51,7 @@ setup_logging(logging_path, enrichment_name)
 SHOULD_UPDATE_COUNT = 0
 
 df = pd.read_csv(
-    "openalex_geo_offset_18650.csv",
+    "cordis_openalex_geo_offset_18650.csv",
     # "openalex_geo_offset_21200.csv",
     # "openalex_geo_offset_31500.csv",
     sep=";",

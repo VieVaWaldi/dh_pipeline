@@ -37,8 +37,7 @@ class OpenAIREExtractor(IExtractor):
         self, extractor_name: str, checkpoint_name: str, download_attachments: bool
     ):
         super().__init__(extractor_name, checkpoint_name)
-        # We don't use download_attachments, but keep for interface compatibility
-        self.download_attachments = download_attachments
+        # self.download_attachments = download_attachments
         self.base_project_url = "https://api.openaire.eu/search/projects"
         self.base_research_products_url = (
             "https://api.openaire.eu/graph/researchProducts"
@@ -119,6 +118,7 @@ class OpenAIREExtractor(IExtractor):
             "format": "json",
             "page": page,
             "size": self.page_size,
+            # "startYear": 2020
         }
 
         response = make_get_request(self.base_project_url, params)

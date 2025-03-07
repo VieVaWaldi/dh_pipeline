@@ -1,26 +1,13 @@
 import math
 import os
-import time
 from datetime import datetime
 
 import pandas as pd
-from sqlalchemy import select
+from dotenv import load_dotenv
 
 from core.etl.dataloader.create_db_session import create_db_session
-from core.web_requests.web_requests import make_get_request
 from datamodels.digicher.entities import Institutions
-
-
-def get_institution_openalex(name: str):
-    time.sleep(0.1)
-    return make_get_request(
-        "https://api.openalex.org/institutions",
-        params={
-            "search": name,
-            "select": "id,display_name,geo,display_name_alternatives",
-            "mailto": "walter.ehrenberger@uni-jena.de",
-        },
-    )
+from enrichment.search_geolocations import search_geolocation
 
 
 def get_distance_in_meters(point1, point2):
@@ -53,10 +40,20 @@ def get_distance_in_meters(point1, point2):
     return distance
 
 
-BATCH_SIZE = 50
-OFFSET = 21200
+load_dotenv()
 
-# Create a timestamped filename
+BATCH_SIZE = 50
+OFFSET = 1350
+
+columns = [
+    "institution_id",
+    "institution_name",
+    "search_result_name",
+    "institution_geolocation",
+    "dist (m)",
+    "source",
+]
+
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 csv_filename = f"openalex_geo_{timestamp}.csv"
 file_exists = os.path.isfile(csv_filename)
@@ -66,39 +63,32 @@ with session_factory() as session:
     print(f"Starting the process at {timestamp}")
     print(f"Results will be saved to {csv_filename}")
 
-    # Create DataFrame structure
-    columns = [
-        "i.id",
-        "oa.id",
-        "i.name",
-        "oa.name",
-        "i.geo",
-        "oa.geo",
-        "dist (m)",
-        "matching_name",
-    ]
-
     keep_going = True
     while keep_going:
         print(f"Processing batch with OFFSET = {OFFSET}")
-        statement = select(Institutions).limit(BATCH_SIZE).offset(OFFSET)
-        rows = session.execute(statement).all()
+        rows = (
+            session.query(Institutions)
+            .filter(Institutions.address_geolocation.is_(None))
+            .limit(BATCH_SIZE)
+            .offset(OFFSET)
+            .all()
+        )
 
-        # Empty dataframe for this batch
         batch_df = pd.DataFrame(columns=columns)
 
         for institution in rows:
-            i = institution[0]
-            results = get_institution_openalex(i.name.replace("!", "").replace("|", ""))
+            search_result = search_geolocation(institution)
 
-            if len(results["results"]) == 0:
+            if search_result["confidence"] is None:
                 continue
 
-            oa = results["results"][0]
-            if i.address_geolocation:
+            if institution.address_geolocation:
                 dist = get_distance_in_meters(
-                    i.address_geolocation,
-                    [float(oa["geo"]["latitude"]), float(oa["geo"]["longitude"])],
+                    institution.address_geolocation,
+                    [
+                        float(search_result["latitude"]),
+                        float(search_result["longitude"]),
+                    ],
                 )
             else:
                 dist = ""
@@ -106,26 +96,17 @@ with session_factory() as session:
             if dist and float(dist) < 150:
                 continue
 
-            check_name = False
-            if oa["display_name"].upper() == i.name.upper() or any(
-                alt.upper() == i.name.upper()
-                for alt in oa.get("display_name_alternatives", [])
-            ):
-                check_name = True
-
             batch_df.loc[len(batch_df)] = [
-                i.id,
-                oa["id"],
-                i.name,
-                oa["display_name"],
+                institution.id,
+                institution.name,
+                search_result["name"],
                 (
-                    f"{i.address_geolocation[0]}, {i.address_geolocation[1]}"
-                    if i.address_geolocation
+                    f"{search_result['latitude']}, {search_result['longitude']}"
+                    if search_result["latitude"] is not None
                     else ""
                 ),
-                f"{oa['geo']['latitude']}, {oa['geo']['longitude']}",
                 round(dist, 0) if dist else "",
-                check_name,
+                search_result["source"],
             ]
 
         # Append this batch to the CSV file
@@ -150,9 +131,3 @@ with session_factory() as session:
             OFFSET += BATCH_SIZE
 
     print(f"Process completed. Results saved to {csv_filename}")
-
-# compare!
-# use csv to update database when happy
-# Use EnrichmentMonitor!
-
-# start with one small batch for testing
