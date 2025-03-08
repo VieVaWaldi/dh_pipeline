@@ -1,4 +1,5 @@
 import logging
+from itertools import islice
 
 from analysis.utils.analysis_interface import IAnalysisJob
 from core.etl.transformer.utils import ensure_list, get_nested
@@ -15,21 +16,27 @@ class ValidateFullKeyValues(IAnalysisJob):
         super().__init__(analysis_name, query_name)
 
         self.result_topic_set = set()
-        self.result_orgas_set = set()
+        self.result_orgas_set = []
         self.orgas_topic_set = set()
-        self.orgas_people_set = set()
+        self.orgas_people_set = []
 
     def run(self) -> None:
-        for document, path in yield_all_documents(self.data_path):
+        for idx, (document, path) in enumerate(yield_all_documents(self.data_path)):
             self.cordis_result_topic(document)
             self.cordis_result_orga(document)
             self.cordis_orga_topics(document)
             self.cordis_orga_people(document)
 
-        logging.info("Result - Topic: \n", self.result_topic_set)
-        logging.info("Result - Orgas: \n", self.result_orgas_set)
-        logging.info("Orgas  - Topics: \n", self.orgas_topic_set)
-        logging.info("Orgas  - People: \n", self.orgas_people_set)
+            if idx % 1000 == 0:
+                print("processed ", idx+1, " elements ...")
+
+        print("Result - Topic: \n", self.result_topic_set)
+        print("Result - Orgas: \n", len(self.result_orgas_set))
+        print(list(islice(self.result_orgas_set, 30)))
+
+        print("Orgas  - Topics: \n", self.orgas_topic_set)
+        print("Orgas  - People: \n", len(self.orgas_people_set))
+        print(list(islice(self.orgas_people_set, 30)))
 
     def cordis_result_topic(self, document):
         results = ensure_list(
@@ -50,7 +57,7 @@ class ValidateFullKeyValues(IAnalysisJob):
         )
         for result in results:
             orga = get_nested(result, "relations.associations.organization.legalName")
-            self.result_orgas_set.add(orga)
+            self.result_orgas_set.append(orga)
 
     def cordis_orga_topics(self, document):
         # "project.relations.associations.organization[_].relations.categories.category.@classification"
@@ -70,7 +77,7 @@ class ValidateFullKeyValues(IAnalysisJob):
         )
         for orga in orgas:
             person = get_nested(orga, "relations.associations.person.firstNames")
-            self.orgas_people_set.add(person)
+            self.orgas_people_set.append(person)
 
 
 if __name__ == "__main__":
