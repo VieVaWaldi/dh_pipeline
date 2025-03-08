@@ -51,9 +51,15 @@ setup_logging(logging_path, enrichment_name)
 SHOULD_UPDATE_COUNT = 0
 
 df = pd.read_csv(
-    "cordis_openalex_geo_offset_18650.csv",
+    # "cordis_openalex_geo_offset_18650.csv",
     # "openalex_geo_offset_21200.csv",
     # "openalex_geo_offset_31500.csv",
+
+    "cordis_2_openalex_geo_offset_800.csv",
+    # "cordis_2_openalex_geo_offset_1350.csv",
+    # "cordis_2_openalex_geo_offset_1600.csv",
+    # "cordis_2_openalex_geo_offset_5450.csv",
+    
     sep=";",
 )
 
@@ -63,7 +69,7 @@ session_factory = create_db_session()
 logging.info(f"Starting enrichment with {len(df)} data points")
 mask = df.apply(
     lambda r: should_update_geolocation(
-        r["i.geo"], float(r["dist (m)"]), bool(r["matching_name"])
+        r["institution_geolocation"], float(r["dist (m)"]), bool(r["matching_name"])
     ),
     axis=1,
 )
@@ -77,19 +83,24 @@ with session_factory() as session:
     batch_cnt = 0
     for _, row in df.iterrows():
 
-        if not row["i.name"] or pd.isna(row["i.name"]):
+        # institution_id; institution_name; search_result_name; 
+        # institution_geolocation; dist (m); source
+
+        if not row["institution_name"] or pd.isna(row["institution_name"]):
             continue
-        if not should_update_geolocation(
-            row["i.geo"], float(row["dist (m)"]), bool(row["matching_name"])
-        ):
+        if not row["institution_geolocation"] or pd.isna(row["institution_geolocation"]):
             continue
+        # if not should_update_geolocation(
+        #     row["institution_geolocation"], float(row["dist (m)"]), bool(row["matching_name"])
+        # ):
+        #     continue
         SHOULD_UPDATE_COUNT += 1
 
         ### UPSERT ###
-        unique_key = {"name": row["i.name"]}
+        unique_key = {"name": row["institution_name"]}
         instance = session.scalar(select(Institutions).filter_by(**unique_key))
         session.add(instance)
-        new_geolocation = clean_geolocation(row["oa.geo"], swap_lat_lon=False)
+        new_geolocation = clean_geolocation(row["institution_geolocation"], swap_lat_lon=False)
         instance.address_geolocation = new_geolocation
         instance.updated_at = datetime.now()
 
