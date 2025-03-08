@@ -174,4 +174,5 @@ def search_geolocation_mapbox(institution: Institutions) -> Dict:
         "name": institution.name,
         "latitude": None,
         "longitude": None,
+        "confidence": None,
     }

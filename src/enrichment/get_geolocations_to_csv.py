@@ -43,7 +43,7 @@ def get_distance_in_meters(point1, point2):
 load_dotenv()
 
 BATCH_SIZE = 50
-OFFSET = 1350
+OFFSET = 1600
 
 columns = [
     "institution_id",
@@ -54,8 +54,9 @@ columns = [
     "source",
 ]
 
+
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-csv_filename = f"openalex_geo_{timestamp}.csv"
+csv_filename = f"cordis_2_openalex_geo_{timestamp}.csv"
 file_exists = os.path.isfile(csv_filename)
 
 session_factory = create_db_session()
@@ -78,9 +79,6 @@ with session_factory() as session:
 
         for institution in rows:
             search_result = search_geolocation(institution)
-
-            if search_result["confidence"] is None:
-                continue
 
             if institution.address_geolocation:
                 dist = get_distance_in_meters(
@@ -109,7 +107,6 @@ with session_factory() as session:
                 search_result["source"],
             ]
 
-        # Append this batch to the CSV file
         if not batch_df.empty:
             batch_df.to_csv(
                 csv_filename,
@@ -123,7 +120,6 @@ with session_factory() as session:
         else:
             print("No matching results in this batch")
 
-        # Check if we need to continue
         if len(rows) < BATCH_SIZE:
             keep_going = False
             print("Final batch processed, ending process")
