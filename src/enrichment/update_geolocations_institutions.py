@@ -55,10 +55,10 @@ df = pd.read_csv(
     # "openalex_geo_offset_21200.csv",
     # "openalex_geo_offset_31500.csv",
 
-    "cordis_2_openalex_geo_offset_800.csv",
+    # "cordis_2_openalex_geo_offset_800.csv",
     # "cordis_2_openalex_geo_offset_1350.csv",
     # "cordis_2_openalex_geo_offset_1600.csv",
-    # "cordis_2_openalex_geo_offset_5450.csv",
+    "cordis_2_openalex_geo_offset_5450.csv",
     
     sep=";",
 )
@@ -69,7 +69,7 @@ session_factory = create_db_session()
 logging.info(f"Starting enrichment with {len(df)} data points")
 mask = df.apply(
     lambda r: should_update_geolocation(
-        r["institution_geolocation"], float(r["dist (m)"]), bool(r["matching_name"])
+        r["institution_geolocation"], float(r["dist (m)"]), True
     ),
     axis=1,
 )

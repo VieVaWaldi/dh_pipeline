@@ -23,7 +23,7 @@ class Organization:
     legal_name: str
     legal_short_name: Optional[str]
     is_first_listed: bool
-    geolocation: Optional[list[int]]
+    geolocation: Optional[list[float]]
 
     alternative_names: List[str]
     website_url: Optional[str]

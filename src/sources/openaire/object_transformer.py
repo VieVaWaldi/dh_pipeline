@@ -293,23 +293,13 @@ class OpenaireObjectTransformer(IObjectTransformer):
                     label=country_data.get("@classname"),
                 )
 
-            # Extract geolocation, which open aire does not provide
-            result = search_geolocation(
-                Institutions(name=get_nested(rel_data, "legalname.$"))
-            )
-            geolocation = (
-                [float(result["latitude"]), float(result["longitude"])]
-                if result["latitude"]
-                else None
-            )
-
             # Create organization with available fields
             organization = Organization(
                 id=get_nested(rel_data, "to.$"),
                 legal_name=get_nested(rel_data, "legalname.$"),
                 legal_short_name=get_nested(rel_data, "legalshortname.$"),
                 is_first_listed=True if rel_idx == 0 else False,
-                geolocation=geolocation,
+                geolocation=None,
                 alternative_names=[],  # Doesnt seem to be in the data though docs say it is. I grep'd all 10k files
                 website_url=get_nested(rel_data, "websiteurl.$"),
                 country=country,

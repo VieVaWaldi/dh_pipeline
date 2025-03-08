@@ -8,6 +8,7 @@ from typing import Type
 from dotenv import load_dotenv
 
 from core.etl.dataloader.create_db_session import create_db_session
+from core.etl.transformer.fuzzy_get_or_create import ModelUpdateMonitor
 from core.etl.transformer.get_or_create import ModelCreationMonitor
 from core.file_handling.file_handling import (
     get_root_path,
@@ -53,9 +54,9 @@ def run_dataloader(source_config: SourceConfig):
                     source_config.orm_transformer(session).map_to_orm(data_object)
                     doc_count += 1
 
-                # if doc_idx % source_config.batch_size == 0:
-                #     session.commit()
-                #     logging.info("Commit successful")
+                if doc_idx % source_config.batch_size == 0:
+                    session.commit()
+                    logging.info("Commit successful")
 
                 if doc_idx % 1000 == 0:
                     logging.info(f"Processed {doc_idx} documents")
@@ -67,8 +68,9 @@ def run_dataloader(source_config: SourceConfig):
                 logging.error(f"Document path: {path}")
                 raise
         # Also commit for leftovers
-        # session.commit()
+        session.commit()
     ModelCreationMonitor.log_stats()
+    ModelUpdateMonitor.log_stats()
     log_run_time(start_time)
 
 
