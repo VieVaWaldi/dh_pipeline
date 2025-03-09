@@ -149,8 +149,8 @@ class OpenaireORMTransformer(IORMTransformer):
 
             unique_key = {"name": name}
             args = {
-                "standardised_name": name,
-                "level": None,  # Default level as specified
+                "standardised_name": None,
+                "level": 4,  # Default level as specified
             }
 
             instance, _ = get_or_create(self.session, Topics, unique_key, **args)

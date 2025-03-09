@@ -1,15 +1,31 @@
-select * from topics
-where created_at >= '2024-03-07'; 			    -- 195
-select * from weblinks
-where created_at >= '2024-03-07'; 			-- 1293
-select * from dois
-where created_at >= '2024-03-07'; 					-- 982
+select ro.title, ro.publication_date from researchoutputs as ro
+order by ro.publication_date desc;
+
+join topics as t on pt.topic_id = t.id
+where p.objective like '%cultural heritage%';
+
+select p.title, t.name, t.level from projects as p
+join projects_topics as pt on pt.project_id = p.id
+join topics as t on pt.topic_id = t.id
+where p.objective like '%cultural heritage%';
+
 select * from institutions
-where created_at >= '2024-03-07'; 		-- 553
-select * from fundingprogrammes
-where created_at >= '2024-03-07'; 	-- 62
-select * from projects
-where created_at >= '2024-03-07'; 			-- 68
+where address_country = 'DE';
+
+select * from institutions
+where lower(name) like '%university college dublin%';
+
+
+-- Fuzzy
+SELECT *
+FROM institutions a
+JOIN institutions b on a.id = b.id;
+
+-- WHERE levenshtein(i1.name, i2.name) <= 3
+-- AND i1.id != i2.id
+-- LIMIT 10
+
+{50.5807275,8.6766131}
 
 -----------------------------------------------
 -- CORE ENTITIES							  --
@@ -34,8 +50,6 @@ select count(*) from projects; 			-- 12k / 6k with doi
 -----------------------------------------------
 -- JUNCTIONS							      --
 ----------------------------------------------- 
-
-{53.33306,-6.24889}
 
 --- ResearchOutputs to Others ---
 

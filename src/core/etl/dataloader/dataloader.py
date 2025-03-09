@@ -46,6 +46,11 @@ def run_dataloader(source_config: SourceConfig):
         for doc_idx, (document, path) in enumerate(
             yield_all_documents(source_config.source_path)
         ):
+
+            checkpoint = int(path.parent.parent.name.split("_")[-1])
+            if checkpoint < 17:
+                continue
+
             transformer = source_config.object_transformer(path)
             data_object, do_use = transformer.transform(document)
 
