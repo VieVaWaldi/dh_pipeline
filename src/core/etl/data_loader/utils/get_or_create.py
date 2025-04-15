@@ -48,7 +48,9 @@ def get_or_create(session: Session, model, unique_key: dict, **kwargs):
         True if a new instance was creates OR False if the instance already exists
     """
     try:
-        instance = session.scalar(select(model).filter_by(**unique_key))
+        # Prevent auto flush so that alchemy doesnt create entities that we first want to search
+        with session.no_autoflush:
+            instance = session.scalar(select(model).filter_by(**unique_key))
         if instance:
             session.add(instance)
             ModelCreationMonitor.record(model.__tablename__, is_created=False)
