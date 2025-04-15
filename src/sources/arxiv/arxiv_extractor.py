@@ -10,8 +10,8 @@ from typing import Any, List, Dict
 import requests
 from dotenv import load_dotenv
 
-from utils.config.config_loader import get_query_config
-from utils.error_handling.error_handling import log_and_raise_exception
+from common_utils.config.config_loader import get_query_config
+from common_utils.error_handling.error_handling import log_and_raise_exception
 from core.file_handling.file_handling import load_file, write_file
 from core.sanitizers.sanitizer import (
     trim_excessive_whitespace,

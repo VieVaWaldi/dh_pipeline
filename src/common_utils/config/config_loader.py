@@ -1,9 +1,25 @@
 import os
+from pathlib import Path
 from typing import Any, Dict
 
 from dotenv import load_dotenv
 
+from core.etl.extractor.utils import clean_extractor_name
 from core.file_handling.file_handling import get_root_path, load_json_file
+
+
+def get_data_path(source_name: str, config: Dict, run: int):
+    assert config, "config must be a non-empty dict"
+    assert run >= 0
+
+    path = Path(config["data_path"]) / (
+        source_name
+        + "_"
+        + clean_extractor_name(get_query_config()[source_name]["runs"][run]["query"])
+    )
+    if os.getenv("ENV") == "dev":
+        return get_root_path() / path
+    return path
 
 
 def get_config() -> Dict[str, Any]:

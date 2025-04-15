@@ -5,15 +5,15 @@ from pathlib import Path
 import pandas as pd
 from sqlalchemy import select
 
-from core.etl.dataloader.create_db_session import create_db_session
-from core.etl.dataloader.dataloader import log_run_time
+from core.etl.data_loader.utils.create_db_session import create_db_session
+from core.etl.data_loader.run_data_loader import log_run_time
 from core.file_handling.file_handling import get_root_path, ensure_path_exists
 from core.sanitizers.sanitizer import (
     clean_geolocation,
 )
 from datamodels.digicher.entities import Institutions
-from utils.config.config_loader import get_config
-from utils.logger.logger import setup_logging
+from common_utils.config.config_loader import get_config
+from common_utils.logger.logger import setup_logging
 
 
 class ModelUpdateMonitor:
@@ -58,7 +58,7 @@ df = pd.read_csv(
     # "cordis_2_openalex_geo_offset_800.csv",
     # "cordis_2_openalex_geo_offset_1350.csv",
     # "cordis_2_openalex_geo_offset_1600.csv",
-    "cordis_2_openalex_geo_offset_5450.csv",
+    "output/cordis_2_openalex_geo_offset_5450.csv",
     
     sep=";",
 )

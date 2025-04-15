@@ -3,26 +3,14 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Dict, Any, Union
 
+from core.etl.extractor.utils import clean_extractor_name
 from core.file_handling.file_handling import (
     ensure_path_exists,
     get_root_path,
     write_file,
 )
-from utils.config.config_loader import get_config
-from utils.logger.logger import setup_logging
-
-
-def clean_extractor_name(extractor_name: str):
-    return (
-        extractor_name.replace(" ", "")
-        .replace("'", "")
-        .replace("*", "STAR")
-        .replace("=", "IS")
-        .replace("+", "PLUS")
-        .replace(":", "COLON")
-        .replace("(", "LB")
-        .replace(")", "RB")
-    )
+from common_utils.config.config_loader import get_config
+from common_utils.logger.logger import setup_logging
 
 
 class IExtractor(ABC):

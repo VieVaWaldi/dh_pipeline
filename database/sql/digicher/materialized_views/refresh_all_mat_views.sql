@@ -1,14 +1,14 @@
-select * from topics; 
-select * from projects_institutions; 
-select * from fundingprogrammes
-where lower(framework_programme) like lower('%INFRAIA%')
-or lower(pga) like lower('%INFRAIA%')
-or lower(code) like lower('%INFRAIA%');
+-- select * from topics; 
+-- select * from projects_institutions; 
+-- select * from fundingprogrammes limit 20;
+-- where lower(framework_programme) like lower('%INFRAIA%')
+-- or lower(pga) like lower('%INFRAIA%')
+-- or lower(code) like lower('%INFRAIA%');
 
-select * from institutions where address_geolocation is null;
+-- select * from institutions where address_geolocation is null;
 
-select * from institutions
-where updated_at > '2025-03-07'::date;
+-- select * from institutions
+-- where updated_at > '2025-03-07'::date;
 -- and address_geolocation is null;
 
 

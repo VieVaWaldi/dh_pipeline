@@ -19,7 +19,7 @@ from sources.cordis.data_objects import (
     Topic,
     Weblink,
 )
-from utils.error_handling.error_handling import log_and_raise_exception
+from common_utils.error_handling.error_handling import log_and_raise_exception
 
 PROJECT = "project"
 RELATIONS = "relations"
@@ -105,7 +105,7 @@ class CordisObjectTransformer(IObjectTransformer):
         for org_data in ensure_list(get_nested(data, ORG_PATH)):
             if org_data.get("legalName") is None:
                 continue
-            coordinates = clean_geolocation(get_nested(org_data, "address.geolocation"))
+            coordinates = clean_geolocation(get_nested(org_data, "address.openalex"))
             institution = Institution(
                 name=org_data.get("legalName"),
                 sme=clean_bool(org_data.get("@sme")),
@@ -240,7 +240,7 @@ class CordisObjectTransformer(IObjectTransformer):
         for org_data in ensure_list(get_nested(result_data, org_path)):
             if org_data.get("legalName") is None:
                 continue
-            coordinates = clean_geolocation(get_nested(org_data, "address.geolocation"))
+            coordinates = clean_geolocation(get_nested(org_data, "address.openalex"))
             institution = Institution(
                 name=org_data.get("legalName"),
                 sme=clean_bool(org_data.get("@sme")),

@@ -1,18 +1,18 @@
 import logging
 from pathlib import Path
 
-from core.file_handling.file_parsing.general_parser import yield_all_documents
-from utils.config.config_loader import get_config
+from core.file_handling.general_parser import yield_all_documents
+from common_utils.config.config_loader import get_config
 from core.file_handling.file_handling import (
     find_pdfs_in_directory,
     get_root_path,
 )
-from core.file_handling.file_processing.pdf_ocr_reader import pdf_to_text
-from utils.logger.logger import setup_logging
+from enrichment.ocr.pdf_ocr_reader import pdf_to_text
+from common_utils.logger.logger import setup_logging
 from sources.arxiv.arxiv_transform_obj import ArxivTransformObj
 from sources.arxiv.arxiv_transform_orm import ArxivTransformOrm
-from core.etl.dataloader.create_db_session import create_db_session
-from core.etl.dataloader import ModelCreationMonitor
+from core.etl.data_loader.utils.create_db_session import create_db_session
+from core.etl.data_loader import ModelCreationMonitor
 from core.sanitizers.sanitizer import DataSanitizer
 
 
@@ -66,9 +66,9 @@ def run_arxiv_dataloader(source_path: Path, batch_size: int, dry_run: bool = Tru
 if __name__ == "__main__":
     config = get_config()
     logging_path: Path = (
-        get_root_path() / config["logging_path"] / "dataloader" / "arxiv"
+        get_root_path() / config["logging_path"] / "data_loader" / "arxiv"
     )
-    setup_logging(logging_path, "dataloader")
+    setup_logging(logging_path, "data_loader")
 
     arxiv_path = Path(
         # "/vast/lu72hip/data/pile/extractors/arxiv_allCOLONcomputingPLUSANDPLUSLBallCOLONhumanitiesPLUSORPLUSallCOLONheritageRB"

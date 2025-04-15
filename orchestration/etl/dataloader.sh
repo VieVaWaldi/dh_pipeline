@@ -1,9 +1,9 @@
 #!/bin/bash
 
-#SBATCH --job-name=dataloader
+#SBATCH --job-name=data_loader
 #SBATCH --partition=standard
-#SBATCH --time=4:00:00
-#SBATCH --output=/home/lu72hip/DIGICHer/DIGICHer_Pipeline/data/runs/dataloader/dataloader_%j.log
+#SBATCH --time=24:00:00
+#SBATCH --output=/home/lu72hip/DIGICHer/DIGICHer_Pipeline/data/runs/data_loader/dataloader_%j.log
 
 ### CleanUp
 

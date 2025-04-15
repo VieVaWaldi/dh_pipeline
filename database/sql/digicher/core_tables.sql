@@ -1,31 +1,20 @@
-select ro.title, ro.publication_date from researchoutputs as ro
-order by ro.publication_date desc;
+select * from projects
+where lower(acronym) like lower('%sámi%')
+or lower(title) like lower('%sámi%')
+or lower(objective) like lower('%sámi%');
 
-join topics as t on pt.topic_id = t.id
-where p.objective like '%cultural heritage%';
+select * from projects
+-- where created_at > '2025-01-23'
+where end_date > '2028-01-02';
 
-select p.title, t.name, t.level from projects as p
-join projects_topics as pt on pt.project_id = p.id
-join topics as t on pt.topic_id = t.id
-where p.objective like '%cultural heritage%';
+select * from topics
+where created_at > '2025-01-23'; 
+
+select * from projects
+where created_at > '2025-01-23'; 
 
 select * from institutions
-where address_country = 'DE';
-
-select * from institutions
-where lower(name) like '%university college dublin%';
-
-
--- Fuzzy
-SELECT *
-FROM institutions a
-JOIN institutions b on a.id = b.id;
-
--- WHERE levenshtein(i1.name, i2.name) <= 3
--- AND i1.id != i2.id
--- LIMIT 10
-
-{50.5807275,8.6766131}
+where created_at > '2025-01-23'; 
 
 -----------------------------------------------
 -- CORE ENTITIES							  --

@@ -7,8 +7,6 @@ from core.sanitizers.sanitizer import (
     clean_float,
     clean_bool,
 )
-from datamodels.digicher.entities import Institutions
-from enrichment.search_geolocations import search_geolocation
 from interfaces.i_object_transformer import IObjectTransformer
 from sources.openaire.data_objects import (
     OpenaireProject,

@@ -1,5 +1,5 @@
 import logging
-from typing import Tuple, Any, Dict, Optional, Type
+from typing import Tuple, Any, Dict, Type
 
 from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
@@ -17,7 +17,7 @@ from .fuzzy_search import (
     fuzzy_search_research_outputs,
     fuzzy_search_funding_programmes,
 )
-from .get_or_create import ModelCreationMonitor
+from core.etl.data_loader.utils.get_or_create import ModelCreationMonitor
 
 
 class ModelUpdateMonitor:

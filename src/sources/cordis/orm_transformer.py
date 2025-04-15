@@ -2,7 +2,7 @@ from typing import List
 
 from sqlalchemy.orm import Session
 
-from core.etl.transformer.get_or_create import get_or_create
+from core.etl.data_loader.utils.get_or_create import get_or_create
 from datamodels.digicher.entities import (
     Projects,
     FundingProgrammes,

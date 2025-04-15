@@ -8,8 +8,8 @@ from core.file_handling.file_handling import (
     raise_error_if_directory_does_not_exists,
 )
 from interfaces.i_extractor import clean_extractor_name
-from utils.config.config_loader import get_config
-from utils.logger.logger import setup_logging
+from common_utils.config.config_loader import get_config
+from common_utils.logger.logger import setup_logging
 
 
 class IAnalysisJob(ABC):

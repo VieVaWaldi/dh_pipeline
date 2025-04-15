@@ -5,9 +5,9 @@ from datetime import datetime
 import pandas as pd
 from dotenv import load_dotenv
 
-from core.etl.dataloader.create_db_session import create_db_session
+from core.etl.data_loader.utils.create_db_session import create_db_session
 from datamodels.digicher.entities import Institutions
-from enrichment.search_geolocations import search_geolocation
+from enrichment.openalex.search_geolocations import search_geolocation
 
 
 def get_distance_in_meters(point1, point2):

@@ -4,7 +4,7 @@ from typing import Dict, Any, List
 
 from analysis.utils.analysis_interface import IAnalysisJob
 from analysis.utils.analysis_utils import clean_value
-from core.file_handling.file_parsing.general_parser import yield_all_documents
+from core.file_handling.general_parser import yield_all_documents
 
 
 class CSVFromDict(IAnalysisJob):
@@ -153,7 +153,7 @@ def run_cordis():
         # "project.relations.categories.category.title",
         # "project.keywords",
         # # Location
-        # "project.relations.associations.organization.address.geolocation",
+        # "project.relations.associations.organization.address.openalex",
         # "project.relations.associations.organization.address.country",
         # "project.relations.associations.organization.address.city"
     ]

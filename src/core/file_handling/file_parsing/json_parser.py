@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 from typing import List, Dict, Any, Callable, Iterator
 
-from utils.error_handling.error_handling import log_and_raise_exception
+from common_utils.error_handling.error_handling import log_and_raise_exception
 
 
 def get_json_as_dict_recursively(file_path: Path) -> Iterator[Dict[str, Any]]:

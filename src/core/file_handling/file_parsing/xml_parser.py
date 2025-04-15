@@ -5,7 +5,7 @@ from typing import List, Dict, Iterator, Any
 
 import xmltodict
 
-from utils.error_handling.error_handling import log_and_raise_exception
+from common_utils.error_handling.error_handling import log_and_raise_exception
 
 
 def get_xml_as_dict_recursively(file_path: Path) -> Iterator[Dict[str, Any]]:

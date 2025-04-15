@@ -3,7 +3,7 @@ from datetime import datetime
 
 from sqlalchemy.orm import Session
 
-from core.etl.transformer.get_or_create import get_or_create
+from core.etl.data_loader.utils.get_or_create import get_or_create
 from datamodels.digicher.entities import (
     Projects,
     FundingProgrammes,
@@ -16,7 +16,7 @@ from datamodels.digicher.entities import (
     ProjectsInstitutions,
     ProjectsWeblinks,
 )
-from enrichment.search_geolocations import search_geolocation
+from enrichment.openalex.search_geolocations import search_geolocation
 from interfaces.i_orm_transformer import IORMTransformer
 from sources.openaire.data_objects import OpenaireProject, Organization, Subject
 
@@ -173,13 +173,13 @@ class OpenaireORMTransformer(IORMTransformer):
 
             unique_key = {"name": name}
 
-            # Handle geolocation, which might be None
+            # Handle openalex, which might be None
             geolocation = None
             if org.geolocation:
                 try:
                     geolocation = [float(x) for x in org.geolocation]
                 except (TypeError, ValueError):
-                    # If conversion fails, keep geolocation as None
+                    # If conversion fails, keep openalex as None
                     geolocation = None
 
             args = {
@@ -202,7 +202,7 @@ class OpenaireORMTransformer(IORMTransformer):
             instance, _ = get_or_create(self.session, Institutions, unique_key, **args)
 
             if instance.address_geolocation is None:
-                # Extract geolocation, which open aire does not provide
+                # Extract openalex, which open aire does not provide
                 result = search_geolocation(instance)
                 geolocation = (
                     [float(result["latitude"]), float(result["longitude"])]

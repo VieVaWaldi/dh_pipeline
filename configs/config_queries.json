@@ -14,7 +14,7 @@
       }
     ]
   },
-  "core": {
+  "coreac": {
     "checkpoint": "publishedDate",
     "runs": [
       {

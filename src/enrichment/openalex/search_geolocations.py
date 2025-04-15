@@ -3,9 +3,9 @@ import os
 import time
 from typing import Dict
 
-from core.web_requests.web_requests import make_get_request
+from core.requests.requests import make_get_request
 from datamodels.digicher.entities import Institutions
-from enrichment.noise_words import normalize_institution_name
+from enrichment.openalex.noise_words import normalize_institution_name
 
 
 def search_geolocation(institution: Institutions) -> Dict:

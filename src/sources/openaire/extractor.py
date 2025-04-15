@@ -13,12 +13,12 @@ from core.file_handling.file_handling import (
     load_file,
     write_file,
 )
-from core.web_requests.web_requests import (
+from core.requests.requests import (
     make_get_request,
 )
 from interfaces.i_extractor import IExtractor
-from utils.config.config_loader import get_query_config
-from utils.error_handling.error_handling import log_and_raise_exception
+from common_utils.config.config_loader import get_query_config
+from common_utils.error_handling.error_handling import log_and_raise_exception
 
 
 class OpenAIREExtractor(IExtractor):

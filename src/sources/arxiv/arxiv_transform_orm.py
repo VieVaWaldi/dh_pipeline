@@ -18,7 +18,7 @@ from datamodels.digicher.junctions import (
     ResearchOutputsPeople,
 )
 from sources.arxiv.arxiv_transform_obj import ArxivEntry
-from core.etl.dataloader import get_or_create
+from core.etl.data_loader.utils import get_or_create
 
 
 class ArxivTransformOrm:
