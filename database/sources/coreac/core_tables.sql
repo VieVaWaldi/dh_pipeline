@@ -1,6 +1,5 @@
 -----------------------------------------------
--- CORE ENTITIES							 --
------------------------------------------------
+-- CORE ENTITIES
 
 -- MIA
 -- * Looks like i am parsing author names wrong, i am seperating where no separation is needed
@@ -15,8 +14,7 @@ select count(*) from coreac.data_provider;
 --
 
 -----------------------------------------------
--- JUNCTIONS							     --
------------------------------------------------
+-- JUNCTIONS
 
 select count(*) from coreac.j_work_link;
 --

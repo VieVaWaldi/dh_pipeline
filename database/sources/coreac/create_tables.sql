@@ -1,4 +1,4 @@
-------------------------------------
+-----------------------------------------------
 -- Coreac Data Model
 
 CREATE SCHEMA IF NOT EXISTS coreac;
@@ -7,7 +7,7 @@ CREATE TABLE coreac.work (
     id SERIAL PRIMARY KEY,
     id_original TEXT UNIQUE NOT NULL,
     title TEXT UNIQUE NOT NULL,
-    doi TEXT UNIQUE,
+    doi TEXT, -- UNIQUE
     arxiv_id TEXT UNIQUE,
     mag_id TEXT UNIQUE,
     pubmed_id TEXT UNIQUE,
@@ -84,7 +84,7 @@ CREATE TABLE coreac.j_work_data_provider (
     PRIMARY KEY (work_id, data_provider_id)
 );
 
-------------------------------------
+-----------------------------------------------
 -- Indexes
 
 CREATE INDEX idx_work_title ON coreac.work(title);
@@ -93,7 +93,7 @@ CREATE INDEX idx_work_published_date ON coreac.work(published_date);
 CREATE INDEX idx_reference_title ON coreac.reference(title);
 CREATE INDEX idx_data_provider_name ON coreac.data_provider(name);
 
-------------------------------------
+-----------------------------------------------
 -- Update Triggers
 
 CREATE OR REPLACE FUNCTION coreac.update_updated_at_column()

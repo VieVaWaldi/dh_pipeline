@@ -6,15 +6,16 @@ from typing import Type
 
 from dotenv import load_dotenv
 
+from common_utils.config.config_loader import get_config, get_data_path
+from common_utils.logger.logger import setup_logging
 from core.etl.data_loader.utils.create_db_session import create_db_session
 from core.etl.data_loader.utils.get_or_create import ModelCreationMonitor
 from core.file_handling.file_handling import (
     get_root_path,
 )
 from core.file_handling.general_parser import yield_all_documents
+from sources.arxiv.data_loader import ArxivDataLoader
 from sources.coreac.data_loader import IDataLoader, CoreacDataLoader
-from common_utils.config.config_loader import get_config, get_data_path
-from common_utils.logger.logger import setup_logging
 
 
 @dataclass
@@ -70,7 +71,7 @@ def log_run_time(start_time: datetime):
 
 
 if __name__ == "__main__":
-    source_name = "coreac"
+    source_name = "arxiv"
     load_dotenv()
     config = get_config()
     data_path = get_data_path(source_name, config, run=0)
@@ -84,10 +85,11 @@ if __name__ == "__main__":
         #     name="openaire",
         #     source_path=data_path,
         # ),
-        # "arxiv": SourceConfig(
-        #     name="arxiv",
-        #     source_path=Path(config["sources"]["arxiv"]["path"]),
-        # ),
+        "arxiv": SourceConfig(
+            name="arxiv",
+            data_loader=ArxivDataLoader,
+            source_path=Path(data_path),
+        ),
         "coreac": SourceConfig(
             name="coreac",
             data_loader=CoreacDataLoader,
@@ -95,7 +97,9 @@ if __name__ == "__main__":
         ),
     }
 
-    logging_path = get_root_path() / config["logging_path"] / "data_loader" / source_name
+    logging_path = (
+        get_root_path() / config["logging_path"] / "data_loader" / source_name
+    )
     setup_logging(logging_path, "data_loader")
 
     run_data_loader(source_configs[source_name])

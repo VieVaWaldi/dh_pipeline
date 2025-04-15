@@ -12,11 +12,9 @@ from dotenv import load_dotenv
 
 from common_utils.config.config_loader import get_query_config
 from common_utils.error_handling.error_handling import log_and_raise_exception
+from core.etl.extractor.utils import trim_excessive_whitespace
 from core.file_handling.file_handling import load_file, write_file
-from core.sanitizers.sanitizer import (
-    trim_excessive_whitespace,
-)
-from interfaces import IExtractor
+from interfaces.i_extractor import IExtractor
 
 
 class ArxivExtractor(IExtractor, ABC):
