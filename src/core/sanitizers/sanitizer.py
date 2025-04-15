@@ -103,7 +103,7 @@ def parse_content(value: Optional[str]) -> Optional[str]:
         return None
 
     clean_str = value.strip()
-    clean_str = clean_str.replace("\r", "")
+    clean_str = clean_str.replace("\r", "").replace("\x00", "")
 
     paragraphs = clean_str.split("\n")
     cleaned_paragraphs = []

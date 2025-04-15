@@ -37,6 +37,8 @@ def run_data_loader(source_config: SourceConfig):
         for doc_idx, (document, path) in enumerate(
             yield_all_documents(source_config.source_path)
         ):
+            if path.parent.name == "test_data":
+                a = 1
             try:
                 data_loader = source_config.data_loader(path)
                 data_loader.load(session, document)

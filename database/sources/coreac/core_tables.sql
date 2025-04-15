@@ -2,6 +2,9 @@
 -- CORE ENTITIES							 --
 -----------------------------------------------
 
+-- MIA
+-- * Looks like i am parsing author names wrong, i am seperating where no separation is needed
+
 select count(*) from coreac.work;
 -- 
 select count(*) from coreac.link;

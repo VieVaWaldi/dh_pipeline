@@ -33,4 +33,4 @@ echo "Current user: $(whoami)"
 echo "Current directory: $(pwd)"
 echo "Python version: $(python --version)"
 
-python src/core/etl/dataloader/dataloader.py # --source cordis
+python src/core/etl/data_loader/run_data_loader.py # --source cordis

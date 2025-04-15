@@ -67,7 +67,7 @@ class Link(Base):
     __table_args__ = {"schema": "coreac"}
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    url: Mapped[Optional[str]] = mapped_column(nullable=False)
+    url: Mapped[str] = mapped_column(nullable=False)
     type: Mapped[Optional[str]] = mapped_column()
 
     created_at: Mapped[datetime] = mapped_column(default=datetime.now)
