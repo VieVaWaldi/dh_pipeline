@@ -38,19 +38,26 @@ DOIs and acronyms should generally NOT be sanitized.
 """
 
 
+def _ensure_string(value: Any) -> Optional[str]:
+    """Convert any value to string, or return None if conversion fails."""
+    if value is None:
+        return None
+    try:
+        return str(value)
+    except (ValueError, TypeError):
+        return None
+
+
 def parse_string(value: Optional[str]) -> Optional[str]:
     """
     Use for all other string than dont fit one of the next methods.
     Trims whitespace and normalizes internal spaces.
     Returns None if string ends up being empty.
     """
+    value = _ensure_string(value)
     if not value:
         return None
-    try:
-        clean_str = str(value)
-    except ValueError:
-        return None
-    clean_str = " ".join(filter(None, clean_str.strip().split()))
+    clean_str = " ".join(filter(None, value.strip().split()))
     return clean_str or None
 
 
@@ -62,6 +69,7 @@ def parse_names_and_identifiers(value: Optional[str]) -> Optional[str]:
     Trims whitespace and normalizes internal spaces.
     Returns None if string ends up being empty.
     """
+    value = _ensure_string(value)
     if not value:
         return None
 
@@ -81,6 +89,7 @@ def parse_titles_and_labels(value: Optional[str]) -> Optional[str]:
     Replaces newlines/tabs with spaces and normalizes internal spacing.
     Returns None if string ends up being empty.
     """
+    value = _ensure_string(value)
     if not value:
         return None
 
@@ -99,6 +108,7 @@ def parse_content(value: Optional[str]) -> Optional[str]:
     Removes excessive newlines and normalizes to single newlines between paragraphs.
     Returns None if string ends up being empty.
     """
+    value = _ensure_string(value)
     if not value:
         return None
 
@@ -125,6 +135,7 @@ def parse_web_resources(value: Optional[str]) -> Optional[str]:
     Minimal processing - only trims whitespace and removes carriage returns.
     Returns None if string ends up being empty.
     """
+    value = _ensure_string(value)
     if not value:
         return None
 
