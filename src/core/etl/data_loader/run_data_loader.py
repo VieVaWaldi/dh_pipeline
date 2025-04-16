@@ -71,7 +71,7 @@ def log_run_time(start_time: datetime):
 
 
 if __name__ == "__main__":
-    source_name = "arxiv"
+    source_name = "coreac"
     load_dotenv()
     config = get_config()
     data_path = get_data_path(source_name, config, run=0)
