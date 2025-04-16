@@ -48,6 +48,7 @@ class ArxivDataLoader(IDataLoader):
         authors = self._create_authors(session, entry_data)
         links = self._create_links(session, entry_data)
 
+        # Flush the session to get all entity IDs
         session.flush()
 
         self._create_entry_authors(session, entry, authors)

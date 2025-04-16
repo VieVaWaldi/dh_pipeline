@@ -46,7 +46,7 @@ class CoreacDataLoader(IDataLoader):
         references = self._create_references(session, document)
         data_providers = self._create_data_providers(session, document)
 
-        # Flush the session to get all IDs
+        # Flush the session to get all entity IDs
         session.flush()
 
         self._create_work_links(session, work, links)
@@ -168,16 +168,23 @@ class CoreacDataLoader(IDataLoader):
         return [parse_web_resources(url) for url in urls if url]
 
     def _create_links(self, session: Session, document: Dict) -> List[Link]:
+        """
+        Tracks already processed URLs in seen_urls to avoid duplicates links in the same entry
+        which can lead to UniqueViolation if we dont flush after each url.
+        """
         links_data = ensure_list(get_nested(document, "links"))
         links = []
+        seen_urls = set()
 
         for link_data in links_data:
             if not link_data:
                 continue
 
             url = parse_web_resources(get_nested(link_data, "url"))
-            if not url:
+            if not url or url in seen_urls:
                 continue
+
+            seen_urls.add(url)
             link_type = parse_names_and_identifiers(get_nested(link_data, "type"))
 
             link, _ = get_or_create(session, Link, {"url": url}, type=link_type)
