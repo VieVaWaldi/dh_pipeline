@@ -38,10 +38,13 @@ def run_data_loader(source_config: SourceConfig):
         for doc_idx, (document, path) in enumerate(
             yield_all_documents(source_config.source_path)
         ):
+            doc_count += 1
+            if doc_count < 24300:
+                continue
+
             try:
                 data_loader = source_config.data_loader(path)
                 data_loader.load(session, document)
-                doc_count += 1
 
                 if doc_idx % source_config.batch_size == 0:
                     session.commit()
