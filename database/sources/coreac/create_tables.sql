@@ -8,9 +8,9 @@ CREATE TABLE coreac.work (
     id_original TEXT UNIQUE NOT NULL,
     title TEXT UNIQUE NOT NULL,
     doi TEXT, -- UNIQUE
-    arxiv_id TEXT UNIQUE,
-    mag_id TEXT UNIQUE,
-    pubmed_id TEXT UNIQUE,
+    arxiv_id TEXT, -- UNIQUE,
+    mag_id TEXT, -- UNIQUE,
+    pubmed_id TEXT, -- UNIQUE,
     oai_ids TEXT[],
     language_code TEXT,
     language_name TEXT,
