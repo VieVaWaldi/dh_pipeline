@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #SBATCH --job-name=data_loader
-#SBATCH --partition=standard
+#SBATCH --partition=fat
 #SBATCH --time=24:00:00
 #SBATCH --output=/home/lu72hip/DIGICHer/DIGICHer_Pipeline/data/runs/data_loader/data_loader_%j.log
 

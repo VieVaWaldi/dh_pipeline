@@ -39,8 +39,8 @@ def run_data_loader(source_config: SourceConfig):
             yield_all_documents(source_config.source_path)
         ):
             doc_count += 1
-            if doc_count < 32000:
-                continue
+            # if doc_count < 32000:
+            #     continue
 
             try:
                 data_loader = source_config.data_loader(path)
@@ -74,7 +74,7 @@ def log_run_time(start_time: datetime):
 
 
 if __name__ == "__main__":
-    source_name = "coreac"
+    source_name = "arxiv"
     load_dotenv()
     config = get_config()
     data_path = get_data_path(source_name, config, run=0)
