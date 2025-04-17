@@ -84,7 +84,8 @@ class ArxivDataLoader(IDataLoader):
         entry, created = get_or_create(
             session,
             Entry,
-            {"id_original": id_original, "title": title},
+            {"title": title},
+            id_original=id_original,
             doi=doi,
             summary=summary,
             full_text=full_text,
