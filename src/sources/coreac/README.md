@@ -4,6 +4,7 @@
 
 * API Docs https://api.core.ac.uk/docs/v3
 * Work API https://api.core.ac.uk/docs/v3#tag/Works <-- We are using this API
+* Get Work by original_id https://api.core.ac.uk/v3/works/{original_id}
 
 ## Data Model
 1. Work

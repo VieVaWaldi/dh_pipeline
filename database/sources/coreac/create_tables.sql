@@ -93,6 +93,12 @@ CREATE INDEX idx_work_published_date ON coreac.work(published_date);
 CREATE INDEX idx_reference_title ON coreac.reference(title);
 CREATE INDEX idx_data_provider_name ON coreac.data_provider(name);
 
+-- GIN indexes for text search
+CREATE INDEX idx_work_abstract_gin ON coreac.work USING gin(to_tsvector('english', COALESCE(abstract, '')));
+CREATE INDEX idx_work_title_gin ON coreac.work USING gin(to_tsvector('english', title));
+-- CREATE INDEX idx_work_fulltext_gin ON coreac.work USING gin(to_tsvector('english', COALESCE(fulltext, '')));
+
+
 -----------------------------------------------
 -- Update Triggers
 

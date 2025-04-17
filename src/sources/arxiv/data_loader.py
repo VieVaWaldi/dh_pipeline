@@ -111,11 +111,6 @@ class ArxivDataLoader(IDataLoader):
                 if term:
                     categories.append(term)
 
-        category_array = ensure_list(get_nested(entry_data, "ns0:category[_].@term"))
-        for category in category_array:
-            if category and category not in categories:
-                categories.append(parse_string(category))
-
         return categories
 
     def _extract_full_text(self):
@@ -137,25 +132,6 @@ class ArxivDataLoader(IDataLoader):
     ) -> List[Tuple[Author, int]]:
         """Create or retrieve Author entities and return with their positions."""
         authors_with_positions = []
-
-        single_author = get_nested(entry_data, "ns0:author")
-        if single_author and isinstance(single_author, dict):
-            author_data = single_author
-            author_name = parse_names_and_identifiers(
-                get_nested(author_data, "ns0:name")
-            )
-            author_affiliation = parse_names_and_identifiers(
-                get_nested(author_data, "ns1:affiliation")
-            )
-
-            if author_name:
-                author, _ = get_or_create(
-                    session,
-                    Author,
-                    {"name": author_name},
-                    affiliation=author_affiliation,
-                )
-                authors_with_positions.append((author, 0))
 
         author_list = ensure_list(get_nested(entry_data, "ns0:author"))
         for position, author_data in enumerate(author_list):
@@ -181,39 +157,13 @@ class ArxivDataLoader(IDataLoader):
                 )
                 authors_with_positions.append((author, position))
 
-        author_array = ensure_list(get_nested(entry_data, "ns0:author[_]"))
-        if author_array and not authors_with_positions:
-            for position, author_data in enumerate(author_array):
-                if isinstance(author_data, dict):
-                    author_name = parse_names_and_identifiers(
-                        get_nested(author_data, "ns0:name")
-                    )
-                    if not author_name:
-                        continue
-
-                    author_affiliation = parse_names_and_identifiers(
-                        get_nested(author_data, "ns1:affiliation")
-                    )
-                    author_affiliations = self._extract_affiliations(author_data)
-
-                    author, _ = get_or_create(
-                        session,
-                        Author,
-                        {"name": author_name},
-                        affiliation=author_affiliation,
-                        affiliations=(
-                            author_affiliations if author_affiliations else None
-                        ),
-                    )
-                    authors_with_positions.append((author, position))
-
         return authors_with_positions
 
     def _extract_affiliations(self, author_data: Dict) -> List[str]:
         """Extract all affiliations for an author if they exist."""
         affiliations = []
 
-        affiliation_array = ensure_list(get_nested(author_data, "ns1:affiliation[_]"))
+        affiliation_array = ensure_list(get_nested(author_data, "ns1:affiliation"))
         for affiliation in affiliation_array:
             if affiliation:
                 clean_affiliation = parse_names_and_identifiers(affiliation)
@@ -226,25 +176,6 @@ class ArxivDataLoader(IDataLoader):
         """Create or retrieve Link entities from the document."""
         links = []
 
-        single_link = get_nested(entry_data, "ns0:link")
-        if single_link and isinstance(single_link, dict):
-            link_data = single_link
-            href = parse_web_resources(get_nested(link_data, "@href"))
-            if href:
-                title = parse_string(get_nested(link_data, "@title"))
-                rel = parse_string(get_nested(link_data, "@rel"))
-                link_type = parse_string(get_nested(link_data, "@type"))
-
-                link, _ = get_or_create(
-                    session,
-                    Link,
-                    {"href": href},
-                    title=title,
-                    rel=rel,
-                    type=link_type,
-                )
-                links.append(link)
-
         link_list = ensure_list(get_nested(entry_data, "ns0:link"))
         for link_data in link_list:
             if isinstance(link_data, dict):
@@ -255,33 +186,6 @@ class ArxivDataLoader(IDataLoader):
                 title = parse_string(get_nested(link_data, "@title"))
                 rel = parse_string(get_nested(link_data, "@rel"))
                 link_type = parse_string(get_nested(link_data, "@type"))
-
-                link, _ = get_or_create(
-                    session,
-                    Link,
-                    {"href": href},
-                    title=title,
-                    rel=rel,
-                    type=link_type,
-                )
-                links.append(link)
-
-        link_hrefs = ensure_list(get_nested(entry_data, "ns0:link[_].@href"))
-        link_titles = ensure_list(get_nested(entry_data, "ns0:link[_].@title"))
-        link_rels = ensure_list(get_nested(entry_data, "ns0:link[_].@rel"))
-        link_types = ensure_list(get_nested(entry_data, "ns0:link[_].@type"))
-
-        if link_hrefs and not links:
-            for i in range(len(link_hrefs)):
-                href = parse_web_resources(
-                    link_hrefs[i] if i < len(link_hrefs) else None
-                )
-                if not href:
-                    continue
-
-                title = parse_string(link_titles[i] if i < len(link_titles) else None)
-                rel = parse_string(link_rels[i] if i < len(link_rels) else None)
-                link_type = parse_string(link_types[i] if i < len(link_types) else None)
 
                 link, _ = get_or_create(
                     session,
