@@ -131,30 +131,33 @@ class ArxivDataLoader(IDataLoader):
     ) -> List[Tuple[Author, int]]:
         """Create or retrieve Author entities and return with their positions."""
         authors_with_positions = []
+        seen_authors = set()
 
         author_list = ensure_list(get_nested(entry_data, "ns0:author"))
         for position, author_data in enumerate(author_list):
-            if isinstance(author_data, dict):
-                author_name = parse_names_and_identifiers(
-                    get_nested(author_data, "ns0:name")
-                )
-                if not author_name:
-                    continue
+            if not isinstance(author_data, dict):
+                continue
 
-                author_affiliation = parse_names_and_identifiers(
-                    get_nested(author_data, "ns1:affiliation")
-                )
+            author_name = parse_names_and_identifiers(
+                get_nested(author_data, "ns0:name")
+            )
+            if not author_name or author_name in seen_authors:
+                continue
+            seen_authors.add(author_name)
 
-                author_affiliations = self._extract_affiliations(author_data)
+            author_affiliation = parse_names_and_identifiers(
+                get_nested(author_data, "ns1:affiliation")
+            )
+            author_affiliations = self._extract_affiliations(author_data)
 
-                author, _ = get_or_create(
-                    session,
-                    Author,
-                    {"name": author_name},
-                    affiliation=author_affiliation,
-                    affiliations=author_affiliations if author_affiliations else None,
-                )
-                authors_with_positions.append((author, position))
+            author, _ = get_or_create(
+                session,
+                Author,
+                {"name": author_name},
+                affiliation=author_affiliation,
+                affiliations=author_affiliations if author_affiliations else None,
+            )
+            authors_with_positions.append((author, position))
 
         return authors_with_positions
 
