@@ -39,8 +39,8 @@ def run_data_loader(source_config: SourceConfig):
             yield_all_documents(source_config.source_path)
         ):
             doc_count += 1
-            # if doc_count < 32000:
-            #     continue
+            if doc_count < 800:
+                continue
 
             try:
                 data_loader = source_config.data_loader(path)
