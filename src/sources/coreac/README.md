@@ -12,7 +12,7 @@
 
 ## Checkpoint
 
-... The last publishedDate. The date where the paper was initially published ...
+CP is publishedDate in form of YYYY-MM-DD.
 
 ## Rate Limits
 

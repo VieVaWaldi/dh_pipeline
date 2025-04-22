@@ -58,7 +58,7 @@ class CordisExtractor(IExtractor):
         data_path = self.save_extracted_data(download_uri)
         self.non_contextual_transformation(data_path)
 
-        checkpoint = self.get_new_checkpoint_from_data()
+        checkpoint = "2025-01-01"  # need to update and overwrite old projects
         self.save_checkpoint(checkpoint)
 
         self._cordis_delete_extraction(api_key, task_id)
@@ -107,19 +107,19 @@ class CordisExtractor(IExtractor):
 
         shutil.rmtree(data_path)
 
-    def get_new_checkpoint_from_data(self) -> str:
-        date_elements = xml.get_all_elements_text_recursively(
-            self.data_path, self.checkpoint_name
-        )
-
-        date_objects = []
-        for date_list in date_elements:
-            date_objects.append(self.parse_date_to_obj(date_list[0]))
-
-        if not date_objects:
-            log_and_raise_exception("Lost xml elements when converting to datatime.")
-
-        return max(date_objects).strftime("%Y-%m-%d")
+    # def get_new_checkpoint_from_data(self) -> str:
+    #     date_elements = xml.get_all_elements_text_recursively(
+    #         self.data_path, self.checkpoint_name
+    #     )
+    #
+    #     date_objects = []
+    #     for date_list in date_elements:
+    #         date_objects.append(self.parse_date_to_obj(date_list[0]))
+    #
+    #     if not date_objects:
+    #         log_and_raise_exception("Lost xml elements when converting to datatime.")
+    #
+    #     return max(date_objects).strftime("%Y-%m-%d")
 
     def parse_date_to_obj(self, date_str) -> datetime:
         try:
@@ -276,8 +276,6 @@ def main():
             checkpoint_to_range,
             download_attachments,
         )
-
-    # Add backup by copying from vast to ceph
 
 
 if __name__ == "__main__":
