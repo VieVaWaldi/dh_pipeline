@@ -81,217 +81,82 @@ ORDER BY count DESC;
 -- 1 doi was used twice
 
 -----------------------------------------------
--- References
-
--- Note: I checked a couple of papers manually, arxiv seems to only get the references for very few papers because they are in the PDFs
-
-select count(distinct w.id) as papers_with_ref
-from arxiv.entry as w
-inner join arxiv.j_entry_reference as wr on w.id = wr.entry_id;
-
--- 4k papers with at least one reference for All papers
--- so should be 96 references per paper on average for these
-
--- 45 papers with at least one reference for digital & heritage
--- 17 papers with at least one reference for digital & heritage
-
-select count(*)
-from arxiv.entry as w
-where not exists (
-	select 1 
-	from arxiv.j_entry_reference as wr
-	where wr.entry_id = w.id
-);
--- 192k papers without a reference
-
------------------------------------------------
 -- Temporal Analysis
 
 -- Note: I dont have all papers for 2024 so far and none for 2025, thats why the number is lower
 
-select year_published, count(*) as pub_count
+select extract(year from published_date) as year, count(*) as pub_count
 from arxiv.entry
-where year_published is not null
-group by year_published
-order by year_published;
+where published_date is not null
+group by year
+order by year;
 
 -- All papers
--- "1990"	508
--- "1991"	1073
--- "1992"	1194
--- "1993"	1126
--- "1994"	1354
--- "1995"	1505
--- "1996"	1559
--- "1997"	1580
--- "1998"	1649
--- "1999"	1785
--- "2000"	2070
--- "2001"	2102
--- "2002"	2285
--- "2003"	2629
--- "2004"	3213
--- "2005"	3345
--- "2006"	3626
--- "2007"	3679
--- "2008"	4051
--- "2009"	4293
--- "2010"	4847
--- "2011"	5385
--- "2012"	6324
--- "2013"	6895
--- "2014"	7970
--- "2015"	9472
--- "2016"	10456
--- "2017"	10974
--- "2018"	12513
--- "2019"	13108
--- "2020"	13828
--- "2021"	14292
--- "2022"	16805
--- "2023"	16010
--- "2024"	3101
+-- 1993	1
+-- 1994	20
+-- 1995	19
+-- 1996	7
+-- 1997	14
+-- 1998	10
+-- 1999	18
+-- 2000	13
+-- 2001	15
+-- 2002	26
+-- 2003	34
+-- 2004	36
+-- 2005	45
+-- 2006	51
+-- 2007	76
+-- 2008	92
+-- 2009	130
+-- 2010	198
+-- 2011	217
+-- 2012	311
+-- 2013	467
+-- 2014	598
+-- 2015	161
+-- 2016	516
+-- 2017	1899
+-- 2018	2752
+-- 2019	2831
+-- 2020	3999
+-- 2021 ????? 0 ... ! ! ! ! ???? error????
+-- 2022	2000, sounds weird
+-- 2023	2000, sounds weird
+-- 2024	2042
 
 -- cultural & heritage
--- "1991"	2
--- "1992"	1
--- "1993"	1
--- "1994"	1
--- "1995"	2
--- "1996"	1
--- "1997"	1
--- "1998"	1
--- "1999"	7
--- "2000"	5
--- "2001"	10
--- "2002"	12
--- "2003"	8
--- "2004"	19
--- "2005"	15
--- "2006"	21
--- "2007"	26
--- "2008"	23
--- "2009"	31
--- "2010"	40
--- "2011"	43
--- "2012"	62
--- "2013"	50
--- "2014"	93
--- "2015"	113
--- "2016"	132
--- "2017"	137
--- "2018"	144
--- "2019"	193
--- "2020"	164
--- "2021"	179
--- "2022"	212
--- "2023"	214
--- "2024"	40
 
 -- digital & heritage
--- "1998"	1
--- "2000"	2
--- "2001"	6
--- "2002"	4
--- "2003"	5
--- "2004"	12
--- "2005"	9
--- "2006"	10
--- "2007"	13
--- "2008"	15
--- "2009"	15
--- "2010"	16
--- "2011"	25
--- "2012"	27
--- "2013"	24
--- "2014"	50
--- "2015"	62
--- "2016"	83
--- "2017"	71
--- "2018"	84
--- "2019"	96
--- "2020"	76
--- "2021"	101
--- "2022"	114
--- "2023"	111
--- "2024"	18
 
 -----------------------------------------------
--- Document Type Distribution
+-- Most frequent authors
 
-SELECT 
-    document_type,
-    COUNT(*) as count,
-    ROUND((COUNT(*) * 100.0 / (SELECT COUNT(*) FROM arxiv.entry)), 2) AS percentage
-FROM 
-    arxiv.entry
-GROUP BY 
-    document_type
-ORDER BY 
-    count DESC;
 
 -----------------------------------------------
--- Most frequent authors USELESS INFO
+-- Most frequent Journal Refs
 
 SELECT 
-    unnest(authors) as author,
+    journal_ref,
     COUNT(*) as publication_count
 FROM 
     arxiv.entry
-GROUP BY 
-    author
-ORDER BY 
-    publication_count DESC
-LIMIT 20;
-
------------------------------------------------
--- Most frequent publishers
-
-SELECT 
-    publisher,
-    COUNT(*) as publication_count
-FROM 
-    arxiv.get_entry_subset('cultural & heritage')
 WHERE 
-    publisher IS NOT NULL
+    journal_ref IS NOT NULL
 GROUP BY 
-    publisher
+    journal_ref
 ORDER BY 
     publication_count DESC
 LIMIT 10;
 
--- All papers
--- "'Elsevier BV'"	3755
--- "'Springer Science and Business Media LLC'"	3622
--- "AIS Electronic Library (AISeL)"	3255
--- "'MDPI AG'"	2311
--- "'Informa UK Limited'"	2045
--- "'Wiley'"	1710
--- "'Association for Computing Machinery (ACM)'"	1382
--- "The University of Edinburgh"	1226
--- "UCL (University College London)"	1107
--- "'IntechOpen'"	1089
+-- "Journal of Computing, Vol. 2, No. 6, June 2010, NY, USA, ISSN 2151-9617"	4
+-- "EMNLP 2020"	4
+-- "Proceedings of the 2023 CHI Conference on Human Factors in Computing Systems"	4
+-- "2021 IEEE International Conference on Robotics and Automation (ICRA)"	3
+-- "CVPR 2018"	3
+-- "CVPR 2023"	3
+-- "ECCV 2018"	3
+-- "CVPR 2019"	3
+-- "AAAI 2020"	3
+-- "IEEE Transactions on Pattern Analysis and Machine Intelligence, 2021"	3
 
--- cultural & heritage
--- "'Universitat Politecnica de Valencia'"	75
--- "'MDPI AG'"	74
--- "'Springer Science and Business Media LLC'"	56
--- "'Copernicus GmbH'"	52
--- "'Association for Computing Machinery (ACM)'"	48
--- "'Elsevier BV'"	35
--- "'Informa UK Limited'"	28
--- "HAL CCSD"	27
--- "'Institute of Electrical and Electronics Engineers (IEEE)'"	26
--- "Alma Mater Studiorum - Università di Bologna"	16
-
--- digital & heritage
--- "'Universitat Politecnica de Valencia'"	62
--- "'Copernicus GmbH'"	33
--- "'MDPI AG'"	31
--- "Hunter Library Digital Collections, Western Carolina University, Cullowhee, NC 28723;"	30
--- "'Association for Computing Machinery (ACM)'"	28
--- "'Informa UK Limited'"	20
--- "'Springer Science and Business Media LLC'"	19
--- "'Elsevier BV'"	12
--- "HAL CCSD"	12
--- "'Institute of Electrical and Electronics Engineers (IEEE)'"	8

@@ -30,7 +30,7 @@
       {
         "query": "all:computing+AND+(all:humanities+OR+all:heritage)",
         "download_attachments": true,
-        "checkpoint_to_range": "2000"
+        "checkpoint_to_range": "10"
       }
     ]
   },

@@ -26,12 +26,18 @@ class ArxivExtractor(IExtractor, ABC):
         self.download_attachments = download_attachments
 
     def extract_until_next_checkpoint(self, query: str) -> bool:
+        time.sleep(5)
         xml_content = self.fetch_arxiv_data(query)
 
         meta_data = self.print_arxiv_meta_data(xml_content)
         total_results = meta_data["total_results"]
 
         entries = self.extract_entries(xml_content)
+        if len(entries) == 0 and self.get_new_checkpoint_from_data() < total_results:
+            raise Exception(
+                "Stopping the extraction after not getting entries, try again soon."
+            )
+
         self.check_and_save_new_entries(entries)
 
         if not self.get_new_checkpoint_from_data() < total_results:
@@ -40,9 +46,6 @@ class ArxivExtractor(IExtractor, ABC):
 
         self.save_checkpoint(str(self.get_new_checkpoint_from_data()))
 
-        # Rate Limiting: Fetch at once a batch of 2000 entries and add 3 seconds delay before fetching a new batch.
-        # Log a completion message once all pages/entries have been processed.
-        time.sleep(30)
         logging.info(">>> Successfully finished extraction")
         return True
 
@@ -51,7 +54,7 @@ class ArxivExtractor(IExtractor, ABC):
         return checkpoint if checkpoint is not None else "0"
 
     def get_new_checkpoint_from_data(self) -> int:
-        return int(self.last_checkpoint) + 2000
+        return int(self.last_checkpoint) + 100
 
     def create_checkpoint_end_for_this_run(self, next_checkpoint: str) -> str:
         """
@@ -59,39 +62,38 @@ class ArxivExtractor(IExtractor, ABC):
         """
         raise NotImplementedError()
 
-    def check_and_save_new_entries(self, entries):
-        """
-        Check for new entries (not processed) with the help of IDS
-        Save new entries
-        Update the set of processed IDs
-        """
-        new_entries = []
-        processed_ids = self.get_processed_ids()
-        for entry in entries:
-            entry_element = xml.fromstring(entry)
-            entry_id = entry_element.find("{http://www.w3.org/2005/Atom}id").text
-            if entry_id not in processed_ids:
-                new_entries.append(entry)
-                processed_ids.add(entry_id)
-
-        if new_entries:
-            self.save_entries_and_papers(new_entries)
-            self.save_processed_ids(processed_ids)
-        else:
-            logging.info("No new entries found.")
-
-    def fetch_arxiv_data(self, query: str) -> str:
+    def fetch_arxiv_data(self, query: str, max_retries=3, initial_delay=10) -> str:
+        """Fetch data using retry when no entries received."""
         try:
-            logging.info(
-                f"Fetching results {self.last_checkpoint} to {self.get_new_checkpoint_from_data()}..."
-            )
-            url = f"https://export.arxiv.org/api/query?{query}"
-            response = requests.get(url)
-            response.raise_for_status()
-            logging.info(
-                "GET Request status: %s",
-                response.text.replace("\n", " ")[:512],
-            )
+            for attempt in range(max_retries):
+                logging.info(
+                    f"Attempt {attempt+1}/{max_retries}: Fetching results {self.last_checkpoint} to {self.get_new_checkpoint_from_data()}..."
+                )
+                url = f"https://export.arxiv.org/api/query?{query}"
+                response = requests.get(url)
+
+                if response.status_code == 200 and "<entry" in response.text:
+                    logging.info(
+                        "GET Request status: %s", response.text.replace("\n", " ")[:512]
+                    )
+                    return response.text
+                else:
+                    # Calculate delay with exponential backoff
+                    delay = initial_delay * (4**attempt)
+                    logging.warning(
+                        f"Received empty or error response. Retrying in {delay} seconds..."
+                    )
+                    time.sleep(delay)
+
+            # If we've exhausted all retries and still don't have entries
+            if "<entry" not in response.text:
+                logging.warning(
+                    "No entries found after all retries. This could be normal if there are no results in this range."
+                )
+                raise Exception(
+                    "Stopping the extraction after 3 retries, try again soon."
+                )
+
             return response.text
         except requests.RequestException as e:
             log_and_raise_exception(f"Error fetching data from {url}: {e}")
@@ -130,7 +132,7 @@ class ArxivExtractor(IExtractor, ABC):
         except Exception as e:
             log_and_raise_exception(f"Error extracting entries: {e}")
 
-    def save_entries_and_papers(self, entries: List[str]) -> None:
+    def check_and_save_new_entries(self, entries):
         for entry in entries:
             # Parse the XML entry
             try:
@@ -179,6 +181,7 @@ class ArxivExtractor(IExtractor, ABC):
                     xml_file_path, encoding="utf-8", xml_declaration=True
                 )  # Writes the XML data to the specified file path
 
+                continue
                 # Find and save the PDF file
                 pdf_url = None  # Initializes the PDF URL variable
                 # Iterates over all link elements in the XML
@@ -207,18 +210,6 @@ class ArxivExtractor(IExtractor, ABC):
 
             except Exception as e:
                 log_and_raise_exception(f"Error saving entries and papers to file: {e}")
-
-    # Manage a record of IDs to prevent duplication
-    # Update the file with new processed IDs
-    def get_processed_ids(self) -> set:
-        if self.processed_ids_file.exists():
-            return {line.strip() for line in self.processed_ids_file.open("r")}
-        return set()
-
-    def save_processed_ids(self, ids: set) -> None:
-        with self.processed_ids_file.open("a") as f:
-            for id in ids:
-                f.write(f"{id}\n")
 
     def save_extracted_data(self, data: str | Dict[str, Any]) -> Path:
         raise NotImplementedError

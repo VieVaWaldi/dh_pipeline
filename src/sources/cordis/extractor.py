@@ -10,10 +10,9 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 import core.file_handling.file_parsing.xml_parser as xml
-from core.etl.extractor import trim_excessive_whitespace
-from core.requests.file_downloader import SeleniumFileDownloader
 from common_utils.config.config_loader import get_query_config
 from common_utils.error_handling.error_handling import log_and_raise_exception
+from core.etl.extractor.utils import trim_excessive_whitespace
 from core.file_handling.file_handling import (
     unpack_and_remove_zip,
     load_file,
@@ -21,6 +20,7 @@ from core.file_handling.file_handling import (
     ensure_path_exists,
     delete_if_empty,
 )
+from core.requests.file_downloader import SeleniumFileDownloader
 from core.requests.requests import (
     make_delete_request,
     make_get_request,
