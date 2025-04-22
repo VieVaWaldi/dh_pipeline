@@ -181,7 +181,6 @@ class ArxivExtractor(IExtractor, ABC):
                     xml_file_path, encoding="utf-8", xml_declaration=True
                 )  # Writes the XML data to the specified file path
 
-                continue
                 # Find and save the PDF file
                 pdf_url = None  # Initializes the PDF URL variable
                 # Iterates over all link elements in the XML
