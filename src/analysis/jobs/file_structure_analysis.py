@@ -76,7 +76,7 @@ class FileStructureAnalysis(IAnalysisJob):
 
     def save_output(self) -> None:
         logging.info("Saving file structure analysis results")
-        csv_output_path = self.output_path / f"{self.analysis_name}.csv"
+        csv_output_path = self.analysis_output_path / f"{self.analysis_name}.csv"
         with open(csv_output_path, "w", newline="") as csv_file:
             writer = csv.writer(csv_file)
             writer.writerow(["Name", "Number of Files", "Size in Gigabyte"])
@@ -131,6 +131,6 @@ if __name__ == "__main__":
         help="Choose query to run analysis on",
     )
     args = parser.parse_args()
-    job = FileStructureAnalysis(args.query)
+    job = FileStructureAnalysis("arxiv_allCOLONcomputingPLUSANDPLUSLBallCOLONhumanitiesPLUSORPLUSallCOLONheritageRB")#args.query)
     job.run()
     job.save_output()
