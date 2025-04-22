@@ -22,7 +22,7 @@ Open `.env_`, add keys and rename it to `.env`. Comments after keys create error
 
 ## Database 
 
-This document explains how you can control the [PostgreSQL](database/README.md) server locally and on the cluster.
+This document explains how you can control the [PostgreSQL](sql/README.md) server locally and on the cluster.
 
 ## Structure
 

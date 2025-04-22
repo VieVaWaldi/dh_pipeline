@@ -9,7 +9,7 @@ class IDataLoader(ABC):
     """
     Base Class for all Data Loaders.
     Takes a dict and transform it into respective ORM Models.
-    Load models into database using the session.
+    Load models into sql using the session.
     """
 
     def __init__(self, path_to_file: Path):

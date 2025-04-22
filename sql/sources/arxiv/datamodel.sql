@@ -6,7 +6,7 @@ CREATE SCHEMA IF NOT EXISTS arxiv;
 CREATE TABLE arxiv.entry (
     id SERIAL PRIMARY KEY,
     id_original TEXT UNIQUE NOT NULL,
-    title TEXT UNIQUE NOT NULL,
+    title TEXT NOT NULL, -- UNIQUE
     doi TEXT, -- UNIQUE
     summary TEXT,
 	full_text TEXT,

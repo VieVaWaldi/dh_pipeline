@@ -27,7 +27,7 @@ from sources.coreac.data_model import (
 class CoreacDataLoader(IDataLoader):
     """
     Data loader for CoreAc documents.
-    Transforms JSON documents into SQLAlchemy ORM models and loads them into the database.
+    Transforms JSON documents into SQLAlchemy ORM models and loads them into the sql.
     """
 
     def __init__(self, path_to_file=None):

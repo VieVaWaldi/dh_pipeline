@@ -3,7 +3,7 @@
 #SBATCH --job-name=dump_to_neon
 #SBATCH --partition=standard
 #SBATCH --time=4:00:00
-#SBATCH --output=/home/lu72hip/DIGICHer/DIGICHer_Pipeline/data/runs/database/dump_to_neon_%j.log
+#SBATCH --output=/home/lu72hip/DIGICHer/DIGICHer_Pipeline/data/runs/sql/dump_to_neon_%j.log
 
 ### CleanUp
 

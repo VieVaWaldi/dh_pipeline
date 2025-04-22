@@ -7,7 +7,7 @@ from common_utils.config.config_loader import get_config
 
 
 def create_db_session() -> sessionmaker:
-    """Create and return a database session factory."""
+    """Create and return a sql session factory."""
     config = get_config()["db"]
     database_url = f"postgresql://{config['url']}:{config['port']}/{config['db_name']}"
     try:
@@ -20,5 +20,5 @@ def create_db_session() -> sessionmaker:
         logging.info(f"Successfully connected to: {database_url}")
         return sessionmaker(bind=engine)
     except Exception as e:
-        logging.error(f"Failed to connect to database: {str(e)}")
+        logging.error(f"Failed to connect to sql: {str(e)}")
         raise

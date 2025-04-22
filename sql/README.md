@@ -1,7 +1,7 @@
 # PostgreSQL
 
-We use PostgreSQL version 17.2. The models are written in AlchemySQL, 
-therefore another Database could be used.
+We use PostgreSQL version 17.2. The source models are written in AlchemySQL, 
+therefore any other Database can be used.
 
 ## Config
 - Local (default): 5432

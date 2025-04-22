@@ -31,7 +31,7 @@ class ModelUpdateMonitor:
         Args:
             model_name: Name of the model class
             field_name: Name of the field with conflict
-            old_value: Original value in the database
+            old_value: Original value in the sql
             new_value: New value that was attempted to be set
         """
         if model_name not in cls._stats:
