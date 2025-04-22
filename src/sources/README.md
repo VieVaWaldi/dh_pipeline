@@ -1,6 +1,8 @@
 # Source Extraction and Loading
 
-Go [Here]((../../sql/sources/README.md)) for Source Transformation
+Go [Here]((../../sql/sources/README.md)) for Source Transformation.
+
+All of these Sources have their very own considerations and therefore specific extraction strategy considerations.
 
 * [Arxiv](arxiv/README.md)
 * [Cordis](cordis/README.md)

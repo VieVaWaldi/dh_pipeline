@@ -3,7 +3,7 @@
 #SBATCH --job-name=arxiv_extractor
 #SBATCH --partition=long
 #SBATCH --time=240:00:00
-#SBATCH --output=/home/lu72hip/DIGICHer/DIGICHer_Pipeline/data/runs/extractor/arxiv_%j.log
+#SBATCH --output=/home/lu72hip/DIGICHer/DIGICHer_Pipeline/data/runs/extractors/arxiv_%j.log
 
 cd /home/lu72hip/DIGICHer/DIGICHer_Pipeline || exit
 source venv/bin/activate

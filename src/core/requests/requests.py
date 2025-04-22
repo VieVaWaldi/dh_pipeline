@@ -9,7 +9,7 @@ import requests
 
 from common_utils.error_handling.error_handling import log_and_raise_exception
 
-MAX_RESPONSE_LOG_LENGTH = 512
+MAX_RESPONSE_LOG_LENGTH = 2048
 
 
 def make_get_request(url: str, params: Dict, header: Dict = None) -> Dict:

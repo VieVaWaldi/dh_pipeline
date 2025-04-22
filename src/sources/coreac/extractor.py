@@ -25,7 +25,7 @@ class CoreExtractor(IExtractor):
     """
     A Core extraction must follow this pattern:
     1. Call search which also returns the data (great)
-    However coreacuk has too many papers. One results returns more than the api allows,
+    However coreac has too many papers. One results returns more than the api allows,
     so we limit it to 10k, remember the checkpoint and start the next query
     sorted from there.
     """
@@ -47,7 +47,6 @@ class CoreExtractor(IExtractor):
 
         if core_data:
             data_path = self.save_extracted_data(core_data)
-            # self.non_contextual_transformation(data_path)
 
             checkpoint = self.get_new_checkpoint_from_data()
             self.save_checkpoint(checkpoint)
@@ -68,6 +67,8 @@ class CoreExtractor(IExtractor):
 
     def save_extracted_data(self, data: List[Dict[str, Any]]) -> Path:
         for index, entry in enumerate(data):
+            if entry is None:
+                continue
             title = self.clean_title(entry["title"], entry, index)
             date = (
                 self.parse_date_to_obj(entry["publishedDate"]).strftime("%Y-%m-%d")
@@ -108,7 +109,7 @@ class CoreExtractor(IExtractor):
 
         while True:
             core_data, hits = self._search_core(query, offset)
-            if not core_data:
+            if not core_data and hits != 1: # and hits != 1 for documentType coreac bug fml
                 break
 
             all_data.extend(core_data)
@@ -121,19 +122,53 @@ class CoreExtractor(IExtractor):
         return all_data, total_hits
 
     def _search_core(
-        self, query: str, offset: int = 0, chunk_size: int = 100
+        self,
+        query: str,
+        offset: int = 0,
+        chunk_size: int = 1,
+        max_retries=3,
+        initial_delay=10,
     ) -> (List[Dict[str, Any]], int):
+        """Search CORE API with retry mechanism and exponential backoff."""
         params = {
             "q": query,
             "sort": "publishedDate",
             "limit": chunk_size,
             "offset": offset,
         }
-        response = make_get_request(
-            f"{self.base_url}/search/works", params, self.headers
-        )
 
-        return response["results"], response["totalHits"]
+        for attempt in range(max_retries):
+            logging.info(
+                f"Attempt {attempt+1}/{max_retries}: Fetching results from CORE API..."
+            )
+
+            try:
+                time.sleep(0.2)
+                response = make_get_request(
+                    f"{self.base_url}/search/works", params, self.headers
+                )
+            except Exception as e:
+                # Stupid freaking coreac document type bug, need to go though all entries one by one fml
+                if "Cannot assign array to property App" in e.args[0]:
+                    return [None], 1
+                else:
+                    # Trying again cuz fuck them and their "200k" requests per day, i probably shouldnt comment like this
+                    response = None
+
+            # Check if we got a valid response with results
+            if response and "results" in response and "totalHits" in response:
+                return response["results"], response["totalHits"]
+            else:
+                # Calculate delay with exponential backoff
+                delay = initial_delay * (4**attempt)
+                logging.warning(
+                    f"Received empty or error response. Retrying in {delay} seconds..."
+                )
+                time.sleep(delay)
+
+        # If we've exhausted all retries and still don't have a good response
+        logging.error("No valid response after all retries.")
+        raise Exception("Stopping the extraction after 3 retries, try again soon.")
 
     def clean_title(self, param, entry, index):
         return (
@@ -186,7 +221,7 @@ def main():
     args = parser.parse_args()
 
     load_dotenv()
-    config = get_query_config()["coreacuk"]
+    config = get_query_config()["coreac"]
 
     run = config["runs"][args.run_id]
     query = run["query"]
@@ -194,7 +229,7 @@ def main():
     checkpoint_to_range = run["checkpoint_to_range"]
     download_attachments = run["download_attachments"]
 
-    extractor_name = f"core_{query}"
+    extractor_name = f"coreac_{query}"
     checkpoint_name = config["checkpoint"]
 
     continue_running = True
@@ -206,9 +241,8 @@ def main():
             checkpoint_to_range,
             download_attachments,
         )
-
-        # To respect the coreacuk limit
-        time.sleep(60)
+        # To respect the coreac limit
+        time.sleep(10)
 
 
 if __name__ == "__main__":
