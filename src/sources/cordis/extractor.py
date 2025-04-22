@@ -81,14 +81,14 @@ class CordisExtractor(IExtractor):
         return new_date.strftime("%Y-%m-%d")
 
     def save_extracted_data(self, data: str) -> Path:
-        base_url = "https://cordis.europa.eu/"
-        zip_path = download_file(base_url + data, self.data_path)
+        # base_url = "https://cordis.europa.eu/"
+        zip_path = download_file(data, self.data_path)
         unpack_and_remove_zip(zip_path)
 
         # Cordis returns a zip in a fucking zip
         xml_zip_path = zip_path.parent / "xml.zip"
         unpack_and_remove_zip(xml_zip_path)
-        return self.data_path / "xml"
+        return self.data_path
 
     def non_contextual_transformation(self, data_path: Path):
         for file_path in Path(data_path).iterdir():

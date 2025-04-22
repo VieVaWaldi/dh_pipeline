@@ -68,7 +68,7 @@ def download_file(url: str, save_path: Path) -> Path:
     """
 
     filename = os.path.basename(url)
-    file_path = save_path / filename
+    file_path = save_path / filename[30:]
 
     try:
         response = requests.get(url, timeout=60)
