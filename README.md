@@ -1,6 +1,13 @@
-# DIGICHer Pipeline
+# Scientometric DH Pipeline
 
-This is an EU funded project. The pipeline follows the EtLT pattern.
+The pipeline follows the EtLT pattern. Source data gets **Extracted**, sanitized and **Loaded** into the database, and finally deduplicated and **Transformed** into a unified data model.
+
+Our sources can be used independently, meaning if you just want to get data from one of the available sources its as simple as configuring the query, entering the api key if needed and running the extractor. 
+Sources have data models in SQL-Alchemy, meaning they can be loaded into any database.
+
+Find more information about the specific sources here [Source Extraction & Loading](src/sources/README.md)
+
+Configure queries for the sources and paths here [Config](config/README.md)
 
 ## Installation
 
@@ -23,6 +30,8 @@ Open `.env_`, add keys and rename it to `.env`. Comments after keys create error
 ## Database 
 
 This document explains how you can control the [PostgreSQL](sql/README.md) server locally and on the cluster.
+
+## Orchestration
 
 ## Structure
 

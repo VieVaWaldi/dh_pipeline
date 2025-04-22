@@ -34,7 +34,7 @@ def get_query_config() -> Dict[str, Any]:
 
 def _get_config(config_name: str) -> Dict[str, Any]:
     """Prepares and returns the given config as json"""
-    config_file_path = get_root_path() / "configs" / f"{config_name}.json"
+    config_file_path = get_root_path() / "config" / f"{config_name}.json"
 
     config = load_json_file(config_file_path)
     if not config:

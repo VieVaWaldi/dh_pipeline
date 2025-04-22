@@ -6,7 +6,7 @@ therefore any other Database can be used.
 ## Config
 - Local (default): 5432
 - Cluster: 5433
-- Find ports, connection strings and database names [here](../configs/config.json).
+- Find ports, connection strings and database names [here](../config/config.json).
 
 ## Local PostgreSQL (MacOS)
 

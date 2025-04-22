@@ -1,4 +1,4 @@
-# Source: OpenAire
+# Source: Openaire 
 
 * https://graph.openaire.eu/docs/
 * https://explore.openaire.eu/search/advanced/projects?f0=q&fv0=cultural&f1=q,or&fv1=heritage
