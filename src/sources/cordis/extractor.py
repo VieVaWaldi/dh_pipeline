@@ -107,7 +107,9 @@ class CordisExtractor(IExtractor):
 
         shutil.rmtree(data_path)
 
-    # def get_new_checkpoint_from_data(self) -> str:
+    def get_new_checkpoint_from_data(self) -> str:
+        pass
+
     #     date_elements = xml.get_all_elements_text_recursively(
     #         self.data_path, self.checkpoint_name
     #     )
