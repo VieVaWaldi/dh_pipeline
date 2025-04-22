@@ -109,7 +109,9 @@ class CoreExtractor(IExtractor):
 
         while True:
             core_data, hits = self._search_core(query, offset)
-            if not core_data and hits != 1: # and hits != 1 for documentType coreac bug fml
+            if (
+                not core_data and hits != 1
+            ):  # and hits != 1 for documentType coreac bug fml
                 break
 
             all_data.extend(core_data)
@@ -125,7 +127,7 @@ class CoreExtractor(IExtractor):
         self,
         query: str,
         offset: int = 0,
-        chunk_size: int = 1,
+        chunk_size: int = 20,
         max_retries=3,
         initial_delay=10,
     ) -> (List[Dict[str, Any]], int):
@@ -143,14 +145,14 @@ class CoreExtractor(IExtractor):
             )
 
             try:
-                time.sleep(0.2)
+                time.sleep(1)
                 response = make_get_request(
                     f"{self.base_url}/search/works", params, self.headers
                 )
             except Exception as e:
                 # Stupid freaking coreac document type bug, need to go though all entries one by one fml
                 if "Cannot assign array to property App" in e.args[0]:
-                    return [None], 1
+                    return [None] * 20, 20
                 else:
                     # Trying again cuz fuck them and their "200k" requests per day, i probably shouldnt comment like this
                     response = None
