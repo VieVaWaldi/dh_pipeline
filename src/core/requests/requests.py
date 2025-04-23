@@ -67,8 +67,7 @@ def download_file(url: str, save_path: Path) -> Path:
     Expects path to be valid. Returns path of saved file.
     """
 
-    filename = os.path.basename(url)
-    file_path = save_path / filename[30:]
+    file_path = save_path / "tmp.zip"
 
     try:
         response = requests.get(url, timeout=60)

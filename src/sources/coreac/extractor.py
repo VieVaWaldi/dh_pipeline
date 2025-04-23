@@ -129,7 +129,7 @@ class CoreExtractor(IExtractor):
         offset: int = 0,
         chunk_size: int = 10,
         max_retries=3,
-        initial_delay=10,
+        initial_delay=1,
     ) -> (List[Dict[str, Any]], int):
         """Search CORE API with retry mechanism and exponential backoff."""
         params = {
@@ -152,7 +152,10 @@ class CoreExtractor(IExtractor):
             except Exception as e:
                 # Stupid freaking coreac document type bug, need to go though all entries one by one fml
                 if "Cannot assign array to property App" in e.args[0]:
-                    return [None] * 10, 10
+                    logging.info("Skipping this chunk of 10 elements")
+                    return [
+                        None
+                    ] * 10, 11  # just make it keep going and skip the chunk ...
                 else:
                     # Trying again cuz fuck them and their "200k" requests per day, i probably shouldnt comment like this
                     response = None

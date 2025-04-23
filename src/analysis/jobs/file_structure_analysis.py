@@ -131,6 +131,6 @@ if __name__ == "__main__":
         help="Choose query to run analysis on",
     )
     args = parser.parse_args()
-    job = FileStructureAnalysis("arxiv_allCOLONcomputingPLUSANDPLUSLBallCOLONhumanitiesPLUSORPLUSallCOLONheritageRB")#args.query)
+    job = FileStructureAnalysis(args.query)
     job.run()
     job.save_output()

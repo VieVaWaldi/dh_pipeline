@@ -93,6 +93,9 @@ class CordisExtractor(IExtractor):
     def non_contextual_transformation(self, data_path: Path):
         for file_path in Path(data_path).iterdir():
 
+            # ToDo:
+            # need to overwrite the existing folders if we want to update in place
+
             if not file_path.is_file() or not (file_path.suffix == ".xml"):
                 log_and_raise_exception("We got a cordis record that is not an XML.")
 
