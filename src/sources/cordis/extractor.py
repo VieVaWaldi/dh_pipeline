@@ -113,18 +113,6 @@ class CordisExtractor(IExtractor):
     def get_new_checkpoint_from_data(self) -> str:
         pass
 
-    #     date_elements = xml.get_all_elements_text_recursively(
-    #         self.data_path, self.checkpoint_name
-    #     )
-    #
-    #     date_objects = []
-    #     for date_list in date_elements:
-    #         date_objects.append(self.parse_date_to_obj(date_list[0]))
-    #
-    #     if not date_objects:
-    #         log_and_raise_exception("Lost xml elements when converting to datatime.")
-    #
-    #     return max(date_objects).strftime("%Y-%m-%d")
 
     def parse_date_to_obj(self, date_str) -> datetime:
         try:
@@ -272,15 +260,16 @@ def main():
     extractor_name = f"cordis_{query}"
     checkpoint_name = config["checkpoint"]
 
-    continue_running = True
-    while continue_running:
-        continue_running = start_extraction(
-            query,
-            extractor_name,
-            checkpoint_name,
-            checkpoint_to_range,
-            download_attachments,
-        )
+    # continue_running = True
+    # while continue_running:
+
+    continue_running = start_extraction(
+        query,
+        extractor_name,
+        checkpoint_name,
+        checkpoint_to_range,
+        download_attachments,
+    )
 
 
 if __name__ == "__main__":
