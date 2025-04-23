@@ -127,7 +127,7 @@ class CoreExtractor(IExtractor):
         self,
         query: str,
         offset: int = 0,
-        chunk_size: int = 10,
+        chunk_size: int = 3,
         max_retries=3,
         initial_delay=10,
     ) -> (List[Dict[str, Any]], int):
@@ -145,7 +145,7 @@ class CoreExtractor(IExtractor):
             )
 
             try:
-                time.sleep(1)
+                time.sleep(2)
                 response = make_get_request(
                     f"{self.base_url}/search/works", params, self.headers
                 )
@@ -155,7 +155,7 @@ class CoreExtractor(IExtractor):
                     logging.info("Skipping this chunk of 10 elements")
                     return [
                         None
-                    ] * 10, 11  # just make it keep going and skip the chunk ...
+                    ] * chunk_size, chunk_size + 1  # just make it keep going and skip the chunk ...
                 else:
                     # Trying again cuz fuck them and their "200k" requests per day, i probably shouldnt comment like this
                     response = None
