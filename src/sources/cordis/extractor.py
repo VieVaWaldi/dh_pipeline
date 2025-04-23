@@ -1,7 +1,6 @@
 import argparse
 import logging
 import os
-import shutil
 import time
 import traceback
 from datetime import datetime, timedelta
@@ -114,7 +113,6 @@ class CordisExtractor(IExtractor):
 
     def get_new_checkpoint_from_data(self) -> str:
         pass
-
 
     def parse_date_to_obj(self, date_str) -> datetime:
         try:
@@ -239,7 +237,7 @@ def start_extraction(
     return extractor.extract_until_next_checkpoint(base_query)
 
 
-def main():
+def main(debug_2=0):
     parser = argparse.ArgumentParser(description="Run Cordis extractor")
     parser.add_argument(
         "-r",
@@ -262,19 +260,18 @@ def main():
     extractor_name = f"cordis_{query}"
     checkpoint_name = config["checkpoint"]
 
-    # continue_running = True
-    # while continue_running:
-
-    # just ensure 2020 is here, then go from 2025
-    # return
-
-    continue_running = start_extraction(
-        query,
-        extractor_name,
-        checkpoint_name,
-        checkpoint_to_range,
-        download_attachments,
-    )
+    continue_running = True
+    while continue_running:
+        continue_running = start_extraction(
+            query,
+            extractor_name,
+            checkpoint_name,
+            checkpoint_to_range,
+            download_attachments,
+        )
+        debug_2 += 1
+        if debug_2 == 2:
+            break
 
 
 if __name__ == "__main__":
