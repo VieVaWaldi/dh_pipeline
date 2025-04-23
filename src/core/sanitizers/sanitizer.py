@@ -94,7 +94,13 @@ def parse_titles_and_labels(value: Optional[str]) -> Optional[str]:
         return None
 
     clean_str = value.strip()
-    clean_str = clean_str.replace("\n", " ").replace("\t", " ").replace("\r", "")
+    clean_str = (
+        clean_str.replace("\n", " ")
+        .replace("\t", " ")
+        .replace("\r", "")
+        .replace("–", "-")
+        .replace("—", "-")
+    )
     clean_str = " ".join(filter(None, clean_str.split()))
 
     return clean_str or None
@@ -163,9 +169,9 @@ def parse_date(date_str: Optional[str]) -> Optional[datetime]:
 
 def parse_geolocation(geolocation: str, swap_lat_lon: bool) -> Optional[list]:
     """
-    Parse openalex string and return as [lon, lat] array.
+    Parse geolocation string and return as [lon, lat] array.
     Returns None if coordinates are invalid.
-    Cordis geolocations with (brackets) are swapped.
+    Cordis geolocations with (brackets) are [lat, lon] in the raw data.
     """
     if not geolocation:
         return None

@@ -128,7 +128,7 @@ class DataProvider(Base):
 """ Junction tables """
 
 
-class WorkLink(Base):
+class JunctionWorkLink(Base):
     __tablename__ = "j_work_link"
     __table_args__ = {"schema": "coreac"}
 
@@ -136,7 +136,7 @@ class WorkLink(Base):
     link_id: Mapped[int] = mapped_column(ForeignKey("coreac.link.id"), primary_key=True)
 
 
-class WorkReference(Base):
+class JunctionWorkReference(Base):
     __tablename__ = "j_work_reference"
     __table_args__ = {"schema": "coreac"}
 
@@ -146,7 +146,7 @@ class WorkReference(Base):
     )
 
 
-class WorkDataProvider(Base):
+class JunctionWorkDataProvider(Base):
     __tablename__ = "j_work_data_provider"
     __table_args__ = {"schema": "coreac"}
 

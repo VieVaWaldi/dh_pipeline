@@ -18,8 +18,8 @@ from sources.arxiv.data_model import (
     Entry,
     Author,
     Link,
-    EntryAuthor,
-    EntryLink,
+    JunctionEntryAuthor,
+    JunctionEntryLink,
 )
 
 
@@ -213,7 +213,7 @@ class ArxivDataLoader(IDataLoader):
             if entry.id and author.id:
                 entry_author, _ = get_or_create(
                     session,
-                    EntryAuthor,
+                    JunctionEntryAuthor,
                     {"entry_id": entry.id, "author_id": author.id},
                     author_position=position,
                 )
@@ -224,6 +224,6 @@ class ArxivDataLoader(IDataLoader):
             if entry.id and link.id:
                 entry_link, _ = get_or_create(
                     session,
-                    EntryLink,
+                    JunctionEntryLink,
                     {"entry_id": entry.id, "link_id": link.id},
                 )

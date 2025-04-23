@@ -10,6 +10,7 @@ All of these Sources have their very own considerations and therefore specific e
 * [OpenAire](openaire/README.md)
 
 Data Source we are considering to add:
+
 * Web of Science
 * Scopus
 * Europeana
@@ -21,4 +22,9 @@ Data Source we are considering to add:
 3. Load SQL Alchemy models into the database
 
 4? Deduplicate the source, its part of tranformation
+
+## Notes for self
+
+* For SQLAlchemy, get_or_create only finds existing entities after flushing, so deduplicate lists with possible
+  duplicates prior using a have seen set
 

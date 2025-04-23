@@ -86,7 +86,7 @@ class Link(Base):
 """ Junction tables """
 
 
-class EntryAuthor(Base):
+class JunctionEntryAuthor(Base):
     __tablename__ = "j_entry_author"
     __table_args__ = {"schema": "arxiv"}
 
@@ -99,7 +99,7 @@ class EntryAuthor(Base):
     author_position: Mapped[int] = mapped_column(nullable=False)
 
 
-class EntryLink(Base):
+class JunctionEntryLink(Base):
     __tablename__ = "j_entry_link"
     __table_args__ = {"schema": "arxiv"}
 

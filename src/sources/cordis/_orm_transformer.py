@@ -24,7 +24,7 @@ from datamodels.digicher.entities import (
     ProjectsResearchOutputs,
 )
 from interfaces.i_orm_transformer import IORMTransformer
-from sources.cordis.object_transformer import (
+from sources.cordis._object_transformer import (
     CordisProject,
     FundingProgramme,
     Topic,

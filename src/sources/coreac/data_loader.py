@@ -18,9 +18,9 @@ from sources.coreac.data_model import (
     Link,
     Reference,
     DataProvider,
-    WorkLink,
-    WorkReference,
-    WorkDataProvider,
+    JunctionWorkLink,
+    JunctionWorkReference,
+    JunctionWorkDataProvider,
 )
 
 
@@ -266,7 +266,7 @@ class CoreacDataLoader(IDataLoader):
         for link in links:
             if work.id and link.id:
                 work_link, _ = get_or_create(
-                    session, WorkLink, {"work_id": work.id, "link_id": link.id}
+                    session, JunctionWorkLink, {"work_id": work.id, "link_id": link.id}
                 )
 
     def _create_work_references(
@@ -276,7 +276,7 @@ class CoreacDataLoader(IDataLoader):
             if work.id and reference.id:
                 work_reference, _ = get_or_create(
                     session,
-                    WorkReference,
+                    JunctionWorkReference,
                     {"work_id": work.id, "reference_id": reference.id},
                 )
 
@@ -287,6 +287,6 @@ class CoreacDataLoader(IDataLoader):
             if work.id and provider.id:
                 work_provider, _ = get_or_create(
                     session,
-                    WorkDataProvider,
+                    JunctionWorkDataProvider,
                     {"work_id": work.id, "data_provider_id": provider.id},
                 )

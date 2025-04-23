@@ -91,6 +91,7 @@ class CordisExtractor(IExtractor):
         return self.data_path
 
     def non_contextual_transformation(self, data_path: Path):
+        # xml_files_dir = data_path  # Store the directory containing the XML files
         for file_path in Path(data_path).iterdir():
 
             # ToDo:
@@ -108,7 +109,8 @@ class CordisExtractor(IExtractor):
             self.download_and_save_attachments(file_path, record_dataset_path)
             os.remove(file_path)
 
-        shutil.rmtree(data_path)
+        # if xml_files_dir != self.data_path:
+        #     shutil.rmtree(xml_files_dir)
 
     def get_new_checkpoint_from_data(self) -> str:
         pass
@@ -264,7 +266,7 @@ def main():
     # while continue_running:
 
     # just ensure 2020 is here, then go from 2025
-    return
+    # return
 
     continue_running = start_extraction(
         query,

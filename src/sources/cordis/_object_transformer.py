@@ -1,16 +1,16 @@
 from typing import Dict, Any, Tuple
 from typing import List, Optional
 
+from common_utils.error_handling.error_handling import log_and_raise_exception
+from core.etl.data_loader.utils.dict_utils import ensure_list, get_nested
 from core.sanitizers.sanitizer import (
-    clean_date,
-    clean_float,
-    clean_geolocation,
-    clean_bool,
-    clean_string,
+    parse_string,
+    parse_geolocation,
+    parse_bool,
+    parse_float,
+    parse_date,
 )
-from core.etl.transformer.utils import ensure_list, get_nested
-from interfaces.i_object_transformer import IObjectTransformer
-from sources.cordis.data_objects import (
+from sources.cordis._data_objects import (
     CordisProject,
     ResearchOutput,
     Institution,
@@ -19,7 +19,6 @@ from sources.cordis.data_objects import (
     Topic,
     Weblink,
 )
-from common_utils.error_handling.error_handling import log_and_raise_exception
 
 PROJECT = "project"
 RELATIONS = "relations"
@@ -56,11 +55,11 @@ class CordisObjectTransformer(IObjectTransformer):
             title=project_data.get("title"),
             acronym=project_data.get("acronym"),
             status=project_data.get("status"),
-            start_date=clean_date(project_data.get("startDate")),
-            end_date=clean_date(project_data.get("endDate")),
-            ec_signature_date=clean_date(project_data.get("ecSignatureDate")),
-            total_cost=clean_float(project_data.get("totalCost")),
-            ec_max_contribution=clean_float(project_data.get("ecMaxContribution")),
+            start_date=parse_date(project_data.get("startDate")),
+            end_date=parse_date(project_data.get("endDate")),
+            ec_signature_date=parse_date(project_data.get("ecSignatureDate")),
+            total_cost=parse_float(project_data.get("totalCost")),
+            ec_max_contribution=parse_float(project_data.get("ecMaxContribution")),
             objective=project_data.get("objective"),
             call_identifier=self.get_call_info(project_data, "identifier"),
             call_title=self.get_call_info(project_data, "title"),
@@ -87,7 +86,7 @@ class CordisObjectTransformer(IObjectTransformer):
                 doi=self.get_doi(result_data, "identifiers.doi"),
                 type=result_data.get("@type"),
                 title=title,
-                publication_date=clean_date(result_data.get("contentUpdateDate")),
+                publication_date=parse_date(result_data.get("contentUpdateDate")),
                 journal=get_nested(result_data, "details.journalTitle"),
                 summary=result_data.get("description"),
                 comment=result_data.get("teaser"),
@@ -105,10 +104,10 @@ class CordisObjectTransformer(IObjectTransformer):
         for org_data in ensure_list(get_nested(data, ORG_PATH)):
             if org_data.get("legalName") is None:
                 continue
-            coordinates = clean_geolocation(get_nested(org_data, "address.openalex"))
+            coordinates = parse_geolocation(get_nested(org_data, "address.openalex"))
             institution = Institution(
                 name=org_data.get("legalName"),
-                sme=clean_bool(org_data.get("@sme")),
+                sme=parse_bool(org_data.get("@sme")),
                 address_street=get_nested(org_data, "address.street"),
                 address_postbox=get_nested(org_data, "address.postBox"),
                 address_postalcode=get_nested(org_data, "address.postalCode"),
@@ -120,9 +119,9 @@ class CordisObjectTransformer(IObjectTransformer):
                 vat_number=org_data.get("vatNumber"),
                 people=self.get_organization_people(org_data),
                 #
-                ec_contribution=clean_float(org_data.get("@ecContribution")),
-                net_ec_contribution=clean_float(org_data.get("@netEcContribution")),
-                total_cost=clean_float(org_data.get("@totalCost")),
+                ec_contribution=parse_float(org_data.get("@ecContribution")),
+                net_ec_contribution=parse_float(org_data.get("@netEcContribution")),
+                total_cost=parse_float(org_data.get("@totalCost")),
                 type=org_data.get("@type"),
                 organization_id=org_data.get("id"),
                 rcn=org_data.get("rcn"),
@@ -240,10 +239,10 @@ class CordisObjectTransformer(IObjectTransformer):
         for org_data in ensure_list(get_nested(result_data, org_path)):
             if org_data.get("legalName") is None:
                 continue
-            coordinates = clean_geolocation(get_nested(org_data, "address.openalex"))
+            coordinates = parse_geolocation(get_nested(org_data, "address.openalex"))
             institution = Institution(
                 name=org_data.get("legalName"),
-                sme=clean_bool(org_data.get("@sme")),
+                sme=parse_bool(org_data.get("@sme")),
                 address_street=get_nested(org_data, "address.street"),
                 address_postbox=get_nested(org_data, "address.postBox"),
                 address_postalcode=get_nested(org_data, "address.postalCode"),
@@ -285,8 +284,8 @@ class CordisObjectTransformer(IObjectTransformer):
         - Level 3 is for all other codes
         """
 
-        codes = clean_string(codes[1:]).split("/")
-        display_codes = clean_string(display_codes[1:]).split("/")
+        codes = parse_string(codes[1:]).split("/")
+        display_codes = parse_string(display_codes[1:]).split("/")
 
         if len(codes) != len(display_codes):
             log_and_raise_exception(

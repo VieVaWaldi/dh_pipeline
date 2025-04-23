@@ -131,6 +131,10 @@ CREATE TABLE Dois (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
+SELECT count(*)
+FROM ResearchOutputs;
+WHERE created_at > '2024-11-01';
+
 -- ResearchOutputs may refer as:
 --    many to many People
 --    many to many Topics

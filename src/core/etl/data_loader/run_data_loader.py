@@ -15,6 +15,7 @@ from core.file_handling.file_handling import (
 )
 from core.file_handling.general_parser import yield_all_documents
 from sources.arxiv.data_loader import ArxivDataLoader
+from sources.cordis.data_loader import CordisDataLoader
 from sources.coreac.data_loader import IDataLoader, CoreacDataLoader
 
 
@@ -39,8 +40,8 @@ def run_data_loader(source_config: SourceConfig):
             yield_all_documents(source_config.source_path)
         ):
             doc_count += 1
-            if doc_count < 800:
-                continue
+            # if doc_count < 800:
+            #     continue
 
             try:
                 data_loader = source_config.data_loader(path)
@@ -74,20 +75,12 @@ def log_run_time(start_time: datetime):
 
 
 if __name__ == "__main__":
-    source_name = "arxiv"
+    source_name = "cordis"  # get from args
     load_dotenv()
     config = get_config()
     data_path = get_data_path(source_name, config, run=0)
 
     source_configs = {
-        # "cordis": SourceConfig(
-        #     name="cordis",
-        #     source_path=data_path,
-        # ),
-        # "openaire": SourceConfig(
-        #     name="openaire",
-        #     source_path=data_path,
-        # ),
         "arxiv": SourceConfig(
             name="arxiv",
             data_loader=ArxivDataLoader,
@@ -98,6 +91,15 @@ if __name__ == "__main__":
             data_loader=CoreacDataLoader,
             source_path=Path(data_path),
         ),
+        "cordis": SourceConfig(
+            name="cordis",
+            data_loader=CordisDataLoader,
+            source_path=data_path,
+        ),
+        # "openaire": SourceConfig(
+        #     name="openaire",
+        #     source_path=data_path,
+        # ),
     }
 
     logging_path = (
