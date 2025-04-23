@@ -129,7 +129,7 @@ class CoreExtractor(IExtractor):
         offset: int = 0,
         chunk_size: int = 10,
         max_retries=3,
-        initial_delay=1,
+        initial_delay=10,
     ) -> (List[Dict[str, Any]], int):
         """Search CORE API with retry mechanism and exponential backoff."""
         params = {
