@@ -263,6 +263,9 @@ def main():
     # continue_running = True
     # while continue_running:
 
+    # just ensure 2020 is here, then go from 2025
+    return
+
     continue_running = start_extraction(
         query,
         extractor_name,

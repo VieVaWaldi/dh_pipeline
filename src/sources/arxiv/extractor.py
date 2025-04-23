@@ -64,6 +64,7 @@ class ArxivExtractor(IExtractor, ABC):
 
     def fetch_arxiv_data(self, query: str, max_retries=3, initial_delay=10) -> str:
         """Fetch data using retry when no entries received."""
+        time.sleep(2)
         try:
             for attempt in range(max_retries):
                 logging.info(
