@@ -67,11 +67,17 @@ class CordisDataLoader(IDataLoader):
             "humanities",
         ]
         self.seen_institutions = set()
+        self.seen_weblinks = set()
+        self.seen_topics = set()
 
     def load(self, session: Session, document: Dict):
         assert (
             isinstance(document, dict) and document
         ), "document must be a non-empty dictionary"
+
+        self.seen_institutions = set()
+        self.seen_weblinks = set()
+        self.seen_topics = set()
 
         project_data = document.get(PROJECT, {})
         if not project_data:
@@ -83,7 +89,6 @@ class CordisDataLoader(IDataLoader):
 
         topics = self._create_topics(session, project_data)
         session.flush()  # Can create the same topics again with research output, need flush for get_or_create
-        self.seen_institutions = set()
 
         weblinks = self._create_weblinks(session, project_data)
         funding_programmes = self._create_funding_programmes(session, project_data)
@@ -138,7 +143,6 @@ class CordisDataLoader(IDataLoader):
     ) -> List[Tuple[Topic, int]]:
         """Create or retrieve Topic entities and return with their levels."""
         topics_with_levels = []
-        seen_topics = set()
 
         for cat_data in ensure_list(get_nested(project_data, CATEGORIES_PATH)):
             if cat_data.get("@classification") != "euroSciVoc":
@@ -160,9 +164,9 @@ class CordisDataLoader(IDataLoader):
                 for level, topic_name in zip(levels, display_codes):
                     if not topic_name:
                         continue
-                    if topic_name in seen_topics:
+                    if topic_name in self.seen_topics:
                         continue
-                    seen_topics.add(topic_name)
+                    self.seen_topics.add(topic_name)
 
                     topic_name = parse_titles_and_labels(topic_name)
                     topic, _ = get_or_create(
@@ -180,8 +184,9 @@ class CordisDataLoader(IDataLoader):
 
         for link_data in ensure_list(get_nested(project_data, f"{PRE}.webLink")):
             url = parse_web_resources(link_data.get("physUrl"))
-            if not url:
+            if not url or url in self.seen_weblinks:
                 continue
+            self.seen_weblinks.add(url)
 
             title = parse_titles_and_labels(link_data.get("title"))
             weblink, _ = get_or_create(session, Weblink, {"url": url}, title=title)
@@ -392,7 +397,6 @@ class CordisDataLoader(IDataLoader):
     def _create_output_topics(self, session: Session, result_data: Dict) -> List[Topic]:
         """Create or retrieve topics for a research output."""
         topics = []
-        seen_topics = set()
 
         for cat_data in ensure_list(get_nested(result_data, CATEGORIES_PATH)):
             if cat_data.get("@classification") != "euroSciVoc":
@@ -414,9 +418,9 @@ class CordisDataLoader(IDataLoader):
                 for level, topic_name in zip(levels, display_codes):
                     if not topic_name:
                         continue
-                    if topic_name in seen_topics:
+                    if topic_name in self.seen_topics:
                         continue
-                    seen_topics.add(topic_name)
+                    self.seen_topics.add(topic_name)
 
                     topic_name = parse_titles_and_labels(topic_name)
                     topic, _ = get_or_create(
@@ -437,8 +441,9 @@ class CordisDataLoader(IDataLoader):
             get_nested(result_data, "relations.associations.webLink")
         ):
             url = parse_web_resources(link_data.get("physUrl"))
-            if not url:
+            if not url or url in self.seen_weblinks:
                 continue
+            self.seen_weblinks.add(url)
 
             title = parse_titles_and_labels(link_data.get("title"))
             weblink, _ = get_or_create(session, Weblink, {"url": url}, title=title)
