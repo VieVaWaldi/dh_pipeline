@@ -217,11 +217,13 @@ class CordisDataLoader(IDataLoader):
     ) -> List[Tuple[Institution, Dict]]:
         """Create or retrieve Institution entities with their associated metadata."""
         institutions_with_metadata = []
+        seen_institutions = set()
 
         for org_data in ensure_list(get_nested(project_data, ORG_PATH)):
             legal_name = parse_names_and_identifiers(org_data.get("legalName"))
-            if not legal_name:
+            if not legal_name or legal_name in seen_institutions:
                 continue
+            seen_institutions.add(legal_name)
 
             coordinates = None
             geo_data = get_nested(org_data, "address.geolocation")
