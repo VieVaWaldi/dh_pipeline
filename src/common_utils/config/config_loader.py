@@ -14,6 +14,7 @@ def get_source_data_path(source_name: str, config: Dict, run: int):
     Gets path from project root for local development.
     """
     assert config, "config must be a non-empty dict"
+    assert get_query_config().get(source_name), f"Faulty source name: {source_name}"
     assert run >= 0
 
     path = Path(config["data_path"]) / (
@@ -21,7 +22,7 @@ def get_source_data_path(source_name: str, config: Dict, run: int):
         + "_"
         + clean_extractor_name(get_query_config()[source_name]["runs"][run]["query"])
     )
-    # ToDo: Raise Error when source doesnt exist in conf right?
+
     if os.getenv("ENV") == "dev":
         return get_project_root_path() / path
     return path

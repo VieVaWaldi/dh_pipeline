@@ -1,3 +1,4 @@
+import argparse
 import logging
 from dataclasses import dataclass
 from datetime import datetime
@@ -93,10 +94,19 @@ def log_run_time(start_time: datetime):
 
 
 if __name__ == "__main__":
-    source_name = "arxiv"  # get from args
+    import sys
+
+    dev_args = ["--source", "arxiv", "--run", "0"]
+    sys.argv.extend(dev_args)
+
+    parser = argparse.ArgumentParser(description="Data Loader Runner")
+    parser.add_argument("--source", help="Select data source", required=True)
+    parser.add_argument("--run", help="Run of the source", required=True, type=int)
+    args = parser.parse_args()
+
     load_dotenv()
     config = get_config()
-    data_path = get_source_data_path(source_name, config, run=0)
+    data_path = get_source_data_path(args.source, config, run=args.run)
 
     source_configs = {
         "arxiv": SourceConfig(
@@ -121,8 +131,8 @@ if __name__ == "__main__":
     }
 
     logging_path = (
-        get_project_root_path() / config["logging_path"] / "data_loader" / source_name
+        get_project_root_path() / config["logging_path"] / "data_loader" / args.source
     )
     setup_logging(logging_path, "data_loader")
 
-    run_data_loader(source_configs[source_name])
+    run_data_loader(source_configs[args.source])
