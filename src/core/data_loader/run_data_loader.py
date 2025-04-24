@@ -27,13 +27,14 @@ class SourceConfig:
     name: str
     data_loader: Type[IDataLoader]
     source_path: Path
+    run_id: int
     batch_size: int = 100
 
 
 def run_data_loader(source_config: SourceConfig):
     start_time = datetime.now()
     session_factory = create_db_session()
-    cp = CheckpointManager(source_config.name)
+    cp = CheckpointManager(source_config.name, source_config.run_id)
 
     doc_count = 0
     skip_count = 0
@@ -91,10 +92,10 @@ def log_run_time(start_time: datetime):
 
 
 if __name__ == "__main__":
-    import sys
-
-    dev_args = ["--source", "openaire", "--run", "0"]
-    sys.argv.extend(dev_args)
+    # import sys
+    #
+    # dev_args = ["--source", "openaire", "--run", "0"]
+    # sys.argv.extend(dev_args)
 
     parser = argparse.ArgumentParser(description="Data Loader Runner")
     parser.add_argument("--source", help="Select data source", required=True)
@@ -110,21 +111,25 @@ if __name__ == "__main__":
             name="arxiv",
             data_loader=ArxivDataLoader,
             source_path=data_path,
+            run_id=args.run,
         ),
         "coreac": SourceConfig(
             name="coreac",
             data_loader=CoreacDataLoader,
             source_path=data_path,
+            run_id=args.run,
         ),
         "cordis": SourceConfig(
             name="cordis",
             data_loader=CordisDataLoader,
             source_path=data_path,
+            run_id=args.run,
         ),
         "openaire": SourceConfig(
             name="openaire",
             data_loader=OpenaireDataLoader,
             source_path=data_path,
+            run_id=args.run,
         ),
     }
 

@@ -14,8 +14,8 @@ CP_FILE_NAME = "mtime.cp"
 
 
 class CheckpointManager:
-    def __init__(self, source_name: str):
-        self.source_name: str = source_name
+    def __init__(self, source_name: str, run_id: int):
+        self.source_name: str = f"{source_name}_{run_id}"
         self.cp_time: datetime = self._load_cp()
         self.next_cp_time: datetime = self.cp_time
         self.err: datetime = datetime.timedelta(seconds=5)
@@ -78,8 +78,8 @@ class CheckpointManager:
 
 
 def test_cp():
-    cp = CheckpointManager("test")
-    cp._rm_cp("test")
+    cp = CheckpointManager("test", 0)
+    cp._rm_cp("test_0")
 
     # 1. Test: New run starts from ts 0, doesnt skip larger values
     test_time = datetime.datetime.fromtimestamp(100, tz=datetime.timezone.utc)
