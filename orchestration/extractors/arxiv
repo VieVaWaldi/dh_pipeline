@@ -20,5 +20,5 @@ while true; do
     echo "Run stopped at: $(date)"
     echo "Sleeping for 1 hour before next run..."
 
-    sleep 3600
+    sleep 1200
 done
