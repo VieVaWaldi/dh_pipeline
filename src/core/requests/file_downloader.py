@@ -7,7 +7,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
 from common_utils.error_handling.error_handling import log_and_raise_exception
-from core.file_handling.file_handling import ensure_path_exists
+from core.file_handling.file_utils import ensure_path_exists
 from core.requests.requests import get_base_url
 
 

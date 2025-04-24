@@ -9,9 +9,11 @@ from sqlalchemy import (
     ARRAY,
     Float,
 )
-from sqlalchemy.orm import mapped_column, relationship, Mapped
+from sqlalchemy.orm import mapped_column, relationship, Mapped, DeclarativeBase
 
-from datamodels.base import Base
+
+class Base(DeclarativeBase):
+    pass
 
 
 class Source_Type(str, Enum):

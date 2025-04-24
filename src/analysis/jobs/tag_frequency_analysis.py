@@ -5,7 +5,7 @@ from typing import Dict, Any
 
 from analysis.utils.analysis_interface import IAnalysisJob
 from analysis.utils.analysis_utils import clean_value
-from core.file_handling.general_parser import yield_all_documents
+from core.file_handling.file_walker import yield_all_documents
 
 
 class KeysFrequencyAnalysis(IAnalysisJob):
@@ -95,7 +95,7 @@ class KeysFrequencyAnalysis(IAnalysisJob):
             )
 
     def save_output(self):
-        output_file = self.output_path / f"{self.analysis_name}_results.csv"
+        output_file = self.analysis_output_path / f"{self.analysis_name}_results.csv"
         unique_keys_count = len(self.keys_statistics)
         rows_written = 0
 

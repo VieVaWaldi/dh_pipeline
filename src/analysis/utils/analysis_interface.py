@@ -1,15 +1,15 @@
 import logging
-from abc import ABC, abstractmethod
+from abc import ABC
 from pathlib import Path
 
-from core.file_handling.file_handling import (
-    get_root_path,
+from common_utils.config.config_loader import get_config
+from common_utils.logger.logger import setup_logging
+from core.extractor.utils import clean_extractor_name
+from core.file_handling.file_utils import (
+    get_project_root_path,
     ensure_path_exists,
     raise_error_if_directory_does_not_exists,
 )
-from interfaces.i_extractor import clean_extractor_name
-from common_utils.config.config_loader import get_config
-from common_utils.logger.logger import setup_logging
 
 
 class IAnalysisJob(ABC):
@@ -24,10 +24,10 @@ class IAnalysisJob(ABC):
 
         """ Output File """
         self.analysis_output_path: Path = (
-            get_root_path()
-            / config["analysis_path"]
-            / self.analysis_name
-            / clean_extractor_name(query_name)
+                get_project_root_path()
+                / config["analysis_path"]
+                / self.analysis_name
+                / clean_extractor_name(query_name)
         )
         ensure_path_exists(self.analysis_output_path)
 
@@ -35,13 +35,13 @@ class IAnalysisJob(ABC):
         if config["data_path"].startswith("/"):
             base_data_path = Path(config["data_path"])
         else:
-            base_data_path = get_root_path() / config["data_path"]
+            base_data_path = get_project_root_path() / config["data_path"]
         self.data_path = base_data_path / query_name
         raise_error_if_directory_does_not_exists(self.data_path)
 
         """ Logging """
         logging_path: Path = (
-            get_root_path() / config["logging_path"] / "analysis" / self.analysis_name
+                get_project_root_path() / config["logging_path"] / "analysis" / self.analysis_name
         )
         ensure_path_exists(logging_path)
         setup_logging(logging_path, "analysis")

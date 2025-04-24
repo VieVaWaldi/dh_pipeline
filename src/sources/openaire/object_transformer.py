@@ -7,7 +7,6 @@ from core.sanitizers.sanitizer import (
     clean_float,
     clean_bool,
 )
-from interfaces.i_object_transformer import IObjectTransformer
 from sources.openaire.data_objects import (
     OpenaireProject,
     Organization,

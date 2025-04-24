@@ -3,7 +3,7 @@ from datetime import datetime
 
 from sqlalchemy.orm import Session
 
-from core.etl.data_loader.utils.get_or_create import get_or_create
+from core.data_loader.utils import get_or_create
 from datamodels.digicher.entities import (
     Projects,
     FundingProgrammes,

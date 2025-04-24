@@ -3,14 +3,14 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Dict, Any, Union
 
-from core.etl.extractor.utils import clean_extractor_name
-from core.file_handling.file_handling import (
-    ensure_path_exists,
-    get_root_path,
-    write_file,
-)
 from common_utils.config.config_loader import get_config
 from common_utils.logger.logger import setup_logging
+from core.extractor.utils import clean_extractor_name
+from core.file_handling.file_utils import (
+    ensure_path_exists,
+    get_project_root_path,
+    write_file,
+)
 
 
 class IExtractor(ABC):
@@ -32,11 +32,11 @@ class IExtractor(ABC):
         extractor_name = clean_extractor_name(extractor_name)
         self.checkpoint_name = checkpoint_name
         self.checkpoint_path: Path = (
-            get_root_path()
-            / config["checkpoint_path"]
-            / "extractors"
-            / extractor_name
-            / f"{checkpoint_name}.cp"
+                get_project_root_path()
+                / config["checkpoint_path"]
+                / "extractors"
+                / extractor_name
+                / f"{checkpoint_name}.cp"
         )
         ensure_path_exists(self.checkpoint_path)
         self.last_checkpoint: str = self.restore_checkpoint()
@@ -44,7 +44,7 @@ class IExtractor(ABC):
         if config["data_path"].startswith("/"):
             base_data_path = Path(config["data_path"])
         else:
-            base_data_path = get_root_path() / config["data_path"]
+            base_data_path = get_project_root_path() / config["data_path"]
 
         self.data_path = (
             base_data_path
@@ -55,7 +55,7 @@ class IExtractor(ABC):
         ensure_path_exists(self.data_path)
 
         self.logging_path: Path = (
-            get_root_path() / config["logging_path"] / "extractors" / extractor_name
+                get_project_root_path() / config["logging_path"] / "extractors" / extractor_name
         )
         ensure_path_exists(self.logging_path)
 

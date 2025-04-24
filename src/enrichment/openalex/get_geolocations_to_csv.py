@@ -5,8 +5,8 @@ from datetime import datetime
 import pandas as pd
 from dotenv import load_dotenv
 
-from core.etl.data_loader.utils.create_db_session import create_db_session
-from datamodels.digicher.entities import Institutions
+from _datamodels.digicher.entities import Institutions
+from core.data_loader.utils.create_db_session import create_db_session
 from enrichment.openalex.search_geolocations import search_geolocation
 
 

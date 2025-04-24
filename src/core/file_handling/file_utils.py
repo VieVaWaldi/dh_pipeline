@@ -11,7 +11,7 @@ from common_utils.error_handling.error_handling import log_and_raise_exception
 ENCODING = "utf-8"
 
 
-def get_root_path() -> Path:
+def get_project_root_path() -> Path:
     """Return the absolute path to the project root directory ending with /."""
     return Path(__file__).parent.parent.parent.parent.absolute()
 
@@ -146,4 +146,4 @@ def find_pdfs_in_directory(file_path: Path) -> Optional[List[Path]]:
 
 
 if __name__ == "__main__":
-    print(get_root_path())
+    print(get_project_root_path())

@@ -4,8 +4,8 @@ from typing import Dict, List, Optional, Tuple
 
 from sqlalchemy.orm import Session
 
-from core.etl.data_loader.utils.dict_utils import ensure_list, get_nested
-from core.etl.data_loader.utils.get_or_create import get_or_create
+from core.data_loader.utils.dict_utils import ensure_list, get_nested
+from core.data_loader.utils.get_or_create import get_or_create
 from core.sanitizers.sanitizer import (
     parse_string,
     parse_geolocation,

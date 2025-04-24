@@ -2,8 +2,8 @@ from typing import Dict, List, Tuple, Optional
 
 from sqlalchemy.orm import Session
 
-from core.etl.data_loader.utils.dict_utils import get_nested, ensure_list
-from core.etl.data_loader.utils.get_or_create import get_or_create
+from core.data_loader.utils.dict_utils import ensure_list, get_nested
+from core.data_loader.utils.get_or_create import get_or_create
 from core.sanitizers.sanitizer import (
     parse_titles_and_labels,
     parse_web_resources,

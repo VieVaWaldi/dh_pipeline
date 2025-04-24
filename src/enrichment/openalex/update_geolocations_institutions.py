@@ -5,9 +5,9 @@ from pathlib import Path
 import pandas as pd
 from sqlalchemy import select
 
-from core.etl.data_loader.utils.create_db_session import create_db_session
-from core.etl.data_loader.run_data_loader import log_run_time
-from core.file_handling.file_handling import get_root_path, ensure_path_exists
+from core.data_loader.utils.create_db_session import create_db_session
+from core.data_loader import log_run_time
+from core.file_handling.file_utils import get_project_root_path, ensure_path_exists
 from core.sanitizers.sanitizer import (
     clean_geolocation,
 )
@@ -43,7 +43,7 @@ def should_update_geolocation(geo_info: str, distance: float, has_matching_name:
 config = get_config()
 enrichment_name = "update_geolocation"
 logging_path: Path = (
-    get_root_path() / config["logging_path"] / "enrichment" / enrichment_name
+        get_project_root_path() / config["logging_path"] / "enrichment" / enrichment_name
 )
 ensure_path_exists(logging_path)
 setup_logging(logging_path, enrichment_name)

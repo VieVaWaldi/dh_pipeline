@@ -1,6 +1,6 @@
 import unittest
 
-from core.file_handling.file_handling import get_root_path
+from core.file_handling.file_utils import get_project_root_path
 from core.file_handling.file_parsing.xml_parser import (
     extract_element_as_dict,
     extract_xml_as_dict,
@@ -13,12 +13,12 @@ class TestXMLParser(unittest.TestCase):
 
     def setUp(self) -> None:
         self.data_dir = (
-            get_root_path()
-            / "tests"
-            / "common_utils"
-            / "file_handling"
-            / "file_parsing"
-            / "test_xml"
+                get_project_root_path()
+                / "tests"
+                / "common_utils"
+                / "file_handling"
+                / "file_parsing"
+                / "test_xml"
         )
 
     def test_get_all_checkpoint_elements(self):

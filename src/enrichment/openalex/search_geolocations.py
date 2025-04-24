@@ -4,7 +4,7 @@ import time
 from typing import Dict
 
 from core.requests.requests import make_get_request
-from datamodels.digicher.entities import Institutions
+from _datamodels.digicher.entities import Institutions
 from enrichment.openalex.noise_words import normalize_institution_name
 
 

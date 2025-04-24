@@ -6,14 +6,15 @@ from typing import Type
 
 from dotenv import load_dotenv
 
-from common_utils.config.config_loader import get_config, get_data_path
+from common_utils.config.config_loader import get_config, get_source_data_path
 from common_utils.logger.logger import setup_logging
-from core.etl.data_loader.utils.create_db_session import create_db_session
-from core.etl.data_loader.utils.get_or_create import ModelCreationMonitor
-from core.file_handling.file_handling import (
-    get_root_path,
+from core.data_loader.checkpoint_manager import CheckpointManager
+from core.data_loader.utils.create_db_session import create_db_session
+from core.data_loader.utils.get_or_create import ModelCreationMonitor
+from core.file_handling.file_utils import (
+    get_project_root_path,
 )
-from core.file_handling.general_parser import yield_all_documents
+from core.file_handling.file_walker import yield_all_documents
 from sources.arxiv.data_loader import ArxivDataLoader
 from sources.cordis.data_loader import CordisDataLoader
 from sources.coreac.data_loader import IDataLoader, CoreacDataLoader
@@ -30,18 +31,24 @@ class SourceConfig:
 def run_data_loader(source_config: SourceConfig):
     start_time = datetime.now()
     session_factory = create_db_session()
+    cp = CheckpointManager(source_config.name)
+
+    doc_count = 0
+    skip_count = 0
+    commit_count = 0
+
     with session_factory() as session:
         logging.info(
             f"Starting document processing for {source_config.name} with path {source_config.source_path}"
         )
 
-        doc_count = 0
-        for doc_idx, (document, path) in enumerate(
+        for doc_idx, (document, path, mtime) in enumerate(
             yield_all_documents(source_config.source_path)
         ):
             doc_count += 1
-            # if doc_count < 800:
-            #     continue
+            if cp.should_skip_or_store(mtime):
+                skip_count += 1
+                continue
 
             try:
                 data_loader = source_config.data_loader(path)
@@ -49,10 +56,11 @@ def run_data_loader(source_config: SourceConfig):
 
                 if doc_idx % source_config.batch_size == 0:
                     session.commit()
-                    logging.info("Commit successful")
+                    commit_count += 1
+                    logging.info(f"Commit # {commit_count} successful")
 
                 if doc_idx % 1000 == 0:
-                    logging.info(f"Processed {doc_idx} documents")
+                    logging.info(f"Processed # {doc_idx} documents")
 
             except Exception as e:
                 session.rollback()
@@ -60,10 +68,20 @@ def run_data_loader(source_config: SourceConfig):
                 logging.error(f"Error details: {str(e)}")
                 logging.error(f"Document path: {path}")
                 raise
-        # Also commit for leftovers
-        session.commit()
-    ModelCreationMonitor.log_stats()
+
+        session.commit()  # Also commit for leftovers
+        cp.update_cp()  # Only update at the end, because files might not be ordered
+
     log_run_time(start_time)
+    ModelCreationMonitor.log_stats()
+    validate(source_config.name, doc_count, skip_count)
+
+
+def validate(source_name: str, doc_count: int, skip_count: int):
+    logging.info(
+        f"{source_name}: Files processed {doc_count} and files skipped {skip_count}, used {doc_count-skip_count} files."
+    )
+    # ToDo: Validate that row count = skipped + not skipped for all sources
 
 
 def log_run_time(start_time: datetime):
@@ -75,10 +93,10 @@ def log_run_time(start_time: datetime):
 
 
 if __name__ == "__main__":
-    source_name = "cordis"  # get from args
+    source_name = "coreac"  # get from args
     load_dotenv()
     config = get_config()
-    data_path = get_data_path(source_name, config, run=0)
+    data_path = get_source_data_path(source_name, config, run=0)
 
     source_configs = {
         "arxiv": SourceConfig(
@@ -103,7 +121,7 @@ if __name__ == "__main__":
     }
 
     logging_path = (
-        get_root_path() / config["logging_path"] / "data_loader" / source_name
+        get_project_root_path() / config["logging_path"] / "data_loader" / source_name
     )
     setup_logging(logging_path, "data_loader")
 

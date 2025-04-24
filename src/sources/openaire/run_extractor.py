@@ -8,7 +8,7 @@ from typing import Dict, Any, Tuple, Optional
 
 from dotenv import load_dotenv
 
-from core.file_handling.file_handling import (
+from core.file_handling.file_utils import (
     ensure_path_exists,
     load_file,
     write_file,

@@ -2,7 +2,7 @@ from typing import Dict, Any, Tuple
 from typing import List, Optional
 
 from common_utils.error_handling.error_handling import log_and_raise_exception
-from core.etl.data_loader.utils.dict_utils import ensure_list, get_nested
+from core.data_loader.utils.dict_utils import get_nested, ensure_list
 from core.sanitizers.sanitizer import (
     parse_string,
     parse_geolocation,
