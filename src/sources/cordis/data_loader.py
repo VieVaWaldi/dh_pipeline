@@ -53,7 +53,7 @@ CATEGORIES_PATH = f"{RELATIONS}.categories.category"
 class CordisDataLoader(IDataLoader):
     """
     Data loader for Cordis documents.
-    Transforms JSON documents into SQLAlchemy ORM models and loads them into the sql.
+    Transforms JSON documents into SQLAlchemy ORM models and adds them to the session
     """
 
     def __init__(self, path_to_file=None):

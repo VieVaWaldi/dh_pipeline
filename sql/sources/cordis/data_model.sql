@@ -65,8 +65,6 @@ CREATE TABLE cordis.institution (
     updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
-select * from cordis.researchoutput where from_pdf;
-
 CREATE TABLE cordis.researchoutput (
     id SERIAL PRIMARY KEY,
     id_original TEXT UNIQUE NOT NULL,

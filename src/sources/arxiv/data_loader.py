@@ -26,7 +26,7 @@ from sources.arxiv.data_model import (
 class ArxivDataLoader(IDataLoader):
     """
     Data loader for Arxiv documents.
-    Transforms JSON documents into SQLAlchemy ORM models and loads them into the sql.
+    Transforms JSON documents into SQLAlchemy ORM models and adds them to the session.
     """
 
     def __init__(self, path_to_file=None):

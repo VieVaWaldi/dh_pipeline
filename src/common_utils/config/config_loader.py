@@ -8,7 +8,7 @@ from core.extractor.utils import clean_extractor_name
 from core.file_handling.file_utils import get_project_root_path, load_json_file
 
 
-def get_source_data_path(source_name: str, config: Dict, run: int):
+def get_source_data_path(source_name: str, config: Dict, run: int) -> Path:
     """
     This function returns the path to the raw source data.
     Gets path from project root for local development.
