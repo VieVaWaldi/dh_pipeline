@@ -14,7 +14,7 @@ while true; do
     echo "Python version: $(python --version)"
     echo "Run started at: $(date)"
 
-    python src/sources/coreac/extractor.py
+    python src/sources/coreac/run_extractor.py
     python src/analysis/jobs/file_structure_analysis.py -q coreac_LBLBcomputingANDculturalRBORLBcomputingANDheritageRBRB
 
     echo "Run stopped at: $(date)"

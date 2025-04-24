@@ -12,5 +12,5 @@ echo "Current user: $(whoami)"
 echo "Current directory: $(pwd)"
 echo "Python version: $(python --version)"
 
-python src/sources/openaire/extractor.py -r 0
+python src/sources/openaire/run_extractor.py -r 0
 python src/analysis/jobs/file_structure_analysis.py -q openaire_cultural

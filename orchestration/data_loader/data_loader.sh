@@ -18,9 +18,13 @@ trap cleanup EXIT SIGINT SIGTERM
 
 echo "Running script ..."
 echo "${PGDATA:?not set}"
-pg_ctl -D $PGDATA stop # Stop it in case its running on the login node
-pg_ctl -D $PGDATA start -l /vast/lu72hip/pgsql/logfile
+echo "Stopping DB in case its running somewhere else"
+pg_ctl -D $PGDATA stop
 sleep 5
+
+echo "Starting DB on this noce"
+pg_ctl -D $PGDATA start -l /vast/lu72hip/pgsql/logfile
+sleep 10
 echo "PostgreSQL status:"
 pg_ctl status -D $PGDATA
 
@@ -33,4 +37,4 @@ echo "Current user: $(whoami)"
 echo "Current directory: $(pwd)"
 echo "Python version: $(python --version)"
 
-python src/core/etl/data_loader/run_data_loader.py # --source cordis
+python src/core/data_loader/run_data_loader.py --source arxiv --run 0

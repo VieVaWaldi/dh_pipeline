@@ -3,7 +3,7 @@
 #SBATCH --job-name=analysis_fs
 #SBATCH --partition=standard
 #SBATCH --time=02:00:00
-#SBATCH --output=/home/lu72hip/DIGICHer/DIGICHer_Pipeline/data/runs/analysis_file_structure_%j.log
+#SBATCH --output=/home/lu72hip/DIGICHer/DIGICHer_Pipeline/data/runs/analysis/file_structure_%j.log
 
 cd /home/lu72hip/DIGICHer/DIGICHer_Pipeline || exit
 source venv/bin/activate

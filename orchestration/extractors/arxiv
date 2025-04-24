@@ -14,7 +14,7 @@ while true; do
     echo "Python version: $(python --version)"
     echo "Run started at: $(date)"
 
-    python src/sources/arxiv/extractor.py
+    python src/sources/arxiv/run_extractor.py
     python src/analysis/jobs/file_structure_analysis.py -q arxiv_allCOLONcomputingPLUSANDPLUSLBallCOLONhumanitiesPLUSORPLUSallCOLONheritageRB
 
     echo "Run stopped at: $(date)"
