@@ -66,6 +66,7 @@ class CordisDataLoader(IDataLoader):
             "social sciences",
             "humanities",
         ]
+        self.seen_institutions = set()
 
     def load(self, session: Session, document: Dict):
         assert (
@@ -82,6 +83,7 @@ class CordisDataLoader(IDataLoader):
 
         topics = self._create_topics(session, project_data)
         session.flush()  # Can create the same topics again with research output, need flush for get_or_create
+        self.seen_institutions = set()
 
         weblinks = self._create_weblinks(session, project_data)
         funding_programmes = self._create_funding_programmes(session, project_data)
@@ -217,13 +219,12 @@ class CordisDataLoader(IDataLoader):
     ) -> List[Tuple[Institution, Dict]]:
         """Create or retrieve Institution entities with their associated metadata."""
         institutions_with_metadata = []
-        seen_institutions = set()
 
         for org_data in ensure_list(get_nested(project_data, ORG_PATH)):
             legal_name = parse_names_and_identifiers(org_data.get("legalName"))
-            if not legal_name or legal_name in seen_institutions:
+            if not legal_name or legal_name in self.seen_institutions:
                 continue
-            seen_institutions.add(legal_name)
+            self.seen_institutions.add(legal_name)
 
             coordinates = None
             geo_data = get_nested(org_data, "address.geolocation")
@@ -450,14 +451,13 @@ class CordisDataLoader(IDataLoader):
     ) -> List[Institution]:
         """Create or retrieve institutions for a research output."""
         institutions = []
-        seen_institutions = set()
         org_path = "relations.associations.organization"
 
         for org_data in ensure_list(get_nested(result_data, org_path)):
             legal_name = parse_names_and_identifiers(org_data.get("legalName"))
-            if not legal_name or legal_name in seen_institutions:
+            if not legal_name or legal_name in self.seen_institutions:
                 continue
-            seen_institutions.add(legal_name)
+            self.seen_institutions.add(legal_name)
 
             coordinates = None
             geo_data = get_nested(org_data, "address.geolocation")
