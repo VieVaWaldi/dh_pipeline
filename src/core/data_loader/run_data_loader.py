@@ -37,7 +37,6 @@ def run_data_loader(source_config: SourceConfig):
 
     doc_count = 0
     skip_count = 0
-    commit_count = 0
 
     with session_factory() as session:
         logging.info(
@@ -58,8 +57,6 @@ def run_data_loader(source_config: SourceConfig):
 
                 if doc_idx % source_config.batch_size == 0:
                     session.commit()
-                    commit_count += 1
-                    logging.info(f"Commit # {commit_count} successful")
 
                 if doc_idx % 1000 == 0:
                     logging.info(f"Processed # {doc_idx} documents")
