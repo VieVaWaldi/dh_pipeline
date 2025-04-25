@@ -53,10 +53,10 @@ def run_data_loader(source_config: SourceConfig):
                 continue
 
             # ToDo REMOVE!
-            if source_config.name == "cordis":
-                logging.info(f"[searching oom] {path}")
             if source_config.name == "cordis" and doc_count < 10_000:
                 continue
+            if source_config.name == "cordis":
+                logging.info(f"[searching oom] {path}")
 
             try:
                 data_loader = source_config.data_loader(path)
