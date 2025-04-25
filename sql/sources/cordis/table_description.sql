@@ -1,24 +1,25 @@
 -----------------------------------------------
 -- CORE ENTITIES
 
-select * from cordis.person;
+-- NOT DONE do not COUNT
+
+select * from cordis.project;
+-- 23
+select count(*) from cordis.researchoutput;
+-- 90_911
+-- 34_302 with doi
+-- 18_019 with fulltext
+select count(*) from cordis.institution;
 --
-select * from cordis.topic;
+select count(*) from cordis.person;
+--
+select count(*) from cordis.topic;
 --
 select count(*) from cordis.weblink;
 --
 select count(*) from cordis.fundingprogramme;
 --
 
------------------------------------------------
--- MAIN TABLES
-
-select * from cordis.institution;
---
-select count(*) from cordis.researchoutput;
---
-select * from cordis.project;
--- 23
 
 -----------------------------------------------
 -- JUNCTIONS

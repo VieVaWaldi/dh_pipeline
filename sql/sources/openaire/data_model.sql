@@ -1,5 +1,5 @@
 -----------------------------------------------
--- OpenAire Data Model
+-- Openaire Data Model
 
 CREATE SCHEMA IF NOT EXISTS openaire;
 

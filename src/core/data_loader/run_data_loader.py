@@ -52,12 +52,17 @@ def run_data_loader(source_config: SourceConfig):
                 skip_count += 1
                 continue
 
+            # ToDo REMOVE!
+            if source_config.name == "cordis" and doc_count < 10_000:
+                continue
+
             try:
                 data_loader = source_config.data_loader(path)
                 data_loader.load(session, document)
 
                 if doc_idx % source_config.batch_size == 0:
                     session.commit()
+                    session.expunge_all()  # Clear all entities from memory
 
                 if doc_idx % 1000 == 0:
                     logging.info(f"Processed # {doc_idx} documents")
@@ -74,6 +79,7 @@ def run_data_loader(source_config: SourceConfig):
 
     log_run_time(start_time)
     ModelCreationMonitor.log_stats()
+    # ToDo: Monitor OCR converter, skips and processed
     validate(source_config.name, doc_count, skip_count)
 
 

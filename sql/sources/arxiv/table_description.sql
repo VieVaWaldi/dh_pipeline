@@ -1,8 +1,10 @@
 -----------------------------------------------
 -- CORE ENTITIES
 
-select * from arxiv.entry limit 100;
--- 20_598
+select count(*) from arxiv.entry;
+-- 33_241
+-- 6_276 with doi
+-- 31_357 with fulltext
 select count(*) from arxiv.author;
 -- 58_285
 select count(*) from arxiv.link;

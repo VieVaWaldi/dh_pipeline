@@ -101,8 +101,7 @@ class CoreacDataLoader(IDataLoader):
         work, created = get_or_create(
             session,
             Work,
-            {"title": title},
-            id_original=id_original,
+            {"id_original": id_original, "title": title},
             doi=doi,
             arxiv_id=arxiv_id,
             mag_id=mag_id,
