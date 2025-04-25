@@ -1,4 +1,0 @@
--- CREATE DATABASE db_digicher_v2;
-
--- SOURCE SCHEMAS --
-CREATE SCHEMA coreac;

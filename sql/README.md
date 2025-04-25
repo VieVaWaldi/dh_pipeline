@@ -1,64 +1,19 @@
-# PostgreSQL
+# Source Transformation
 
-We use PostgreSQL version 17.2. The source models are written in AlchemySQL, 
-therefore any other Database can be used.
+Go [Here](../src/sources/README.md) for Source Extraction & Loading.
 
-## Config
-- Local (default): 5432
-- Cluster: 5433
-- Find ports, connection strings and database names [here](../config/config.json).
+Go [Here](README_DB.md) for the database documentation.
 
-## Local PostgreSQL (MacOS)
+SQL Transformation to transform the source tables into our core data model ......
 
-```bash
-$ brew services start postgresql@17
-$ brew services stop postgresql@17
-$ lsof -i :5432 # Check status
-```
+## Core Data Model
 
-## Cluster PostgreSQL
+* source type
 
-These variables have to be available to the environment:
+## Strategy
 
-```bash
-$ export PATH=/vast/lu72hip/pgsql/bin:$PATH
-$ export LD_LIBRARY_PATH=/vast/lu72hip/pgsql/lib:$LD_LIBRARY_PATH
-$ export PGDATA=/vast/lu72hip/pgsql/data
-```
-
-Note: Port 5433 is configured in `$PGDATA/postgresql.conf`
-
-```bash
-$ pg_ctl -D $PGDATA start
-$ pg_ctl -D $PGDATA stop
-$ pg_ctl -D $PGDATA status
-```
-
-## Local SSH Tunnel
-
-To connect to the cluster database from a local machine:
-
-```bash
-# Create tunnel on your local machine
-$ ssh -N -L 5433:localhost:5433 lu72hip@login2.draco.uni-jena.de
-
-# Check if tunnel is active
-$ lsof -i :5433
-
-# Stop tunnel
-$ lsof -ti :5433 | xargs kill
-```
-
-## Dumps
-
-To create a dump use the following command:
-
-```bash
-# Change $DB_NAME to the databases name
-$ pg_dump -h localhost -p 5433 -U lu72hip $DB_NAME > backup_db_digicher.sql
-
-# You may omit tables using this before the $DB_Name
---exclude-table=researchoutputs
-
-# Use pg_dumpall if you want to dump all databases
-```
+1. pick
+2. transform
+3. ingest
+4. deduplicate
+5. self refferential

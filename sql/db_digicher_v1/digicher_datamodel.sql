@@ -1,92 +1,5 @@
 -------------------------------------------------------------------
--- Database model                                               ---
-
------ 1. General                                                ---
-
--- Serial Id's are always the PK.
--- One-to-One: Use a foreign key in either table.
--- One-to-Many: Put the foreign key in the "Many" side.
--- Many-to-Many: Use a junction table.
-
------ 2. Unique keys for each Table                             ---
-
--- All of the following must be UNIQUE so we only can refer to
--- them, if they already exist:
-
--- People               on same name
--- Topics               on same name
--- Dois                 on same doi
--- Weblinks             on same link
--- ResearchOutputs      on same id_original
--- Institutions         on same name
--- FundingProgrammes    on same code
--- Projects             on same id_original
-
--- Important! --->
--- If you got a match you must also check the existing source table.
-
------ 3. Handling objects from different sources                ---
-
--- Each entity gets an entry in the source table.
--- If you find the same entity in different sources,
--- add another entry to the source table. The source table does
--- not need references because it directly takes the entities id's.
-
------ 4. Search for each entity before creating it              ---
-
--- If it exists already update it and use its id to refer to it.
--- Besides matching the unique identifier, we use the
--- following strategies.
--- Searchable Strings are all: Lower case, no commas,
--- no special signs and fuzzy search given a score.
-
--- People:
---    Name, Date (may not always be the same)
--- Topics:
---   Are standardized in a source and should be exact matches
--- Weblinks:
---   If sanitized, URL should be an exact match
--- Dois:
---   Are standardized and should be an exact match
--- ResearchOutputs
---   Title
--- Institution
---    Name and location
--- FundingProgrammes
---    code
--- Projects
---    id_original
-
------ 5. WIP Adding later information
-
--- Eg we have a filled database with all the core entities.
--- Now we add a new publication, until now we only search for
--- existing publications. But now we should also search for
--- Projects or Institutions that might reference it.
--- --> NO. Eg projects list their own references already ...
--- NO Backtracking! Would be reference hell!
-
-
-
-
------ Where else do we need this fuzzy matching?
-
-
-CREATE EXTENSION IF NOT EXISTS fuzzystrmatch;
-CREATE INDEX idx_project_title_lower ON projects (lower(title));
-CREATE INDEX idx_projects_normalized_title ON projects (regexp_replace(lower(title), '[^a-z0-9]', '', 'g'));
-
--- REMOVE?: CREATE EXTENSION IF NOT EXISTS pg_trgm;
--- REMOVE: CREATE INDEX idx_project_title_trgm ON projects USING gin (lower(title) gin_trgm_ops);
-
-EXPLAIN ANALYZE 
-SELECT * FROM projects 
-WHERE lower(title) % lower('search term');
-
--------------------------------------------------------------------
 --- Core Tables                                                 ---
-
---CREATE TYPE SOURCE_TYPE AS ENUM ('arxiv', 'core', 'cordis');
 
 CREATE TABLE Sources (
     id SERIAL PRIMARY KEY,
@@ -144,14 +57,20 @@ CREATE TABLE ResearchOutputs (
     id SERIAL PRIMARY KEY,
     id_original TEXT UNIQUE NOT NULL,
     type TEXT NOT NULL, -- eg publication, relatedResult for cordis ...
+
     doi_id INTEGER REFERENCES Dois(id), -- ToDo UNIQUE
     arxiv_id TEXT,
+
     title TEXT NOT NULL,
-    publication_date DATE,
-    journal TEXT,
     abstract TEXT,
-    summary TEXT,
     full_text TEXT,
+
+    publication_date DATE,
+
+    journal TEXT,
+
+    summary TEXT,
+
     comment TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP

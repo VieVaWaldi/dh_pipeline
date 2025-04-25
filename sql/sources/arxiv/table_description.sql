@@ -1,5 +1,5 @@
 -----------------------------------------------
--- CORE ENTITIES
+-- ENTITIES COUNT
 
 select count(*) from arxiv.entry;
 -- 33_241
@@ -11,9 +11,14 @@ select count(*) from arxiv.link;
 -- 45_0342
 
 -----------------------------------------------
--- JUNCTIONS
+-- JUNCTIONS COUNT
 
 select count(*) from arxiv.j_entry_author;
 -- 90_292
 select count(*) from arxiv.j_entry_link;
 -- 45_033
+
+-----------------------------------------------
+-- Entry
+
+select * from coreac.work limit 100;

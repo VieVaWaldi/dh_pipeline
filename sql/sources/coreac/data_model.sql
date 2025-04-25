@@ -6,7 +6,7 @@ CREATE SCHEMA IF NOT EXISTS coreac;
 CREATE TABLE coreac.work (
     id SERIAL PRIMARY KEY,
     id_original TEXT UNIQUE NOT NULL,
-    title TEXT UNIQUE NOT NULL,
+    title TEXT NOT NULL, -- removed UNIQUE for 2nd run
     doi TEXT, -- UNIQUE
     arxiv_id TEXT, -- UNIQUE,
     mag_id TEXT, -- UNIQUE,

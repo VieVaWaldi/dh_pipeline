@@ -2,12 +2,13 @@
 
 The pipeline follows the EtLT pattern. Source data gets **Extracted**, sanitized and **Loaded** into the database, and finally deduplicated and **Transformed** into a unified data model.
 
-Our sources can be used independently, meaning if you just want to get data from one of the available sources its as simple as configuring the query, entering the api key if needed and running the extractor. 
-Sources have data models in SQL-Alchemy, meaning they can be loaded into any database.
+Our sources can be used independently, meaning if you just want to get data from one of the available sources its as simple as
+(optionally) configuring the query, entering the api key if needed and running the extractor. 
+All sources have data models in SQL-Alchemy, meaning they can be loaded into any database.
 
-Find more information about the specific sources here [Source Extraction & Loading](src/sources/README.md)
+Find more information about the specific sources [here](src/sources/README.md).
 
-Configure queries for the sources and paths here [Config](config/README.md)
+Configure queries for the sources and paths [here](config/README.md).
 
 ## Installation
 
@@ -29,22 +30,22 @@ Open `.env_`, add keys and rename it to `.env`. Comments after keys create error
 
 ## Database 
 
-This document explains how you can control the [PostgreSQL](sql/README.md) server locally and on the cluster.
+This document explains how you can control the [PostgreSQL](sql/README_DB.md) server locally and on the cluster.
 
 ## Orchestration
 
-## Structure
+## Project Structure
 
-**Configuration**
+**0. Configuration**
 
 - Under `/configs`, to configure queries and extration runs.
 - Change prod or dev in `.env`.
 
-**1. Orchestration and Clusters**
+**1. Orchestration**
 
 - ...
 
-**2. Utils**
+**2. Common Utils**
 
 - Shared reusable code for single point of failure and logging.
 - Under `/src/utils`
@@ -53,22 +54,22 @@ This document explains how you can control the [PostgreSQL](sql/README.md) serve
 - Use `web_requests` for all web requests including downloads.
 - Use the various parsers to parse specific file types.
 
-**3. Extractors**
+**3. Extractors **
 
 - Under `/src/extractors`
 - Extracts the data and loads it in the pile.
 - Simply run the file from the top level directory.
 - See more here [Link to Extractors Documentation](src/extractors/README.md)
 
-**4. Analysis**
+**3. Loading**
 
 - ...
 
-**5. Transformer**
+**4. Transformation **
 
 - ...
 
-**6. Data Fuser**
+**5. Analysis**
 
 - ...
 
@@ -86,29 +87,3 @@ This document explains how you can control the [PostgreSQL](sql/README.md) serve
 - Use load_dotenv() load api keys etc. and store them in .env.
 - Use the logging module to log info's and errors.
 - When a request fails: Log error, dont save the data and abort.
-
-
------
-
-# Extractors
-
-For each extractor the interface `i_extractor` should be implemented.
-
-It provides the following:
-
-* Configures logging: Use `import logging` and call `logging.info()`.
-* Member Variables for checkpoint and data paths.
-    * `self.last_checkpoint`, reads and holds the last checkpoint value.
-    * `self.checkpoint_path`, holds the path to the checkpoint.
-    * `self.data_path`, holds the path to the data directory.
-    * Each extracted record should have its own directory in `self.data_path`.
-    * For further downloads create a directory called `attachments` in the record directory.
-
-Furthermore, it enforces the following interface:
-
-1. Create the end for the next checkpoint.
-2. Extract data until next checkpoint.
-3. Save the data.
-4. Non contextually transform the data (This includes simple sanitization and attachment downloading).
-5. Get the checkpoint.
-6. Save the checkpoint.
