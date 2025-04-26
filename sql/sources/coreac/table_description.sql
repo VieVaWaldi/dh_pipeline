@@ -4,8 +4,7 @@
 -- MIA
 -- * Looks like i am parsing author names wrong, i am seperating where no separation is needed
 
-select count(*) from coreac.work
-where fulltext is not null;
+select count(*) from coreac.work;
 -- 196_614
 -- 63_280 with doi
 -- 195_447

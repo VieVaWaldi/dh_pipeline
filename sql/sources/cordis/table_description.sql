@@ -4,7 +4,7 @@
 -- NOT DONE do not COUNT
 
 select * from cordis.project;
--- 23
+-- 7k
 select count(*) from cordis.researchoutput;
 -- 90_911
 -- 34_302 with doi
