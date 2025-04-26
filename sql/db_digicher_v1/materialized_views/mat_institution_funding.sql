@@ -5,11 +5,14 @@
 -- Matches all Institutions to all Projects_Institutions where the funding information is.
 -- Aggregates all projects and their costs into a array for further filtering.
 
+--ALTER TYPE project_funding_type ADD ATTRIBUTE start_date date;
+
 CREATE TYPE project_funding_type AS (
     project_id integer,
     ec_contribution numeric,
     net_ec_contribution numeric,
-    total_cost numeric
+    total_cost numeric,
+    start_date date
 );
 
 -- Then use this type in the materialized view
@@ -19,7 +22,7 @@ SELECT
     i.address_geolocation as address_geolocation,
     i.address_country as address_country,
     array_agg( -- This saves 30% size but needs a custom string parser
-        (pi.project_id, pi.ec_contribution, pi.net_ec_contribution, pi.total_cost)::project_funding_type
+        (pi.project_id, pi.ec_contribution, pi.net_ec_contribution, pi.total_cost, p.start_date)::project_funding_type
     ) as projects_funding
 	-- json_agg( -- No string parsing needed
 	-- 	json_build_object(
@@ -32,6 +35,7 @@ SELECT
 FROM 
     Institutions i
     INNER JOIN Projects_Institutions pi ON i.id = pi.institution_id
+    INNER JOIN Projects p ON p.id = pi.project_id
 WHERE 
     pi.total_cost IS NOT NULL
     AND i.address_geolocation IS NOT NULL

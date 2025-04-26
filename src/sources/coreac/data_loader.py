@@ -2,8 +2,8 @@ from typing import Dict, List, Tuple, Optional
 
 from sqlalchemy.orm import Session
 
-from core.data_loader.utils.get_or_create import get_or_create
 from core.data_loader.utils.dict_utils import ensure_list, get_nested
+from core.data_loader.utils.get_or_create import get_or_create
 from core.sanitizers.sanitizer import (
     parse_titles_and_labels,
     parse_web_resources,
@@ -101,7 +101,8 @@ class CoreacDataLoader(IDataLoader):
         work, created = get_or_create(
             session,
             Work,
-            {"id_original": id_original, "title": title},
+            {"id_original": id_original},
+            title=title,
             doi=doi,
             arxiv_id=arxiv_id,
             mag_id=mag_id,
