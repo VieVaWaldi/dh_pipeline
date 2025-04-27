@@ -23,9 +23,11 @@ BEGIN
     SELECT abt.cp_timestamp INTO cp_timestamp
     FROM arxiv_batch_tracker abt;
 
+--- Insert arxiv.entry batch
+
     LOOP
         WITH batch_entries AS (
-        -- entry data for batch
+            -- entry data for this batch
             SELECT
                 e.id,
                 e.id_original,
@@ -47,7 +49,7 @@ BEGIN
             LIMIT (SELECT batch_size FROM arxiv_batch_tracker)
         ),
         inserted_outputs AS (
-        -- how to insert into core.researchoutput
+            -- insert entries into core.researchoutput
             INSERT INTO core.researchoutput (
                 source_id,
                 source_system,
@@ -82,19 +84,69 @@ BEGIN
                 full_text = EXCLUDED.full_text,
                 updated_date = EXCLUDED.updated_date,
                 updated_at = NOW()
-            -- Not needed now but could be useful later
+            -- Not using the id's but keeping them
             RETURNING id, source_id
         )
-        -- save last updated_at as timestamp -- wouldnt work if an earlier batch had a higher timestamp right?
+        -- Update max_timestamp for this batch and num of batch entries
         SELECT COUNT(*), MAX(updated_at) FROM batch_entries INTO batch_count, max_timestamp;
 
+        -- Finish if no more entries
+        IF batch_count = 0 THEN
+            EXIT;
+        END IF;
 
+--- Insert arxiv.authors and junctions
 
-
-
-
-
-
+        WITH author_entries AS (
+            SELECT
+                e.id_original,
+                a.name,
+                j_ea.author_position
+            FROM arxiv.entry e
+            JOIN arxiv.j_entry_author j_ea ON e.id = j_ea.entry_id
+            JOIN arxiv.author a ON j_ea.author_id = a.id
+            WHERE e.updated_at > cp_timestamp
+            -- Query Optimization
+            AND e.updated_at <= max_timestamp
+        ),
+        inserted_authors AS (
+            -- Insert author into core.person without duplicates
+            INSERT INTO core.person (name)
+            SELECT DISTINCT name
+            FROM author_entries
+            ON CONFLICT (name) DO NOTHING
+            RETURNING id, name
+        ),
+        -- rename to inserted_author_junctions?
+        -- i think i dont really understand the purpose of this subquery
+        all_authors(
+            SELECT id, name FROM inserted_authors
+            -- union combines them?
+            UNION ALL
+            -- how come we use p.id form author_entries?
+            SELECT p.id, p.name FROM author_entries ae
+            -- joining on names and not id
+            JOIN core.person p ON p.name = ae.name
+            WHERE NOT EXISTS (
+                SELECT 1 FROM inserted_authors ia WHERE ia.name = ae.name
+            )
+        )
+        -- Insert core.ro core.person junction
+        INSERT INTO core.j_researchoutput_person (
+            researchoutput_id,
+            person_id,
+            role,
+            position
+        )
+        SELECT
+            ro.id,
+            a.id,
+            'author',
+            ae.author_position,
+        FROM author_entries ae
+        JOIN core.researchoutput ro ON ro.source_system = 'arxiv' AND ro.source_id = ae.id_original
+        JOIN all_authors a ON a.name = ae.name
+        ON CONFLICT (researchoutput_id, person_id) DO NOTHING;
 
 
 

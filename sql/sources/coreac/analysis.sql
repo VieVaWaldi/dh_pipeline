@@ -174,7 +174,7 @@ where not exists (
 -- Note: I dont have all papers for 2024 so far and none for 2025, thats why the number is lower
 
 select year_published, count(*) as pub_count
-from coreac.get_work_subset('digital & heritage')
+from coreac.work
 where year_published is not null
 group by year_published
 order by year_published;
