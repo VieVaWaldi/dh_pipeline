@@ -55,10 +55,10 @@ def run_data_loader(source_config: SourceConfig):
             # ToDo REMOVE!
             if source_config.name == "cordis" and doc_count < 10_100:
                 continue
-            if source_config.name == "cordis":
-                logging.info(path)
-            if source_config.name == "cordis" and path == "/vast/lu72hip/data/pile/cordis_culturalORheritage/last_startDate_2015-01-01/project-rcn-211925_en/project-rcn-211925_en.xml":
-                logging.info(f"[skipping??? oom] {path}")
+            if path == Path(
+                "/vast/lu72hip/data/pile/cordis_culturalORheritage/last_startDate_2015-01-01/project-rcn-211925_en/project-rcn-211925_en.xml"
+            ):
+                logging.info(f"[skipping oom path] {path}")
                 continue
 
             try:

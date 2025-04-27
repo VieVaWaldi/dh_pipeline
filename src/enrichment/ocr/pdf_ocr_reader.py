@@ -1,3 +1,4 @@
+import gc
 import logging
 import re
 import unicodedata
@@ -8,25 +9,57 @@ import PyPDF2
 
 from core.sanitizers.sanitizer import parse_content
 
-logging.getLogger("PyPDF2").setLevel(logging.ERROR)
-
 
 def pdf_to_text(pdf_path: Path) -> Optional[str]:
     try:
-        full_text = ""
+        chunks = []
+
         with open(pdf_path, "rb") as file:
             reader = PyPDF2.PdfReader(file)
-            for page_num in range(len(reader.pages)):
-                page = reader.pages[page_num]
-                text = page.extract_text()
-                text = sanitize_pdf_text(text)
-                text = parse_content(text)
-                if text:
-                    full_text += text + "\n\n"  # Page breaks
+            page_count = len(reader.pages)
+
+            for page_num in range(page_count):
+                try:
+                    page = reader.pages[page_num]
+                    text = page.extract_text()
+                    text = sanitize_pdf_text(text)
+                    text = parse_content(text)
+
+                    if text:
+                        chunks.append(text)
+
+                except Exception as page_error:
+                    logging.warning(
+                        f"Error processing page {page_num} in {pdf_path}: {page_error}"
+                    )
+                    continue
+
+        gc.collect()
+        full_text = "\n\n".join(chunks)
         return full_text
+
     except Exception as e:
         logging.warning(f"Failed to OCR pdf from: {pdf_path},\n{e}")
+        gc.collect()  # Ensure memory is freed even after an error
         return None
+
+
+# def pdf_to_text(pdf_path: Path) -> Optional[str]:
+#     try:
+#         full_text = ""
+#         with open(pdf_path, "rb") as file:
+#             reader = PyPDF2.PdfReader(file)
+#             for page_num in range(len(reader.pages)):
+#                 page = reader.pages[page_num]
+#                 text = page.extract_text()
+#                 text = sanitize_pdf_text(text)
+#                 text = parse_content(text)
+#                 if text:
+#                     full_text += text + "\n\n"  # Page breaks
+#         return full_text
+#     except Exception as e:
+#         logging.warning(f"Failed to OCR pdf from: {pdf_path},\n{e}")
+#         return None
 
 
 def sanitize_pdf_text(text: Optional[str]) -> Optional[str]:
@@ -72,9 +105,13 @@ def sanitize_pdf_text(text: Optional[str]) -> Optional[str]:
 
 if __name__ == "__main__":
     file_path = Path(
-        "/Users/wehrenberger/Code/DIGICHer/DIGICHer_Pipeline/data/pile/arxiv_allCOLONcomputingPLUSANDPLUSLBallCOLONhumanitiesPLUSORPLUSallCOLONheritageRB/last_start_46000/2024-08-07T08:19:44Z_A_Logical_Fallacy_Informed_Framework_for/paper_2024-08-07T08:19:44Z_A_Logical_Fallacy_Informed_Framework_for.pdf"
+        "/Users/wehrenberger/Downloads/rmme/attachments"
     )
-    print(pdf_to_text(file_path))
+    for file in file_path.iterdir():
+        if file == Path("/Users/wehrenberger/Downloads/rmme/attachments/Attachment_0 (20).pdf"):
+            continue
+        print(file)
+        print(pdf_to_text(file)[:20])
 
 # def pdf_to_text2(pdf_path: Path) -> Optional[str]:
 #     try:

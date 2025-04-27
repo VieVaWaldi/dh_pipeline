@@ -14,7 +14,7 @@ from core.file_handling.file_parsing.xml_parser import (
 def yield_all_documents(document_path: Path, cordis_only_project_flag: bool = False):
     """
     Yields all documents as dictionaries including their path name and last modification time
-    given a path recursively.
+    in utc given a path recursively.
     """
     yield from _process_files(document_path, cordis_only_project_flag)
 
@@ -22,7 +22,7 @@ def yield_all_documents(document_path: Path, cordis_only_project_flag: bool = Fa
 def _process_files(file_path: Path, cordis_only_project_flag: bool) -> Iterator[Any]:
     """
     Walks through all files in the given file_path and yields the extracted documents
-    as a dictionary including their path and last modification time.
+    as a dictionary including their path and last modification time in utc.
     """
     for root, _, files in os.walk(file_path):
         for file in files:
