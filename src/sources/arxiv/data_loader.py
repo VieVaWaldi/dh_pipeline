@@ -178,13 +178,15 @@ class ArxivDataLoader(IDataLoader):
     def _create_links(self, session: Session, entry_data: Dict) -> List[Link]:
         """Create or retrieve Link entities from the document."""
         links = []
+        seen_hrefs = set()
 
         link_list = ensure_list(get_nested(entry_data, "ns0:link"))
         for link_data in link_list:
             if isinstance(link_data, dict):
                 href = parse_web_resources(get_nested(link_data, "@href"))
-                if not href:
+                if not href or href in seen_hrefs:
                     continue
+                seen_hrefs.add(href)
 
                 title = parse_string(get_nested(link_data, "@title"))
                 rel = parse_string(get_nested(link_data, "@rel"))
