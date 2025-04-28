@@ -1,10 +1,12 @@
 -----------------------------------------------
 -- ENTITIES COUNT
 
-select count(*) from arxiv.entry;
--- 33_241
--- 6_276 with doi
--- 31_357 with fulltext
+select * from arxiv.entry
+limit 1000;
+where full_text is not null;
+-- 46_312
+-- 7_844 with doi
+-- 44_385 with fulltext
 select count(*) from arxiv.author;
 -- 58_285
 select count(*) from arxiv.link;

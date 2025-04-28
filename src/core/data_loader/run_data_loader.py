@@ -103,10 +103,10 @@ def log_run_time(start_time: datetime):
 
 
 if __name__ == "__main__":
-    # import sys
-    #
-    # dev_args = ["--source", "openaire", "--run", "0"]
-    # sys.argv.extend(dev_args)
+    import sys
+
+    dev_args = ["--source", "cordis", "--run", "0"]
+    sys.argv.extend(dev_args)
 
     parser = argparse.ArgumentParser(description="Data Loader Runner")
     parser.add_argument("--source", help="Select data source", required=True)

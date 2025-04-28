@@ -6,6 +6,18 @@ CREATE SCHEMA IF NOT EXISTS core_enrichment;
 
 CREATE TYPE core.source_type AS ENUM ('cordis', 'arxiv', 'coreac', 'openaire');
 
+-- DeDup title
+
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+
+SELECT t1.id as id1, t2.id as id2, 
+       t1.title as title1, t2.title as title2,
+       similarity(LOWER(t1.title), LOWER(t2.title)) as similarity_score
+FROM core.researchoutput t1
+JOIN core.researchoutput t2 ON t1.id < t2.id
+WHERE similarity(LOWER(t1.title), LOWER(t2.title)) > 0.7
+ORDER BY similarity_score DESC;
+
 -------------------------------------------------------------------
 --- Main Models
 
@@ -35,16 +47,19 @@ CREATE TABLE core.researchoutput (
     full_text TEXT,
     comment TEXT,
 
+    funding_number TEXT,
+
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
 
-    CONSTRAINT unique_source_record UNIQUE (source_system, source_id)
+    CONSTRAINT unique_source_researchoutput UNIQUE (source_system, source_id)
 );
 
 CREATE INDEX idx_ro_source ON core.researchoutput(source_system, source_id);
 CREATE INDEX idx_ro_doi ON core.researchoutput(doi) WHERE doi IS NOT NULL;
 CREATE INDEX idx_ro_publication_date ON core.researchoutput(publication_date);
 CREATE INDEX idx_ro_title_search ON core.researchoutput USING gin(to_tsvector('english', title));
+CREATE INDEX idx_ro_title_lower_trgm ON core.researchoutput USING gin (LOWER(title) gin_trgm_ops);
 CREATE INDEX idx_ro_abstract_search ON core.researchoutput USING gin(to_tsvector('english', coalesce(abstract, '')));
 -- FULL TEXT INDEX LATER
 
@@ -69,14 +84,13 @@ CREATE INDEX idx_ro_abstract_search ON core.researchoutput USING gin(to_tsvector
 
 CREATE TABLE core.topic (
     id SERIAL PRIMARY KEY,
-    source_id TEXT NOT NULL,
     source_system core.source_type NOT NULL,
 
-    name TEXT UNIQUE NOT NULL,
+    name TEXT NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
 
-    CONSTRAINT unique_source_record UNIQUE (source_system, name)
+    CONSTRAINT unique_source_topic UNIQUE (source_system, name)
 );
 
 CREATE INDEX idx_topic_name ON core.topic(name);
@@ -95,7 +109,7 @@ CREATE TABLE core.person (
     name TEXT UNIQUE NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW()
-)
+);
 
 CREATE INDEX idx_person_name ON core.person(name);
 CREATE INDEX idx_person_name_search ON core.person USING gin(to_tsvector('english', name));
@@ -116,16 +130,10 @@ CREATE TABLE core.publisher (
     name TEXT UNIQUE NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW()
-)
+);
 
 CREATE INDEX idx_publisher_name ON core.publisher(name);
 CREATE INDEX idx_publisher_name_search ON core.publisher USING gin(to_tsvector('english', name));
-
-CREATE TABLE core.j_journal_publisher (
-    journal_id INTEGER REFERENCES core.journal(id) ON DELETE CASCADE,
-    publisher_id INTEGER REFERENCES core.publisher(id) ON DELETE CASCADE,
-    PRIMARY KEY (journal_id, publisher_id)
-);
 
 --- Journal ---
 
@@ -135,7 +143,7 @@ CREATE TABLE core.journal (
     -- issn TEXT,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW()
-)
+);
 
 CREATE INDEX idx_journal_name ON core.journal(name);
 CREATE INDEX idx_journal_name_search ON core.journal USING gin(to_tsvector('english', name));
@@ -147,6 +155,12 @@ CREATE TABLE core.j_researchoutput_journal (
     PRIMARY KEY (researchoutput_id, journal_id)
 );
 
+CREATE TABLE core.j_journal_publisher (
+    journal_id INTEGER REFERENCES core.journal(id) ON DELETE CASCADE,
+    publisher_id INTEGER REFERENCES core.publisher(id) ON DELETE CASCADE,
+    PRIMARY KEY (journal_id, publisher_id)
+);
+
 --- Link ---
 
 CREATE TABLE core.link (
@@ -156,7 +170,7 @@ CREATE TABLE core.link (
     description TEXT,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW()
-)
+);
 
 CREATE INDEX idx_link_url ON core.link(url);
 CREATE INDEX idx_link_type ON core.link(type);

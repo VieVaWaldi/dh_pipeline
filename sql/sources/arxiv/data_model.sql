@@ -6,26 +6,26 @@ CREATE SCHEMA IF NOT EXISTS arxiv;
 CREATE TABLE arxiv.entry (
     id SERIAL PRIMARY KEY,
     id_original TEXT UNIQUE NOT NULL,
-    title TEXT NOT NULL, -- UNIQUE
-    doi TEXT, -- UNIQUE
-    summary TEXT,
+    title TEXT NOT NULL,
+    doi TEXT,
+    summary TEXT, -- abstract
 	full_text TEXT,
-    journal_ref TEXT,
+    journal_ref TEXT, -- junction to core.journal
     comment TEXT,
-    primary_category TEXT,
-    category_term TEXT,
-    categories TEXT[],
+    primary_category TEXT, -- junction core.topic
+    category_term TEXT, -- ignore
+    categories TEXT[], -- junction core.topic
     published_date TIMESTAMP,
     updated_date TIMESTAMP,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
-CREATE TABLE arxiv.author (
+CREATE TABLE arxiv.author ( -- junction core.author
     id SERIAL PRIMARY KEY,
     name TEXT UNIQUE NOT NULL,
-    affiliation TEXT,
-    affiliations TEXT[],
+    affiliation TEXT, -- ignore
+    affiliations TEXT[], -- ignore
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
@@ -37,12 +37,12 @@ CREATE TABLE arxiv.j_entry_author (
     PRIMARY KEY (entry_id, author_id)
 );
 
-CREATE TABLE arxiv.link (
+CREATE TABLE arxiv.link ( -- junction to core.link
     id SERIAL PRIMARY KEY,
-    href TEXT NOT NULL,
-    title TEXT,
-    rel TEXT,
-    type TEXT,
+    href TEXT NOT NULL, -- url
+    title TEXT, -- ignore
+    rel TEXT, -- ignore
+    type TEXT, -- type
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );

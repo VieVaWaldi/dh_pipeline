@@ -66,18 +66,18 @@ CREATE TABLE cordis.institution (
 );
 
 CREATE TABLE cordis.researchoutput (
-    id SERIAL PRIMARY KEY,
-    id_original TEXT UNIQUE NOT NULL,
-	from_pdf BOOLEAN,
-    type TEXT NOT NULL,
-    doi TEXT,
-    title TEXT NOT NULL,
-    publication_date DATE,
-    journal TEXT,
-    summary TEXT,
-    comment TEXT,
-    fulltext TEXT, -- wip
-    funding_number TEXT, -- wip
+    id SERIAL PRIMARY KEY, -- ignore
+    id_original TEXT UNIQUE NOT NULL, -- source_id
+	from_pdf BOOLEAN, -- ignore
+    type TEXT NOT NULL, -- type
+    doi TEXT, -- doi
+    title TEXT NOT NULL, -- title
+    publication_date DATE, -- publication date
+    journal TEXT, -- create junction to core journal
+    summary TEXT, -- abstract
+    comment TEXT, -- comment
+    fulltext TEXT, -- fulltext
+    funding_number TEXT, -- funding_number
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );

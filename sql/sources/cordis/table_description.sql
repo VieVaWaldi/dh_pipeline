@@ -1,14 +1,20 @@
 -----------------------------------------------
--- CORE ENTITIES
+-- CORDIS ENTITIES
 
--- NOT DONE do not COUNT
+select * from openaire.organization;
+-- 17_470
+
+select * from openaire.project;
+-- 10_263
+
+-------
 
 select * from cordis.project;
--- 7k
+-- 12_792
 select count(*) from cordis.researchoutput;
--- 90_911
--- 34_302 with doi
--- 18_019 with fulltext
+-- 204_372
+-- 75_480 with doi
+-- 50_026 with fulltext
 select count(*) from cordis.institution;
 --
 select count(*) from cordis.person;
@@ -25,13 +31,13 @@ select count(*) from cordis.fundingprogramme;
 -- JUNCTIONS
 
 -----------------------------------------------
--- Institution
+-- JUNCTIONS Institution
 
 select count(*) from cordis.j_institution_person;
 --
 
 -----------------------------------------------
--- Research Output
+-- JUNCTIONS Research Output
 
 select count(*) from cordis.j_researchoutput_person;
 --
@@ -43,7 +49,7 @@ select count(*) from cordis.j_researchoutput_institution;
 --
 
 -----------------------------------------------
--- Project
+-- JUNCTIONS Project
 
 select count(*) from cordis.j_project_topic;
 --
@@ -55,3 +61,11 @@ select count(*) from cordis.j_project_institution;
 --
 select count(*) from cordis.j_project_researchoutput;
 --
+
+-----------------------------------------------
+-- Analysis
+
+SELECT extract(year from publication_date) as year, COUNT(*) 
+FROM cordis.researchoutput 
+GROUP BY year
+order by year;

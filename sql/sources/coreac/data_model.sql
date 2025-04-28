@@ -5,37 +5,37 @@ CREATE SCHEMA IF NOT EXISTS coreac;
 
 CREATE TABLE coreac.work (
     id SERIAL PRIMARY KEY,
-    id_original TEXT UNIQUE NOT NULL,
-    title TEXT NOT NULL, -- removed UNIQUE for 2nd run
-    doi TEXT, -- UNIQUE
-    arxiv_id TEXT, -- UNIQUE,
-    mag_id TEXT, -- UNIQUE,
-    pubmed_id TEXT, -- UNIQUE,
-    oai_ids TEXT[],
+    id_original TEXT UNIQUE NOT NULL, -- source id
+    title TEXT NOT NULL,
+    doi TEXT,
+    arxiv_id TEXT,
+    mag_id TEXT, -- ignore
+    pubmed_id TEXT, -- ignore
+    oai_ids TEXT[], -- ignore
     language_code TEXT,
-    language_name TEXT,
-    document_type TEXT,
-    field_of_study TEXT,
+    language_name TEXT, -- ignore
+    document_type TEXT, -- type
+    field_of_study TEXT, -- ignore
     abstract TEXT,
     fulltext TEXT,
-    publisher TEXT,
-    authors TEXT[],
-    contributors TEXT[],
-    journals_title TEXT[],
-    download_url TEXT,
-    outputs TEXT[],
-    source_fulltext_urls TEXT[],
-    year_published TEXT,
-    created_date TIMESTAMP,
-    updated_date TIMESTAMP,
-    published_date TIMESTAMP,
-    deposited_date TIMESTAMP,
-    accepted_date TIMESTAMP,
+    publisher TEXT, -- ignore
+    authors TEXT[], -- junction to core.authors where the junction has the type contributor
+    contributors TEXT[], -- junction to core.authors where the junction has the type contributor
+    journals_title TEXT[], -- junction to core.journal
+    download_url TEXT, -- junction to core.link where type is download
+    outputs TEXT[], -- ignore
+    source_fulltext_urls TEXT[], -- ignore
+    year_published TEXT, -- ignore
+    created_date TIMESTAMP, -- ignore
+    updated_date TIMESTAMP, -- updated_date
+    published_date TIMESTAMP, -- publication_date
+    deposited_date TIMESTAMP, -- ignore
+    accepted_date TIMESTAMP, -- ignore
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
-CREATE TABLE coreac.link (
+CREATE TABLE coreac.link ( -- junction to core.link where type is type
     id SERIAL PRIMARY KEY,
     url TEXT NOT NULL,
 	type TEXT,

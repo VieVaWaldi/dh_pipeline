@@ -2,6 +2,13 @@
 Needs: $ gcloud init $ to be run first in the terminal.
 Pick Models & Billing at https://console.cloud.google.com/vertex-ai/
 
+-- perplexity talk: https://www.perplexity.ai/search/does-google-have-a-python-read-a0aM1UUYQomq7JOp2xtpqg
+
+-- get models here? https://console.cloud.google.com/vertex-ai/studio/multimodal?model=gemini-2.5-flash-preview-04-17&hl=en&project=digicher
+-- bucket? https://console.cloud.google.com/storage/browser/digicher-gemini-bucket?hl=en&project=digicher
+-- api key? https://aistudio.google.com/apikey
+-- gemini quick start? https://ai.google.dev/gemini-api/docs/quickstart?lang=python
+
 """
 
 import json
