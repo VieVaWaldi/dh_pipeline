@@ -1,8 +1,8 @@
 #!/bin/bash
 
 #SBATCH --job-name=data_loader
-#SBATCH --partition=fat
-#SBATCH --time=48:00:00
+#SBATCH --partition=standard
+#SBATCH --time=24:00:00
 #SBATCH --output=/home/lu72hip/DIGICHer/DIGICHer_Pipeline/data/runs/data_loader/data_loader_all_%j.log
 
 ### CleanUp
@@ -37,17 +37,17 @@ echo "Current user: $(whoami)"
 echo "Current directory: $(pwd)"
 echo "Python version: $(python --version)"
 
-# python src/core/data_loader/run_data_loader.py --source cordis --run 0
-# sleep 600
+python src/core/data_loader/run_data_loader.py --source cordis --run 0
+sleep 300
 
 # python src/core/data_loader/run_data_loader.py --source openaire --run 0
-# sleep 600
+# sleep 300
 
 # python src/core/data_loader/run_data_loader.py --source openaire --run 1
-# sleep 600
+# sleep 300
 
 python src/core/data_loader/run_data_loader.py --source coreac --run 0
-sleep 600
+sleep 300
 
 python src/core/data_loader/run_data_loader.py --source arxiv --run 0
-sleep 600
+sleep 300
