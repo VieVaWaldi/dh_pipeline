@@ -80,7 +80,8 @@ BEGIN
                     IF author_name IS NOT NULL AND author_name != '' THEN
                         -- Insert or get the person
                         INSERT INTO core.person (name)
-                        VALUES (author_name)
+                        -- VALUES (author_name) -- some names were too long for the index
+                        VALUES (substring(author_name, 1, 500))
                         ON CONFLICT (name) DO UPDATE SET name = EXCLUDED.name
                         RETURNING id INTO person_id;
                         
@@ -116,7 +117,8 @@ BEGIN
                     IF contributor_name IS NOT NULL AND contributor_name != '' THEN
                         -- Insert or get the person
                         INSERT INTO core.person (name)
-                        VALUES (contributor_name)
+                        -- VALUES (contributor_name)
+                        VALUES (substring(contributor_name, 1, 500))
                         ON CONFLICT (name) DO UPDATE SET name = EXCLUDED.name
                         RETURNING id INTO person_id;
                         
