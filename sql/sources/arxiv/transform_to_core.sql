@@ -147,7 +147,8 @@ BEGIN
 
             -- Create the junction between research output and link
             INSERT INTO core.j_researchoutput_link (researchoutput_id, link_id)
-            VALUES (new_core_id, link_id);
+            VALUES (new_core_id, link_id)
+            ON CONFLICT DO NOTHING;
         END LOOP;
         END;
 
