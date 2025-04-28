@@ -42,4 +42,27 @@ cd /home/lu72hip/DIGICHer/DIGICHer_Pipeline || exit
 # psql -d db_digicher_v2 -p 5433 -f sql/sources/arxiv/transform_to_core.sql
 
 # echo "--- Running Coreac Transfomer"
-psql -d db_digicher_v2 -p 5433 -f sql/sources/coreac/transform_to_core.sql
+# psql -d db_digicher_v2 -p 5433 -f sql/sources/coreac/transform_to_core.sql
+
+#psql -d db_digicher_v2 -p 5433 -f sql/core/dedpulication.sql
+
+# Make sure the response directory exists
+mkdir -p ./response
+
+# Run the deduplication query and save the result to a file
+echo "--- Running deduplication query and saving results"
+psql -d db_digicher_v2 -p 5433 -c "
+WITH title_blocks AS (
+    SELECT id, title, substring(LOWER(title) from 1 for 5) AS block
+    FROM core.researchoutput
+    WHERE LOWER(title) NOT LIKE '%attachment%'
+)
+SELECT t1.id as id1, t2.id as id2,
+       t1.title as title1, t2.title as title2,
+       similarity(LOWER(t1.title), LOWER(t2.title)) as similarity_score
+FROM title_blocks t1
+JOIN title_blocks t2 ON t1.id < t2.id AND t1.block = t2.block
+WHERE similarity(LOWER(t1.title), LOWER(t2.title)) > 0.9
+ORDER BY similarity_score DESC;" -o ./response/deduplication_results.txt
+
+echo "Query results saved to ./response/deduplication_results.txt"

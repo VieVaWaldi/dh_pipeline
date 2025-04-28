@@ -78,121 +78,6 @@ $$ LANGUAGE plpgsql;
 -----------------------------------------------
 -- Run Transform
 
---DO $$
---DECLARE
---    total_transformed INTEGER := 0;
---    newly_transformed INTEGER := 0;
---    batch_num INTEGER := 0;
---    last_error TEXT;
---    start_time TIMESTAMP;
---    end_time TIMESTAMP;
---    duration INTERVAL;
---BEGIN
---    RAISE NOTICE 'Starting cordis to core transformation with junctions...';
---
---    -- Add logging table if it doesn't exist
---    CREATE TABLE IF NOT EXISTS batch_process_log (
---        batch_num INTEGER PRIMARY KEY,
---        start_time TIMESTAMP,
---        end_time TIMESTAMP,
---        duration INTERVAL,
---        records_processed INTEGER,
---        cumulative_records INTEGER,
---        error_message TEXT
---    );
---
---    LOOP
---        -- Start timing this batch
---        start_time := clock_timestamp();
---
---        -- Increment batch counter
---        batch_num := batch_num + 1;
---        RAISE NOTICE 'Processing batch %...', batch_num;
---
---        BEGIN
---            -- Process batch and capture count of transformed records
---            newly_transformed := transform_cordis_to_core_with_junctions();
---            total_transformed := total_transformed + newly_transformed;
---
---            -- Calculate timing
---            end_time := clock_timestamp();
---            duration := end_time - start_time;
---
---            -- Log successful batch
---            INSERT INTO batch_process_log (
---                batch_num,
---                start_time,
---                end_time,
---                duration,
---                records_processed,
---                cumulative_records
---            )
---            VALUES (
---                batch_num,
---                start_time,
---                end_time,
---                duration,
---                newly_transformed,
---                total_transformed
---            );
---
---            RAISE NOTICE 'Batch % complete: % records transformed in % seconds',
---                batch_num, newly_transformed, extract(epoch from duration);
---
---        EXCEPTION WHEN OTHERS THEN
---            -- Capture error details
---            last_error := SQLERRM || ' (SQLSTATE: ' || SQLSTATE || ')';
---            end_time := clock_timestamp();
---            duration := end_time - start_time;
---
---            -- Log the error
---            INSERT INTO batch_process_log (
---                batch_num,
---                start_time,
---                end_time,
---                duration,
---                records_processed,
---                cumulative_records,
---                error_message
---            )
---            VALUES (
---                batch_num,
---                start_time,
---                end_time,
---                duration,
---                0,
---                total_transformed,
---                last_error
---            );
---
---            RAISE WARNING 'Batch % failed: %', batch_num, last_error;
---        END;
---
---        -- Exit conditions: no more records or an error occurred
---        EXIT WHEN newly_transformed = 0 OR last_error IS NOT NULL;
---
---        -- Commit transaction to release locks
---        COMMIT;
---
---        -- Database maintenance between batches
---        PERFORM pg_catalog.pg_stat_reset();  -- Reset statistics
---        -- VACUUM ANALYZE;                      -- Reclaim space and update stats
---        CHECKPOINT;                          -- Force WAL checkpoint
---
---        -- Short pause to allow system recovery if needed
---        PERFORM pg_sleep(2);
---    END LOOP;
---
---    -- Final summary message
---    IF last_error IS NULL THEN
---        RAISE NOTICE 'Transformation complete. Total records transformed: %', total_transformed;
---    ELSE
---        RAISE WARNING 'Transformation stopped after % batches due to error. Total records transformed: %',
---            batch_num, total_transformed;
---    END IF;
---END;
---$$;
-
 DO $$
 DECLARE
     total_transformed INTEGER := 0;
@@ -213,9 +98,9 @@ BEGIN
         -- Exit when no more records to transform
         EXIT WHEN newly_transformed = 0;
 
-        COMMIT;
+        -- COMMIT;
         PERFORM pg_catalog.pg_stat_reset();  -- Reset statistics
-        VACUUM;  -- Release memory
+        -- VACUUM;  -- Release memory
 
     END LOOP;
 

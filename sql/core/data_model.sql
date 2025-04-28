@@ -148,17 +148,16 @@ CREATE TABLE core.journal (
 CREATE INDEX idx_journal_name ON core.journal(name);
 CREATE INDEX idx_journal_name_search ON core.journal USING gin(to_tsvector('english', name));
 
+CREATE TABLE core.j_journal_publisher (
+    journal_id INTEGER REFERENCES core.journal(id) ON DELETE CASCADE,
+    publisher_id INTEGER REFERENCES core.publisher(id) ON DELETE CASCADE,
+    PRIMARY KEY (journal_id, publisher_id)
+);
 
 CREATE TABLE core.j_researchoutput_journal (
     researchoutput_id INTEGER REFERENCES core.researchoutput(id) ON DELETE CASCADE,
     journal_id INTEGER REFERENCES core.journal(id) ON DELETE CASCADE,
     PRIMARY KEY (researchoutput_id, journal_id)
-);
-
-CREATE TABLE core.j_journal_publisher (
-    journal_id INTEGER REFERENCES core.journal(id) ON DELETE CASCADE,
-    publisher_id INTEGER REFERENCES core.publisher(id) ON DELETE CASCADE,
-    PRIMARY KEY (journal_id, publisher_id)
 );
 
 --- Link ---
