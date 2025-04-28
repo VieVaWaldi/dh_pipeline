@@ -99,6 +99,9 @@ BEGIN
         EXIT WHEN newly_transformed = 0;
 
         COMMIT;
+        PERFORM pg_catalog.pg_stat_reset();  -- Reset statistics
+        VACUUM;  -- Release memory
+
     END LOOP;
 
     RAISE NOTICE 'Transformation complete. Total records transformed: %', total_transformed;
