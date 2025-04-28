@@ -18,7 +18,8 @@ select count(*) from core.j_researchoutput_person;
 select count(*) from core.j_researchoutput_link;
 -- 
 
--- test
+-----------------------------------------------
+-- RMME TESTs
 
 select count(*) from core.researchoutput;
 where full_text is not null;

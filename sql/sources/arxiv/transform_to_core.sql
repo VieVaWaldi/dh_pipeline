@@ -181,8 +181,7 @@ BEGIN
         -- Exit when no more records to transform
         EXIT WHEN newly_transformed = 0;
         
-        -- Optional: Add a commit here for large datasets
-        -- COMMIT;
+        COMMIT;
     END LOOP;
     
     RAISE NOTICE 'Transformation complete. Total records transformed: %', total_transformed;
