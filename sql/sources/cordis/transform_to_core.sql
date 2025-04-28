@@ -176,7 +176,7 @@ BEGIN
 
         -- Database maintenance between batches
         PERFORM pg_catalog.pg_stat_reset();  -- Reset statistics
-        VACUUM ANALYZE;                      -- Reclaim space and update stats
+        -- VACUUM ANALYZE;                      -- Reclaim space and update stats
         CHECKPOINT;                          -- Force WAL checkpoint
 
         -- Short pause to allow system recovery if needed
