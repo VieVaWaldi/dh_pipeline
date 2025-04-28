@@ -1,10 +1,8 @@
 -----------------------------------------------
 -- Transform arxiv to core
 
-DROP FUNCTION IF EXISTS transform_arxiv_to_core_with_junctions();
-
 CREATE OR REPLACE FUNCTION transform_arxiv_to_core_with_junctions()
-RETURNS INTEGER AS $$
+RETURNS void AS $$
 DECLARE
     batch_size INTEGER := 1000;
     total_count INTEGER;
@@ -16,11 +14,9 @@ DECLARE
     link_id INTEGER;
     link_rec RECORD;
     topic_id INTEGER;
-    category_name TEXT;
     journal_id INTEGER;
     new_core_id INTEGER;
     already_exists BOOLEAN;
-    transform_count INTEGER := 0;
 BEGIN
     RAISE NOTICE 'Starting arxiv to core transformation with junctions...';
 
@@ -74,8 +70,6 @@ BEGIN
                     entry_rec.comment
                 ) RETURNING id INTO new_core_id;
 
-                transform_count := transform_count + 1;
-
                 -- Process authors
                 FOR author_rec IN
                     SELECT a.*
@@ -90,23 +84,19 @@ BEGIN
                         INSERT INTO core.person (name) VALUES (author_rec.name) RETURNING id INTO author_id;
                     END IF;
 
-                    -- Create junction (ignore if already exists)
-                    BEGIN
-                        INSERT INTO core.j_researchoutput_person (
-                            researchoutput_id,
-                            person_id,
-                            role,
-                            position
-                        ) VALUES (
-                            new_core_id,
-                            author_id,
-                            'author',
-                            (SELECT author_position FROM arxiv.j_entry_author
-                             WHERE entry_id = entry_rec.id AND author_id = author_rec.id)
-                        );
-                    EXCEPTION WHEN unique_violation THEN
-                        -- Junction already exists, continue
-                    END;
+                    -- Create junction
+                    INSERT INTO core.j_researchoutput_person (
+                        researchoutput_id,
+                        person_id,
+                        role,
+                        position
+                    ) VALUES (
+                        new_core_id,
+                        author_id,
+                        'author',
+                        (SELECT author_position FROM arxiv.j_entry_author
+                         WHERE entry_id = entry_rec.id AND author_id = author_rec.id)
+                    );
                 END LOOP;
 
                 -- Process links
@@ -125,13 +115,19 @@ BEGIN
                         RETURNING id INTO link_id;
                     END IF;
 
-                    -- Create junction (ignore if already exists)
-                    BEGIN
+                    -- Check if junction already exists before creating it
+                    SELECT EXISTS (
+                        SELECT 1
+                        FROM core.j_researchoutput_link
+                        WHERE researchoutput_id = new_core_id
+                        AND link_id = link_id
+                    ) INTO already_exists;
+
+                    IF NOT already_exists THEN
+                        -- Create junction if it doesn't exist
                         INSERT INTO core.j_researchoutput_link (researchoutput_id, link_id)
                         VALUES (new_core_id, link_id);
-                    EXCEPTION WHEN unique_violation THEN
-                        -- Junction already exists, continue
-                    END;
+                    END IF;
                 END LOOP;
 
                 -- Process topics (from primary_category and categories)
@@ -146,36 +142,38 @@ BEGIN
                         RETURNING id INTO topic_id;
                     END IF;
 
-                    -- Create junction (ignore if already exists)
-                    BEGIN
-                        INSERT INTO core.j_researchoutput_topic (researchoutput_id, topic_id)
-                        VALUES (new_core_id, topic_id);
-                    EXCEPTION WHEN unique_violation THEN
-                        -- Junction already exists, continue
-                    END;
+                    -- Create junction
+                    INSERT INTO core.j_researchoutput_topic (researchoutput_id, topic_id)
+                    VALUES (new_core_id, topic_id);
                 END IF;
 
                 -- Process other categories
                 IF entry_rec.categories IS NOT NULL THEN
-                    FOREACH category_name IN ARRAY (SELECT string_to_array(entry_rec.categories, ' '))
+                    FOREACH topic_id IN ARRAY entry_rec.categories
                     LOOP
                         -- Get or create topic
                         SELECT id INTO topic_id FROM core.topic
-                        WHERE source_system = 'arxiv' AND name = category_name;
+                        WHERE source_system = 'arxiv' AND name = topic_id;
 
                         IF topic_id IS NULL THEN
                             INSERT INTO core.topic (source_system, name)
-                            VALUES ('arxiv', category_name)
+                            VALUES ('arxiv', topic_id)
                             RETURNING id INTO topic_id;
                         END IF;
 
-                        -- Create junction (ignore if already exists)
-                        BEGIN
+                        -- Check if junction already exists
+                        SELECT EXISTS (
+                            SELECT 1
+                            FROM core.j_researchoutput_topic
+                            WHERE researchoutput_id = new_core_id
+                            AND topic_id = topic_id
+                        ) INTO already_exists;
+
+                        IF NOT already_exists THEN
+                            -- Create junction if it doesn't exist
                             INSERT INTO core.j_researchoutput_topic (researchoutput_id, topic_id)
                             VALUES (new_core_id, topic_id);
-                        EXCEPTION WHEN unique_violation THEN
-                            -- Junction already exists, continue
-                        END;
+                        END IF;
                     END LOOP;
                 END IF;
 
@@ -190,13 +188,9 @@ BEGIN
                         RETURNING id INTO journal_id;
                     END IF;
 
-                    -- Create junction (ignore if already exists)
-                    BEGIN
-                        INSERT INTO core.j_researchoutput_journal (researchoutput_id, journal_id)
-                        VALUES (new_core_id, journal_id);
-                    EXCEPTION WHEN unique_violation THEN
-                        -- Junction already exists, continue
-                    END;
+                    -- Create junction
+                    INSERT INTO core.j_researchoutput_journal (researchoutput_id, journal_id)
+                    VALUES (new_core_id, journal_id);
                 END IF;
             END IF;
         END LOOP;
@@ -206,7 +200,6 @@ BEGIN
     END LOOP;
 
     RAISE NOTICE 'Arxiv to core transformation completed successfully';
-    RETURN transform_count;
 END;
 $$ LANGUAGE plpgsql;
 
