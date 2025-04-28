@@ -26,7 +26,6 @@ BEGIN
                 doi,
                 publication_date,
                 updated_date,
-                language_code,
                 type,
                 title,
                 abstract,
