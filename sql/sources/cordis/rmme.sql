@@ -64,3 +64,51 @@ BEGIN
     RETURN transformed_count;
 END;
 $$ LANGUAGE plpgsql;
+
+----------
+
+DO $$
+DECLARE
+    -- existing variables
+    last_error TEXT;
+BEGIN
+    -- Add logging table if it doesn't exist
+    CREATE TABLE IF NOT EXISTS batch_process_log (
+        batch_num INTEGER,
+        timestamp TIMESTAMP DEFAULT now(),
+        records_processed INTEGER,
+        error_message TEXT
+    );
+
+    LOOP
+        -- Your existing loop code
+        BEGIN
+            newly_transformed := transform_cordis_to_core_with_junctions();
+
+            -- Log success
+            INSERT INTO batch_process_log (batch_num, records_processed)
+            VALUES (batch_num, newly_transformed);
+
+        EXCEPTION WHEN OTHERS THEN
+            last_error := SQLERRM;
+
+            -- Log error
+            INSERT INTO batch_process_log (batch_num, records_processed, error_message)
+            VALUES (batch_num, 0, last_error);
+
+            RAISE NOTICE 'Batch % failed: %', batch_num, last_error;
+        END;
+
+        -- More aggressive maintenance
+        COMMIT;
+        PERFORM pg_catalog.pg_stat_reset();
+        VACUUM ANALYZE;  -- More thorough VACUUM with statistics update
+
+        -- Perhaps add a checkpoint
+        CHECKPOINT;
+
+        -- Exit when no more records or on error
+        EXIT WHEN newly_transformed = 0 OR last_error IS NOT NULL;
+    END LOOP;
+END;
+$$;

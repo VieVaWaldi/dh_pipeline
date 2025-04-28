@@ -19,7 +19,11 @@ select count(*) from core.j_researchoutput_link;
 -- 
 
 -----------------------------------------------
--- RMME TESTs
+-- Researchoutput
+
+-- REINDEX INDEX core.idx_ro_source;
+
+
 
 select count(*) from core.researchoutput;
 where full_text is not null;
