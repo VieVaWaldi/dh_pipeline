@@ -2,159 +2,204 @@
 -- Transform arxiv to core
 
 CREATE OR REPLACE FUNCTION transform_arxiv_to_core_with_junctions()
-RETURNS INTEGER AS $$
+RETURNS void AS $$
 DECLARE
-    transformed_count INTEGER := 0;
-    arxiv_record RECORD;
-    new_core_id INTEGER;
-    journal_id INTEGER;
-    topic_id INTEGER;
-    person_id INTEGER;
+    batch_size INTEGER := 1000;
+    total_count INTEGER;
+    batch_count INTEGER;
+    entry_id INTEGER;
+    entry_rec RECORD;
+    author_id INTEGER;
+    author_rec RECORD;
     link_id INTEGER;
-    category TEXT;
+    link_rec RECORD;
+    topic_id INTEGER;
+    journal_id INTEGER;
+    new_core_id INTEGER;
+    already_exists BOOLEAN;
 BEGIN
-    -- Process each arxiv entry that doesn't have a corresponding core entry yet
-    FOR arxiv_record IN 
-        SELECT a.* 
-        FROM arxiv.entry a
-        LEFT JOIN core.researchoutput r ON r.source_system = 'arxiv' AND r.source_id = a.id_original
-        WHERE r.id IS NULL
-        LIMIT 1000  -- Process in batches of 1000
-    LOOP
-        -- Insert the transformed record into core.researchoutput
-        INSERT INTO core.researchoutput (
-            source_id,
-            source_system,
-            doi,
-            arxiv_id,
-            publication_date,
-            updated_date,
-            language_code,
-            type,
-            title,
-            abstract,
-            full_text,
-            comment
-        ) VALUES (
-            arxiv_record.id_original,
-            'arxiv'::core.source_type,
-            arxiv_record.doi,
-            arxiv_record.id_original,
-            arxiv_record.published_date::DATE,
-            arxiv_record.updated_date::DATE,
-            'en',  -- Assuming English as default language
-            'publication',  -- Standard type for arxiv entries
-            arxiv_record.title,
-            arxiv_record.summary,
-            arxiv_record.full_text,
-            arxiv_record.comment
-        ) RETURNING id INTO new_core_id;
-        
-        -- Handle journal reference if it exists
-        IF arxiv_record.journal_ref IS NOT NULL AND arxiv_record.journal_ref != '' THEN
-            -- Insert or get the journal
-            INSERT INTO core.journal (name)
-            VALUES (arxiv_record.journal_ref)
-            ON CONFLICT (name) DO UPDATE SET name = EXCLUDED.name
-            RETURNING id INTO journal_id;
-            
-            -- Create the junction between research output and journal
-            INSERT INTO core.j_researchoutput_journal (researchoutput_id, journal_id)
-            VALUES (new_core_id, journal_id);
-        END IF;
-        
-        -- Handle primary category as a topic
-        IF arxiv_record.primary_category IS NOT NULL AND arxiv_record.primary_category != '' THEN
-            -- Insert or get the topic
-            INSERT INTO core.topic (source_system, name)
-            VALUES ('arxiv'::core.source_type, arxiv_record.primary_category)
-            ON CONFLICT (source_system, name) DO UPDATE SET name = EXCLUDED.name
-            RETURNING id INTO topic_id;
-            
-            -- Create the junction between research output and topic
-            INSERT INTO core.j_researchoutput_topic (researchoutput_id, topic_id)
-            VALUES (new_core_id, topic_id);
-        END IF;
-        
-        -- Handle all categories as topics
-        IF arxiv_record.categories IS NOT NULL THEN
-            FOREACH category IN ARRAY arxiv_record.categories
-            LOOP
-                -- Skip empty categories
-                IF category IS NOT NULL AND category != '' THEN
-                    -- Insert or get the topic
-                    INSERT INTO core.topic (source_system, name)
-                    VALUES ('arxiv'::core.source_type, category)
-                    ON CONFLICT (source_system, name) DO UPDATE SET name = EXCLUDED.name
-                    RETURNING id INTO topic_id;
-                    
-                    -- Create the junction between research output and topic
+    RAISE NOTICE 'Starting arxiv to core transformation with junctions...';
+
+    -- Get total count and calculate batch count
+    SELECT COUNT(*) INTO total_count FROM arxiv.entry;
+    batch_count := CEIL(total_count::FLOAT / batch_size);
+
+    -- Process in batches
+    FOR batch_num IN 1..batch_count LOOP
+        RAISE NOTICE 'Processing batch %...', batch_num;
+
+        -- Fetch entries in current batch
+        FOR entry_rec IN
+            SELECT e.*
+            FROM arxiv.entry e
+            ORDER BY e.id
+            LIMIT batch_size
+            OFFSET (batch_num - 1) * batch_size
+        LOOP
+            -- Check if this entry has already been transformed
+            SELECT EXISTS (
+                SELECT 1
+                FROM core.researchoutput
+                WHERE source_system = 'arxiv'
+                AND source_id = entry_rec.id_original
+            ) INTO already_exists;
+
+            IF NOT already_exists THEN
+                -- Transform entry to core.researchoutput
+                INSERT INTO core.researchoutput (
+                    source_id,
+                    source_system,
+                    doi,
+                    arxiv_id,
+                    publication_date,
+                    updated_date,
+                    title,
+                    abstract,
+                    full_text,
+                    comment
+                ) VALUES (
+                    entry_rec.id_original,
+                    'arxiv',
+                    entry_rec.doi,
+                    entry_rec.id_original,
+                    entry_rec.published_date::DATE,
+                    entry_rec.updated_date::DATE,
+                    entry_rec.title,
+                    entry_rec.summary,
+                    entry_rec.full_text,
+                    entry_rec.comment
+                ) RETURNING id INTO new_core_id;
+
+                -- Process authors
+                FOR author_rec IN
+                    SELECT a.*
+                    FROM arxiv.author a
+                    JOIN arxiv.j_entry_author ja ON a.id = ja.author_id
+                    WHERE ja.entry_id = entry_rec.id
+                LOOP
+                    -- Get or create person in core
+                    SELECT id INTO author_id FROM core.person WHERE name = author_rec.name;
+
+                    IF author_id IS NULL THEN
+                        INSERT INTO core.person (name) VALUES (author_rec.name) RETURNING id INTO author_id;
+                    END IF;
+
+                    -- Create junction
+                    INSERT INTO core.j_researchoutput_person (
+                        researchoutput_id,
+                        person_id,
+                        role,
+                        position
+                    ) VALUES (
+                        new_core_id,
+                        author_id,
+                        'author',
+                        (SELECT author_position FROM arxiv.j_entry_author
+                         WHERE entry_id = entry_rec.id AND author_id = author_rec.id)
+                    );
+                END LOOP;
+
+                -- Process links
+                FOR link_rec IN
+                    SELECT l.*
+                    FROM arxiv.link l
+                    JOIN arxiv.j_entry_link jl ON l.id = jl.link_id
+                    WHERE jl.entry_id = entry_rec.id
+                LOOP
+                    -- Get or create link in core
+                    SELECT id INTO link_id FROM core.link WHERE url = link_rec.href;
+
+                    IF link_id IS NULL THEN
+                        INSERT INTO core.link (url, type)
+                        VALUES (link_rec.href, link_rec.type)
+                        RETURNING id INTO link_id;
+                    END IF;
+
+                    -- Check if junction already exists before creating it
+                    SELECT EXISTS (
+                        SELECT 1
+                        FROM core.j_researchoutput_link
+                        WHERE researchoutput_id = new_core_id
+                        AND link_id = link_id
+                    ) INTO already_exists;
+
+                    IF NOT already_exists THEN
+                        -- Create junction if it doesn't exist
+                        INSERT INTO core.j_researchoutput_link (researchoutput_id, link_id)
+                        VALUES (new_core_id, link_id);
+                    END IF;
+                END LOOP;
+
+                -- Process topics (from primary_category and categories)
+                IF entry_rec.primary_category IS NOT NULL THEN
+                    -- Get or create topic
+                    SELECT id INTO topic_id FROM core.topic
+                    WHERE source_system = 'arxiv' AND name = entry_rec.primary_category;
+
+                    IF topic_id IS NULL THEN
+                        INSERT INTO core.topic (source_system, name)
+                        VALUES ('arxiv', entry_rec.primary_category)
+                        RETURNING id INTO topic_id;
+                    END IF;
+
+                    -- Create junction
                     INSERT INTO core.j_researchoutput_topic (researchoutput_id, topic_id)
-                    VALUES (new_core_id, topic_id)
-                    ON CONFLICT DO NOTHING;  -- In case primary_category was already added
+                    VALUES (new_core_id, topic_id);
                 END IF;
-            END LOOP;
-        END IF;
-        
-        -- Handle authors
-        DECLARE
-            person_record RECORD;
-        BEGIN
-            FOR person_record IN 
-                SELECT a.*, j.author_position 
-                FROM arxiv.author a
-                JOIN arxiv.j_entry_author j ON a.id = j.author_id
-                WHERE j.entry_id = arxiv_record.id
-                ORDER BY j.author_position
-            LOOP
-            -- Insert or get the person
-            INSERT INTO core.person (name)
-            VALUES (person_record.name)
-            ON CONFLICT (name) DO UPDATE SET name = EXCLUDED.name
-            RETURNING id INTO person_id;
-            
-            -- Create the junction between research output and person
-            INSERT INTO core.j_researchoutput_person (
-                researchoutput_id, 
-                person_id, 
-                role, 
-                position
-            )
-            VALUES (
-                new_core_id, 
-                person_id, 
-                'author', 
-                person_record.author_position
-            );
+
+                -- Process other categories
+                IF entry_rec.categories IS NOT NULL THEN
+                    FOREACH topic_id IN ARRAY entry_rec.categories
+                    LOOP
+                        -- Get or create topic
+                        SELECT id INTO topic_id FROM core.topic
+                        WHERE source_system = 'arxiv' AND name = topic_id;
+
+                        IF topic_id IS NULL THEN
+                            INSERT INTO core.topic (source_system, name)
+                            VALUES ('arxiv', topic_id)
+                            RETURNING id INTO topic_id;
+                        END IF;
+
+                        -- Check if junction already exists
+                        SELECT EXISTS (
+                            SELECT 1
+                            FROM core.j_researchoutput_topic
+                            WHERE researchoutput_id = new_core_id
+                            AND topic_id = topic_id
+                        ) INTO already_exists;
+
+                        IF NOT already_exists THEN
+                            -- Create junction if it doesn't exist
+                            INSERT INTO core.j_researchoutput_topic (researchoutput_id, topic_id)
+                            VALUES (new_core_id, topic_id);
+                        END IF;
+                    END LOOP;
+                END IF;
+
+                -- Process journal reference
+                IF entry_rec.journal_ref IS NOT NULL THEN
+                    -- Get or create journal
+                    SELECT id INTO journal_id FROM core.journal WHERE name = entry_rec.journal_ref;
+
+                    IF journal_id IS NULL THEN
+                        INSERT INTO core.journal (name)
+                        VALUES (entry_rec.journal_ref)
+                        RETURNING id INTO journal_id;
+                    END IF;
+
+                    -- Create junction
+                    INSERT INTO core.j_researchoutput_journal (researchoutput_id, journal_id)
+                    VALUES (new_core_id, journal_id);
+                END IF;
+            END IF;
         END LOOP;
-        END;
-        
-        -- Handle links
-        DECLARE
-            link_record RECORD;
-        BEGIN
-            FOR link_record IN 
-                SELECT l.* 
-                FROM arxiv.link l
-                JOIN arxiv.j_entry_link j ON l.id = j.link_id
-                WHERE j.entry_id = arxiv_record.id
-            LOOP
-            -- Insert or get the link
-            INSERT INTO core.link (url, type)
-            VALUES (link_record.href, link_record.type)
-            ON CONFLICT (url) DO UPDATE SET type = EXCLUDED.type
-            RETURNING id INTO link_id;
-            
-            -- Create the junction between research output and link
-            INSERT INTO core.j_researchoutput_link (researchoutput_id, link_id)
-            VALUES (new_core_id, link_id);
-        END LOOP;
-        END;
-        
-        transformed_count := transformed_count + 1;
+
+        RAISE NOTICE 'Transformed % records in batch %',
+            LEAST(batch_size, total_count - (batch_num - 1) * batch_size), batch_num;
     END LOOP;
-    
-    RETURN transformed_count;
+
+    RAISE NOTICE 'Arxiv to core transformation completed successfully';
 END;
 $$ LANGUAGE plpgsql;
 
