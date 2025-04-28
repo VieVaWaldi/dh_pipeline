@@ -3,7 +3,7 @@
 #SBATCH --job-name=cordis_transformer
 #SBATCH --partition=fat
 #SBATCH --time=4:00:00
-#SBATCH --output=/home/lu72hip/DIGICHer/DIGICHer_Pipeline/data/runs/transformation/cordis_ch_%j.log
+#SBATCH --output=/home/lu72hip/DIGICHer/DIGICHer_Pipeline/data/runs/transformation/all_ch_%j.log
 
 ### CleanUp
 
@@ -32,8 +32,14 @@ pg_ctl status -D $PGDATA
 
 cd /home/lu72hip/DIGICHer/DIGICHer_Pipeline || exit
 
-echo "Current user: $(whoami)"
-echo "Current directory: $(pwd)"
-echo "Python version: $(python --version)"
+# echo "Current user: $(whoami)"
+# echo "Current directory: $(pwd)"
 
-psql -d db_digicher_v2 -p 5433 -f sql/sources/cordis/transform_to_core.sql
+# echo "--- Running Cordis Transfomer"
+# psql -d db_digicher_v2 -p 5433 -f sql/sources/cordis/transform_to_core.sql
+
+# echo "--- Running Arxiv Transfomer"
+# psql -d db_digicher_v2 -p 5433 -f sql/sources/arxiv/transform_to_core.sql
+
+# echo "--- Running Coreac Transfomer"
+psql -d db_digicher_v2 -p 5433 -f sql/sources/coreac/transform_to_core.sql
