@@ -41,7 +41,6 @@ class Entry(Base):
         secondary="arxiv.j_entry_link", back_populates="entries"
     )
 
-
 class Author(Base):
     __tablename__ = "author"
     __table_args__ = {"schema": "arxiv"}

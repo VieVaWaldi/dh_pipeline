@@ -187,14 +187,21 @@ CREATE TABLE cordis.j_project_researchoutput (
 -- Indexes
 
 CREATE INDEX idx_project_title ON cordis.project(title);
+CREATE INDEX idx_project_title_search ON cordis.project USING gin(to_tsvector('english', title));
+CREATE INDEX idx_project_objective_search ON cordis.project USING gin(to_tsvector('english', coalesce(objective, '')));
 CREATE INDEX idx_project_start_date ON cordis.project(start_date);
 CREATE INDEX idx_project_end_date ON cordis.project(end_date);
+
 CREATE INDEX idx_researchoutput_title ON cordis.researchoutput(title);
 CREATE INDEX idx_researchoutput_publication_date ON cordis.researchoutput(publication_date);
+
 CREATE INDEX idx_institution_name ON cordis.institution(legal_name);
+
 CREATE INDEX idx_person_name ON cordis.person(name);
 CREATE INDEX idx_person_fullname ON cordis.person(first_name, last_name);
+
 CREATE INDEX idx_topic_name ON cordis.topic(name);
+
 CREATE INDEX idx_fundingprogramme_code ON cordis.fundingprogramme(code);
 
 -----------------------------------------------

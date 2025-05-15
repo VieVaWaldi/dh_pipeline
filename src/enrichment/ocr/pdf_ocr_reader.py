@@ -105,13 +105,15 @@ def sanitize_pdf_text(text: Optional[str]) -> Optional[str]:
 
 if __name__ == "__main__":
     file_path = Path(
-        "/Users/wehrenberger/Downloads/rmme/attachments"
+        "/Users/wehrenberger/Downloads/Exported Items/files/14/D4.1_Requirements_Analysis_v1.0.pdf"
     )
-    for file in file_path.iterdir():
-        if file == Path("/Users/wehrenberger/Downloads/rmme/attachments/Attachment_0 (20).pdf"):
-            continue
-        print(file)
-        print(pdf_to_text(file)[:20])
+    print(pdf_to_text(file_path))
+
+    # for file in file_path.iterdir():
+    #     # if file == Path("/Users/wehrenberger/Downloads/rmme/attachments/Attachment_0 (20).pdf"):
+    #     #     continue
+    #     print(file)
+    #     print(pdf_to_text(file)[:20])
 
 # def pdf_to_text2(pdf_path: Path) -> Optional[str]:
 #     try:

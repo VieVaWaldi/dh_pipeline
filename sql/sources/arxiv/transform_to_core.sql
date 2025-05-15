@@ -29,8 +29,8 @@ BEGIN
             arxiv_id,
             publication_date,
             updated_date,
-            language_code,
-            type,
+            -- language_code,
+            -- type,
             title,
             abstract,
             full_text,
@@ -42,8 +42,8 @@ BEGIN
             arxiv_record.id_original,
             arxiv_record.published_date::DATE,
             arxiv_record.updated_date::DATE,
-            'en',  -- Assuming English as default language
-            'publication',  -- Standard type for arxiv entries
+            -- 'en',  -- Assuming English as default language
+            -- 'publication',  -- Standard type for arxiv entries
             arxiv_record.title,
             arxiv_record.summary,
             arxiv_record.full_text,

@@ -1,5 +1,5 @@
 -----------------------------------------------
--- Openaire Table Description
+-- OPEN AIRE ENTITIES
 
 -----------------------------------------------
 -- Entities Count

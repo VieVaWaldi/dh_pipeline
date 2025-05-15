@@ -1,68 +1,37 @@
 -----------------------------------------------
 -- ENTITIES COUNT
 
-select count(*) from core.researchoutput;
---
-select count(*) from core.topic
--- 
+select count(*) from core.researchoutput
+where full_text is not null;
+-- 451_800
+-- 148_545 doi
+-- 294_346 fulltext
+select count(*) from core.topic;
+-- 1_980
 select count(*) from core.person;
---
+-- 697_904
 select count(*) from core.publisher;
---
+-- 0
 select count(*) from core.journal;
---
+-- 44_259
 select count(*) from core.link;
+-- 891_010
 
 -----------------------------------------------
 -- JUNCTIONS COUNT
 
-select count(*) from core.j_researchoutput_topic
-
+select count(*) from core.j_researchoutput_topic;
+-- 94_448
 select count(*) from core.j_researchoutput_person;
--- 
+-- 1_019_255
 select count(*) from core.j_journal_publisher;
--- 
+-- 0
 select count(*) from core.j_researchoutput_journal;
--- 
+-- 112_451
 select count(*) from core.j_researchoutput_link;
--- 
+-- 895_712
 
------------------------------------------------
--- Researchoutput
-
-select count(*) from core.researchoutput
-where full_text is not null;
-
-select count(*) from core.researchoutput
-where source_system = 'cordis';
---
-select count(*) from core.researchoutput
-where source_system = 'arxiv';
---
-select count(*) from core.researchoutput
-where source_system = 'coreac';
-
--- Look of same source_id is in there twice
-SELECT source_id, source_system, COUNT(*) 
-FROM core.researchoutput 
-WHERE source_system = 'coreac'
-GROUP BY source_id, source_system
-HAVING COUNT(*) > 1
-ORDER BY COUNT(*) DESC;
-
--- DEDUP for all
-
--- First find potential blocks of similar titles
--- dont search within same source
--- WITH title_blocks AS (
---     SELECT id, title, substring(LOWER(title) from 1 for 5) AS block
---     FROM core.researchoutput
--- 	WHERE LOWER(title) NOT LIKE '%attachment%'
--- )
--- SELECT t1.id as id1, t2.id as id2, 
---        t1.title as title1, t2.title as title2,
---        similarity(LOWER(t1.title), LOWER(t2.title)) as similarity_score
--- FROM title_blocks t1
--- JOIN title_blocks t2 ON t1.id < t2.id AND t1.block = t2.block
--- WHERE similarity(LOWER(t1.title), LOWER(t2.title)) > 0.9
--- ORDER BY similarity_score DESC;
+select id_original, id, title, abstract, fulltext
+from coreac.work
+where id_original = '50579246' or
+ id_original = '57812024';
