@@ -213,7 +213,7 @@ def start_extraction(
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Run Core extractor")
+    parser = argparse.ArgumentParser(description="Run Core extract")
     parser.add_argument(
         "-r",
         "--run_id",

@@ -250,7 +250,7 @@ def start_extraction(
     )
 
     checkpoint_from = extractor.restore_checkpoint()
-    # checkpoint_to = extractor.create_checkpoint_end_for_this_run(checkpoint_to_range)
+    # checkpoint_to = extract.create_checkpoint_end_for_this_run(checkpoint_to_range)
 
     base_query = f"search_query={query}"
     base_query += f"&start={checkpoint_from}&max_results={checkpoint_to_range}"
@@ -261,7 +261,7 @@ def start_extraction(
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Run Arxiv extractor")
+    parser = argparse.ArgumentParser(description="Run Arxiv extract")
     parser.add_argument(
         "-r",
         "--run_id",

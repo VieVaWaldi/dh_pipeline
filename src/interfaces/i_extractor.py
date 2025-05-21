@@ -59,7 +59,7 @@ class IExtractor(ABC):
         )
         ensure_path_exists(self.logging_path)
 
-        setup_logging(self.logging_path, "extractor")
+        setup_logging(self.logging_path, "extract")
         logging.info(
             "\n>>> Starting new data extraction run for %s from checkpoint %s.",
             extractor_name,

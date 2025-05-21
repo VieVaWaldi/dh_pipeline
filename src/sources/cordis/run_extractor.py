@@ -238,7 +238,7 @@ def start_extraction(
 
 
 def main(debug_2=0):
-    parser = argparse.ArgumentParser(description="Run Cordis extractor")
+    parser = argparse.ArgumentParser(description="Run Cordis extract")
     parser.add_argument(
         "-r",
         "--run_id",

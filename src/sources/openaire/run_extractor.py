@@ -25,7 +25,7 @@ class OpenAIREExtractor(IExtractor):
     """
     OpenAIRE Extractor - Extract project data and related research products from OpenAIRE API
 
-    This extractor follows this pattern:
+    This extract follows this pattern:
     1. Extract projects based on query keywords
     2. For each project, extract its related research products
     3. Save both project and research product data
@@ -258,15 +258,15 @@ def start_extraction(
         download_attachments=download_attachments,
     )
 
-    # checkpoint_from = extractor.restore_checkpoint()
-    # checkpoint_to = extractor.create_checkpoint_end_for_this_run(checkpoint_to_range)
+    # checkpoint_from = extract.restore_checkpoint()
+    # checkpoint_to = extract.create_checkpoint_end_for_this_run(checkpoint_to_range)
 
     # For OpenAIRE, we use the raw query string
     return extractor.extract_until_next_checkpoint(query)
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Run OpenAIRE extractor")
+    parser = argparse.ArgumentParser(description="Run OpenAIRE extract")
     parser.add_argument(
         "-r",
         "--run_id",

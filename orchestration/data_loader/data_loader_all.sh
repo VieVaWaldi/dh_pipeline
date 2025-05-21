@@ -40,10 +40,10 @@ echo "Python version: $(python --version)"
 python src/core/data_loader/run_data_loader.py --source cordis --run 0
 sleep 300
 
-# python src/core/loader/run_data_loader.py --source openaire --run 0
+# python src/core/loader/run_loader.py --source openaire --run 0
 # sleep 300
 
-# python src/core/loader/run_data_loader.py --source openaire --run 1
+# python src/core/loader/run_loader.py --source openaire --run 1
 # sleep 300
 
 python src/core/data_loader/run_data_loader.py --source coreac --run 0
