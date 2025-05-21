@@ -1,7 +1,7 @@
 ### Custom ignores ###
 
-/scripts
 /.script
+/scripts
 /_scripts
 .vscode/
 .idea/
