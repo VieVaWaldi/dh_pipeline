@@ -2,10 +2,10 @@ import logging
 from abc import ABC
 from pathlib import Path
 
-from common_utils.config.config_loader import get_config
-from common_utils.logger.logger import setup_logging
-from core.extractor.utils import clean_extractor_name
-from core.file_handling.file_utils import (
+from utils.config.config_loader import get_config
+from utils.logger import setup_logging
+from lib.extractor import clean_extractor_name
+from lib.file_handling.file_utils import (
     get_project_root_path,
     ensure_path_exists,
     raise_error_if_directory_does_not_exists,

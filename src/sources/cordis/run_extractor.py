@@ -8,19 +8,19 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-import core.file_handling.file_parsing.xml_parser as xml
-from common_utils.config.config_loader import get_query_config
-from common_utils.error_handling.error_handling import log_and_raise_exception
-from core.extractor.utils import trim_excessive_whitespace
-from core.file_handling.file_utils import (
+import lib.file_handling.file_parsing.xml_parser as xml
+from utils.config.config_loader import get_query_config
+from utils.error_handling.error_handling import log_and_raise_exception
+from lib.extractor.utils import trim_excessive_whitespace
+from lib.file_handling.file_utils import (
     unpack_and_remove_zip,
     load_file,
     write_file,
     ensure_path_exists,
     delete_if_empty,
 )
-from core.requests.file_downloader import SeleniumFileDownloader
-from core.requests.requests import (
+from lib.requests.file_downloader import SeleniumFileDownloader
+from lib.requests.requests import (
     make_delete_request,
     make_get_request,
     download_file,

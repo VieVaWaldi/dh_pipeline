@@ -10,10 +10,10 @@ from typing import Any, List, Dict
 import requests
 from dotenv import load_dotenv
 
-from common_utils.config.config_loader import get_query_config
-from common_utils.error_handling.error_handling import log_and_raise_exception
-from core.extractor.utils import trim_excessive_whitespace
-from core.file_handling.file_utils import load_file, write_file
+from utils.config.config_loader import get_query_config
+from utils.error_handling.error_handling import log_and_raise_exception
+from lib.extractor.utils import trim_excessive_whitespace
+from lib.file_handling.file_utils import load_file, write_file
 from interfaces.i_extractor import IExtractor
 
 

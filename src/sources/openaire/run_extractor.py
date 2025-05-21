@@ -8,17 +8,17 @@ from typing import Dict, Any, Tuple, Optional
 
 from dotenv import load_dotenv
 
-from core.file_handling.file_utils import (
+from lib.file_handling.file_utils import (
     ensure_path_exists,
     load_file,
     write_file,
 )
-from core.requests.requests import (
+from lib.requests.requests import (
     make_get_request,
 )
 from interfaces.i_extractor import IExtractor
-from common_utils.config.config_loader import get_query_config
-from common_utils.error_handling.error_handling import log_and_raise_exception
+from utils.config.config_loader import get_query_config
+from utils.error_handling.error_handling import log_and_raise_exception
 
 
 class OpenAIREExtractor(IExtractor):

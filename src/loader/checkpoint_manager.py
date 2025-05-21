@@ -2,8 +2,8 @@ import datetime
 import logging
 from pathlib import Path
 
-from common_utils.config.config_loader import get_config
-from core.file_handling.file_utils import (
+from utils.config.config_loader import get_config
+from lib.file_handling.file_utils import (
     get_project_root_path,
     ensure_path_exists,
     load_file,
@@ -64,7 +64,7 @@ class CheckpointManager:
         cp_path = (
             get_project_root_path()
             / get_config()["checkpoint_path"]
-            / "data_loader"
+            / "loader"
             / source_name
         )
         ensure_path_exists(cp_path)

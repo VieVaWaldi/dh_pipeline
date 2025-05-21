@@ -5,15 +5,15 @@ from pathlib import Path
 import pandas as pd
 from sqlalchemy import select
 
-from core.data_loader.utils.create_db_session import create_db_session
-from core.data_loader import log_run_time
-from core.file_handling.file_utils import get_project_root_path, ensure_path_exists
-from core.sanitizers.sanitizer import (
+from lib.loader import create_db_session
+from loader import log_run_time
+from lib.file_handling.file_utils import get_project_root_path, ensure_path_exists
+from lib.sanitizers.sanitizer import (
     clean_geolocation,
 )
 from datamodels.digicher.entities import Institutions
-from common_utils.config.config_loader import get_config
-from common_utils.logger.logger import setup_logging
+from utils.config.config_loader import get_config
+from utils.logger import setup_logging
 
 
 class ModelUpdateMonitor:

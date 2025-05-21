@@ -2,7 +2,7 @@ from itertools import islice
 
 from analysis.utils.analysis_interface import IAnalysisJob
 from core.etl.transformer.utils import ensure_list, get_nested
-from core.file_handling.file_walker import yield_all_documents
+from lib.file_handling import yield_all_documents
 
 
 class ValidateFullKeyValues(IAnalysisJob):

@@ -1,7 +1,7 @@
 import logging
 from pathlib import Path
 
-from core.file_handling.file_utils import ensure_path_exists
+from lib.file_handling.file_utils import ensure_path_exists
 
 LOG_LEVEL = logging.INFO
 

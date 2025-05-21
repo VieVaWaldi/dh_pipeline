@@ -7,15 +7,15 @@ from typing import Type
 
 from dotenv import load_dotenv
 
-from common_utils.config.config_loader import get_config, get_source_data_path
-from common_utils.logger.logger import setup_logging
-from core.data_loader.checkpoint_manager import CheckpointManager
-from core.data_loader.utils.create_db_session import create_db_session
-from core.data_loader.utils.get_or_create import ModelCreationMonitor
-from core.file_handling.file_utils import (
+from utils.config.config_loader import get_config, get_source_data_path
+from utils.logger.logger import setup_logging
+from loader.checkpoint_manager import CheckpointManager
+from lib.loader.create_db_session import create_db_session
+from lib.loader.get_or_create import ModelCreationMonitor
+from lib.file_handling.file_utils import (
     get_project_root_path,
 )
-from core.file_handling.file_walker import yield_all_documents
+from lib.file_handling.file_walker import yield_all_documents
 from sources.arxiv.data_loader import ArxivDataLoader
 from sources.cordis.data_loader import CordisDataLoader
 from sources.coreac.data_loader import IDataLoader, CoreacDataLoader
@@ -145,8 +145,8 @@ if __name__ == "__main__":
     }
 
     logging_path = (
-        get_project_root_path() / config["logging_path"] / "data_loader" / args.source
+        get_project_root_path() / config["logging_path"] / "loader" / args.source
     )
-    setup_logging(logging_path, "data_loader")
+    setup_logging(logging_path, "loader")
 
     run_data_loader(source_configs[args.source])

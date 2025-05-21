@@ -4,8 +4,8 @@ from typing import Any, Dict
 
 from dotenv import load_dotenv
 
-from core.extractor.utils import clean_extractor_name
-from core.file_handling.file_utils import get_project_root_path, load_json_file
+from lib.extractor.utils import clean_extractor_name
+from lib.file_handling.file_utils import get_project_root_path, load_json_file
 
 
 def get_source_data_path(source_name: str, config: Dict, run: int) -> Path:

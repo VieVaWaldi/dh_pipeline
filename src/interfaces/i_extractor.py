@@ -3,10 +3,10 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Dict, Any, Union
 
-from common_utils.config.config_loader import get_config
-from common_utils.logger.logger import setup_logging
-from core.extractor.utils import clean_extractor_name
-from core.file_handling.file_utils import (
+from utils.config.config_loader import get_config
+from utils.logger.logger import setup_logging
+from lib.extractor.utils import clean_extractor_name
+from lib.file_handling.file_utils import (
     ensure_path_exists,
     get_project_root_path,
     write_file,

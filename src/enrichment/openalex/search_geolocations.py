@@ -3,7 +3,7 @@ import os
 import time
 from typing import Dict
 
-from core.requests.requests import make_get_request
+from lib.requests.requests import make_get_request
 from _datamodels.digicher.entities import Institutions
 from enrichment.openalex.noise_words import normalize_institution_name
 

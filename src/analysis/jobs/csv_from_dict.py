@@ -4,7 +4,7 @@ from typing import Dict, Any, List
 
 from analysis.utils.analysis_interface import IAnalysisJob
 from analysis.utils.analysis_utils import clean_value
-from core.file_handling.file_walker import yield_all_documents
+from lib.file_handling import yield_all_documents
 
 
 class CSVFromDict(IAnalysisJob):

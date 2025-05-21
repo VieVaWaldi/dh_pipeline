@@ -2,9 +2,9 @@ from typing import Dict, List, Tuple, Optional
 
 from sqlalchemy.orm import Session
 
-from core.data_loader.utils.dict_utils import ensure_list, get_nested
-from core.data_loader.utils.get_or_create import get_or_create
-from core.sanitizers.sanitizer import (
+from lib.loader.dict_utils import ensure_list, get_nested
+from lib.loader.get_or_create import get_or_create
+from lib.sanitizers.sanitizer import (
     parse_bool,
     parse_float,
     parse_string,

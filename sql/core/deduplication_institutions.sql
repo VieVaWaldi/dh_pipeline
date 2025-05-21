@@ -37,7 +37,8 @@ JOIN unified_institutions b ON
     a.id < b.id
 ;
 
--- 4263 duplicates
+-- 32518 + 17470 = 49988
+-- 4263 duplicates = 45725
 
 -----------------------------------------------
 -- Fuzzy Legal Name Matching
