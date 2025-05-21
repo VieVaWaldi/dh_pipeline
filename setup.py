@@ -7,7 +7,7 @@ with open("requirements.txt") as f:
     required = f.read().splitlines()
 
 setup(
-    name="DIGICHER_Pipeline",
+    name="dh_pipeline",
     version="0.2",
     install_requires=required,
     packages=find_packages(where="src", exclude=["tests*"]),
