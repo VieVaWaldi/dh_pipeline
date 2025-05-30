@@ -4,16 +4,18 @@
 -- See more here: https://docs.google.com/document/d/1bDopkhuGieQ4F8gGNj7sEc8WSE8mvLZS/edit?tab=t.0
 -- And topic CSV we used for seeding here: https://docs.google.com/spreadsheets/d/1v-MAq64x4YjhO7RWcB-yrKV5D_2vOOsxl4u6GBKEXY8/edit?gid=983250122#gid=983250122
 
-select topic_name, keywords from core.topic_openalex_keyword_density
-where lower(keywords) ILIKE '%cultural heritage%';
+select topic_name, keywords from core.topic_openalex_keyword_density;
+-- where lower(keywords) ILIKE '%cultural heritage%';
+
+select * from core.j_researchoutput_topic_openalex_keyword_density;
 
 select r.title, j_rt.score, t.topic_name, t.subfield_name, t.field_name, t.domain_name, r.full_text
 from core.j_researchoutput_topic_openalex_keyword_density as j_rt
 left join core.researchoutput r on r.id = j_rt.researchoutput_id
 left join core.topic_openalex_keyword_density t on t.id = j_rt.topic_openalex_keyword_density_id
-where lower(t.keywords) ILIKE '%cultural heritage%';
+-- where lower(t.keywords) ILIKE '%cultural heritage%';
 
--- delete from core.j_researchoutput_topic_openalex_keyword_density;
+delete from core.j_researchoutput_topic_openalex_keyword_density;
 
 -------------------------------------------------------------------
 --- Main Models
