@@ -52,7 +52,6 @@ def run_topic_modelling(batch_requester: BatchRequester):
 def process_document(doc_data: Tuple[int, str], topic_keywords: dict) -> Tuple[int, int, int]:
     doc_id, full_text = doc_data
     process_id = os.getpid()
-    logging.info(f"Process {process_id} processing doc {doc_id}")
 
     text = _normalise_text(full_text)
     topic_id, score = _assign_topic(text, topic_keywords)
@@ -63,7 +62,7 @@ def process_document(doc_data: Tuple[int, str], topic_keywords: dict) -> Tuple[i
 
 
 def _normalise_text(text: str) -> str:
-    doc = nlp(text.lower()[:1000000])
+    doc = nlp(text.lower()[:999_900])
     """
         ValueError: [E088] Text of length 1604351 exceeds maximum of 1000000.
     The parser and NER models require roughly 1GB of temporary memory per 100,000 characters in the input.
