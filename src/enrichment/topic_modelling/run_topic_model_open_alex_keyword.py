@@ -22,7 +22,7 @@ from utils.logger.logger import setup_logging
 topic_keyword_map = {}
 # max_workers = os.cpu_count()
 max_workers = psutil.cpu_count(logical=False)  # Gets physical cores only
-batch_size = 64
+batch_size = 96
 
 try:
     nlp = spacy.load("en_core_web_sm")
@@ -32,8 +32,8 @@ except OSError as e:
 
 def run_topic_modelling(batch_requester: BatchRequester):
     for idx, batch in enumerate(batch_requester.next_batch()):
-        if idx > 0:
-            return
+        # if idx > 0:
+        #     return
         start = datetime.datetime.now()
         processed_batch = []
         with ProcessPoolExecutor(max_workers=max_workers) as executor:
@@ -63,7 +63,7 @@ def process_document(doc_data: Tuple[int, str], topic_keywords: dict) -> Tuple[i
 
 
 def _normalise_text(text: str) -> str:
-    doc = nlp(text[:1000000].lower())
+    doc = nlp(text.lower()[:1000000])
     """
         ValueError: [E088] Text of length 1604351 exceeds maximum of 1000000.
     The parser and NER models require roughly 1GB of temporary memory per 100,000 characters in the input.
