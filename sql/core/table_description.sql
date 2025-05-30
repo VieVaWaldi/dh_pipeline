@@ -1,8 +1,9 @@
 -----------------------------------------------
 -- ENTITIES COUNT
 
-select count(*) from core.researchoutput
-where full_text is not null;
+select * from core.researchoutput
+where full_text is null
+limit 1000;
 -- 451_800
 -- 148_545 doi
 -- 294_346 fulltext

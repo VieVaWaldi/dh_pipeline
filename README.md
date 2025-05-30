@@ -43,11 +43,11 @@ The following software is used:
 
 ## Database
 
-This document explains how you can control the [PostgreSQL](sql/README_DB.md) server locally and on the cluster.
+[This document](sql/README_DB.md) explains how you can control the PostgreSQL server locally and on the cluster.
 
 ## Orchestration
 
-This document explains how orchestration with [Airflow](orchestration/README.md) is set up and works.
+[This document](orchestration/README.md) explains how orchestration with Airflow is set up and works.
 
 ## Project Structure
 
@@ -61,7 +61,7 @@ This document explains how orchestration with [Airflow](orchestration/README.md)
 
 - Run extractions with `/src/extracer/run_extractor.py`.
 - This uses the sources extractors.
-- See more here [Link to Extractor Documentation](src/extract/README.md)
+- See more here [Link to Extractor Documentation](src/extractor/README.md)
 
 **Loading:**
 
