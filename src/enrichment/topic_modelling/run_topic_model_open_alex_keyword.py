@@ -1,6 +1,5 @@
 import datetime
 import logging
-import os
 from concurrent.futures import as_completed, ProcessPoolExecutor
 from pathlib import Path
 from typing import List, Tuple, Set
@@ -20,9 +19,8 @@ from lib.loader.get_or_create import get_or_create
 from utils.logger.logger import setup_logging
 
 topic_keyword_map = {}
-# max_workers = os.cpu_count()
 max_workers = psutil.cpu_count(logical=False)  # Gets physical cores only
-batch_size = 96
+batch_size = 128
 
 try:
     nlp = spacy.load("en_core_web_sm")
@@ -30,10 +28,10 @@ except OSError as e:
     raise Exception("Dont forget to download the dataset first: `python -m spacy download en_core_web_sm`.")
 
 
-def run_topic_modelling(batch_requester: BatchRequester):
-    for idx, batch in enumerate(batch_requester.next_batch()):
-        # if idx > 0:
-        #     return
+def run_topic_modelling(batch_requester: BatchRequester, offset=0):
+    if offset > 0:
+        logging.info(f"Skipping {offset} rows.")
+    for idx, batch in enumerate(batch_requester.next_batch(offset_start=offset)):
         start = datetime.datetime.now()
         processed_batch = []
         with ProcessPoolExecutor(max_workers=max_workers) as executor:
@@ -51,8 +49,6 @@ def run_topic_modelling(batch_requester: BatchRequester):
 
 def process_document(doc_data: Tuple[int, str], topic_keywords: dict) -> Tuple[int, int, int]:
     doc_id, full_text = doc_data
-    process_id = os.getpid()
-
     text = _normalise_text(full_text)
     topic_id, score = _assign_topic(text, topic_keywords)
 
@@ -165,10 +161,12 @@ def _seed_topics(df: DataFrame):
                 session.commit()
                 session.expunge_all()
                 print(f"Processed {idx} rows.")
+        session.commit()  # Never forget the final commit ...
 
 
 """
 ToDo:
+- We are not using batch size l  o  l
 - increase spacy limit to process whole doc if that works
 - disabe others using fat node while i let this run okay
 - Should we keep not using get_or_create for creating the junctions for the topics? if we created one the batch requester should ignore it i think
@@ -192,6 +190,6 @@ if __name__ == "__main__":
     logging.info(f"Got {max_workers} CPUs available.")
     logging.info(f"Using batch size {batch_size}.")
 
-    load_topics(do_seed=False)
+    load_topics(do_seed=True)
 
-    run_topic_modelling(BatchRequester(ResearchOutput))
+    run_topic_modelling(BatchRequester(ResearchOutput), offset=916*64)

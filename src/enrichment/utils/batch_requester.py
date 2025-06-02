@@ -8,9 +8,9 @@ class BatchRequester:
         self.batch_size = batch_size
         self.session_factory = create_db_session()
 
-    def next_batch(self):
+    def next_batch(self, offset_start: int = 0):
         with self.session_factory() as session:
-            offset = 0
+            offset = offset_start
             while True:
                 batch = session.query(self.model.id, self.model.full_text) \
                     .filter(self.model.full_text.isnot(None)) \
