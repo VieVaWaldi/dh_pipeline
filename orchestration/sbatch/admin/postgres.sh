@@ -1,9 +1,9 @@
 #!/bin/bash
 
-#SBATCH --job-name=sql
+#SBATCH --job-name=transformation
 #SBATCH --partition=standard
 #SBATCH --time=4:00:00
-#SBATCH --output=/home/lu72hip/DIGICHer/DIGICHer_Pipeline/data/runs/sql/postgres_%j.log
+#SBATCH --output=/home/lu72hip/DIGICHer/DIGICHer_Pipeline/data/runs/transformation/postgres_%j.log
 
 ### CleanUp
 

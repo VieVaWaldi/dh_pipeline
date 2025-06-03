@@ -3,7 +3,7 @@
 #SBATCH --job-name=dump_to_neon
 #SBATCH --partition=standard
 #SBATCH --time=4:00:00
-#SBATCH --output=/home/lu72hip/DIGICHer/DIGICHer_Pipeline/data/runs/sql/dump_to_neon_%j.log
+#SBATCH --output=/home/lu72hip/DIGICHer/DIGICHer_Pipeline/data/runs/transformation/dump_to_neon_%j.log
 
 ### CleanUp
 
@@ -29,4 +29,4 @@ cd /vast/lu72hip/pgsql_dumps
 
 # pg_dump --table topics --table projects_topics db_digicher | psql "postgresql://db_digicher_owner:qBa0z4HOLWPA@ep-old-meadow-a20eql9r-pooler.eu-central-1.aws.neon.tech/db_digicher?sslmode=require"
 
-#pg_dump -F p --column-inserts --data-only --table="weblinks" --where-condition="id IN (SELECT weblink_id FROM projects_weblinks)" dbname > project_weblinks.sql
+#pg_dump -F p --column-inserts --data-only --table="weblinks" --where-condition="id IN (SELECT weblink_id FROM projects_weblinks)" dbname > project_weblinks.transformation

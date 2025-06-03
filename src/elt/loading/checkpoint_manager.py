@@ -38,7 +38,7 @@ class CheckpointManager:
         ts = str(int(self.next_cp_time.timestamp()))
         write_file(cp_path, ts)
         logging.info(
-            f"Updated data loader checkpoint for {self.source_name} with {self.next_cp_time}"
+            f"Updated data loading checkpoint for {self.source_name} with {self.next_cp_time}"
         )
 
     def _load_cp(self) -> datetime:
@@ -56,7 +56,7 @@ class CheckpointManager:
             )
 
         logging.info(
-            f"Loaded data loader checkpoint for {self.source_name} with {cp_time}"
+            f"Loaded data loading checkpoint for {self.source_name} with {cp_time}"
         )
         return cp_time
 
@@ -64,7 +64,7 @@ class CheckpointManager:
         cp_path = (
             get_project_root_path()
             / get_config()["checkpoint_path"]
-            / "loader"
+            / "loading"
             / source_name
         )
         ensure_path_exists(cp_path)

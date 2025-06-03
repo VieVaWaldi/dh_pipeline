@@ -2,8 +2,8 @@ from typing import Dict, List, Tuple, Optional
 
 from sqlalchemy.orm import Session
 
-from lib.loader.dict_utils import ensure_list, get_nested
-from lib.loader.get_or_create import get_or_create
+from lib.database.dict_utils import ensure_list, get_nested
+from lib.database.get_or_create import get_or_create
 from lib.sanitizers.sanitizer import (
     parse_bool,
     parse_float,
@@ -34,7 +34,7 @@ from sources.openaire.data_model import (
 
 class OpenaireDataLoader(IDataLoader):
     """
-    Data loader for Openaire documents.
+    Data loading for Openaire documents.
     Transforms JSON documents into SQLAlchemy ORM models and adds them to the session.
     """
 

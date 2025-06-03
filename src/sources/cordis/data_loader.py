@@ -4,8 +4,8 @@ from typing import Dict, List, Optional, Tuple
 
 from sqlalchemy.orm import Session
 
-from lib.loader.dict_utils import ensure_list, get_nested
-from lib.loader.get_or_create import get_or_create
+from lib.database.dict_utils import ensure_list, get_nested
+from lib.database.get_or_create import get_or_create
 from lib.sanitizers.sanitizer import (
     parse_string,
     parse_geolocation,
@@ -52,7 +52,7 @@ CATEGORIES_PATH = f"{RELATIONS}.categories.category"
 
 class CordisDataLoader(IDataLoader):
     """
-    Data loader for Cordis documents.
+    Data loading for Cordis documents.
     Transforms JSON documents into SQLAlchemy ORM models and adds them to the session
     """
 

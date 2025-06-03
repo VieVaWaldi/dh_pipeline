@@ -6,7 +6,7 @@ therefore any other Database can be used.
 ## Config
 - Local (default): 5432
 - Cluster: 5433
-- Find ports, connection strings and database names [here](../config/config.json).
+- Find ports, connection strings and database names [here](../../../config/config.json).
 
 ## Local PostgreSQL (MacOS)
 
@@ -55,7 +55,7 @@ To create a dump use the following command:
 
 ```bash
 # Change $DB_NAME to the databases name
-$ pg_dump -h localhost -p 5433 -U lu72hip $DB_NAME > backup_db_digicher.sql
+$ pg_dump -h localhost -p 5433 -U lu72hip $DB_NAME > backup_db_digicher.transformation
 
 # You may omit tables using this before the $DB_Name
 --exclude-table=researchoutputs

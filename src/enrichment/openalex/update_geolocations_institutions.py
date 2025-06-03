@@ -5,8 +5,8 @@ from pathlib import Path
 import pandas as pd
 from sqlalchemy import select
 
-from lib.loader import create_db_session
-from loader import log_run_time
+from lib.database import create_db_session
+from elt.loading import log_run_time
 from lib.file_handling.file_utils import get_project_root_path, ensure_path_exists
 from lib.sanitizers.sanitizer import (
     clean_geolocation,

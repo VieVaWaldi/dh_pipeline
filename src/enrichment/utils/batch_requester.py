@@ -1,4 +1,4 @@
-from lib.loader.create_db_session import create_db_session
+from lib.database.create_db_session import create_db_session
 
 
 class BatchRequester:

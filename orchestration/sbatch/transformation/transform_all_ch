@@ -36,15 +36,15 @@ cd /home/lu72hip/DIGICHer/DIGICHer_Pipeline || exit
 # echo "Current directory: $(pwd)"
 
 # echo "--- Running Cordis Transfomer"
-# psql -d db_digicher_v2 -p 5433 -f sql/sources/cordis/transform_to_core.sql
+# psql -d db_digicher_v2 -p 5433 -f transformation/sources/cordis/transform_to_core.transformation
 
 # echo "--- Running Arxiv Transfomer"
-# psql -d db_digicher_v2 -p 5433 -f sql/sources/arxiv/transform_to_core.sql
+# psql -d db_digicher_v2 -p 5433 -f transformation/sources/arxiv/transform_to_core.transformation
 
 # echo "--- Running Coreac Transfomer"
-# psql -d db_digicher_v2 -p 5433 -f sql/sources/coreac/transform_to_core.sql
+# psql -d db_digicher_v2 -p 5433 -f transformation/sources/coreac/transform_to_core.transformation
 
-#psql -d db_digicher_v2 -p 5433 -f sql/core/dedpulication.sql
+#psql -d db_digicher_v2 -p 5433 -f transformation/core/dedpulication.transformation
 
 # Make sure the response directory exists
 mkdir -p ./response

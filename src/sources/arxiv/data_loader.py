@@ -2,8 +2,8 @@ from typing import Dict, List, Tuple, Optional
 
 from sqlalchemy.orm import Session
 
-from lib.loader.dict_utils import ensure_list, get_nested
-from lib.loader.get_or_create import get_or_create
+from lib.database.dict_utils import ensure_list, get_nested
+from lib.database.get_or_create import get_or_create
 from lib.sanitizers.sanitizer import (
     parse_titles_and_labels,
     parse_web_resources,
@@ -25,7 +25,7 @@ from sources.arxiv.data_model import (
 
 class ArxivDataLoader(IDataLoader):
     """
-    Data loader for Arxiv documents.
+    Data loading for Arxiv documents.
     Transforms JSON documents into SQLAlchemy ORM models and adds them to the session.
     """
 

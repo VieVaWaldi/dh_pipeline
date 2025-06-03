@@ -10,12 +10,15 @@ import psutil
 import spacy
 from pandas import DataFrame
 
-from enrichment.data_model import JResearchOutputTopicOpenalexKeywordDensity, \
-    TopicOpenalexKeywordDensity, ResearchOutput
+from enrichment.data_model import (
+    JResearchOutputTopicOpenalexKeywordDensity,
+    TopicOpenalexKeywordDensity,
+    ResearchOutput,
+)
 from enrichment.utils.batch_requester import BatchRequester
 from lib.file_handling.file_utils import get_project_root_path
-from lib.loader.create_db_session import create_db_session
-from lib.loader.get_or_create import get_or_create
+from lib.database.create_db_session import create_db_session
+from lib.database.get_or_create import get_or_create
 from utils.logger.logger import setup_logging
 
 topic_keyword_map = {}
@@ -25,7 +28,9 @@ batch_size = 128
 try:
     nlp = spacy.load("en_core_web_sm")
 except OSError as e:
-    raise Exception("Dont forget to download the dataset first: `python -m spacy download en_core_web_sm`.")
+    raise Exception(
+        "Dont forget to download the dataset first: `python -m spacy download en_core_web_sm`."
+    )
 
 
 def run_topic_modelling(batch_requester: BatchRequester, offset=0):
@@ -43,11 +48,15 @@ def run_topic_modelling(batch_requester: BatchRequester, offset=0):
             for future in as_completed(futures):
                 doc_id, topic_id, score = future.result()
                 processed_batch.append((doc_id, topic_id, score))
-        logging.info(f"took {datetime.datetime.now() - start} seconds to process batch #{idx}")
+        logging.info(
+            f"took {datetime.datetime.now() - start} seconds to process batch #{idx}"
+        )
         upload_topics_to_db(processed_batch)
 
 
-def process_document(doc_data: Tuple[int, str], topic_keywords: dict) -> Tuple[int, int, int]:
+def process_document(
+    doc_data: Tuple[int, str], topic_keywords: dict
+) -> Tuple[int, int, int]:
     doc_id, full_text = doc_data
     text = _normalise_text(full_text)
     topic_id, score = _assign_topic(text, topic_keywords)
@@ -86,7 +95,9 @@ def _assign_topic(text: str, topic_keywords: dict) -> Tuple[int, int]:
     return best_topic, highest_score
 
 
-def _calculate_topic_significance_keyword_density(normalized_text: str, topic_keywords: list) -> float:
+def _calculate_topic_significance_keyword_density(
+    normalized_text: str, topic_keywords: list
+) -> float:
     text_tokens = set(normalized_text.split())
     matches = sum(1 for keyword in topic_keywords if keyword in text_tokens)
     return matches / len(topic_keywords)
@@ -98,7 +109,7 @@ def upload_topics_to_db(batch: List[Tuple[int, int, int]]):
             JResearchOutputTopicOpenalexKeywordDensity(
                 researchoutput_id=doc_id,
                 topic_openalex_keyword_density_id=topic_id,
-                score=score
+                score=score,
             )
             for doc_id, topic_id, score in batch
         ]
@@ -108,16 +119,13 @@ def upload_topics_to_db(batch: List[Tuple[int, int, int]]):
 
 def load_topics(do_seed=False):
     start = datetime.datetime.now()
-    df = pd.read_csv(get_project_root_path() / 'data/topics/openalex_topic_mapping.csv')
+    df = pd.read_csv(get_project_root_path() / "data/topics/openalex_topic_mapping.csv")
 
     if do_seed:
         _seed_topics(df)
 
     with ProcessPoolExecutor(max_workers=max_workers) as executor:
-        futures = [
-            executor.submit(normalise_topics, row)
-            for _, row in df.iterrows()
-        ]
+        futures = [executor.submit(normalise_topics, row) for _, row in df.iterrows()]
 
         for future in as_completed(futures):
             topic_key, normalised_keywords = future.result()
@@ -126,7 +134,7 @@ def load_topics(do_seed=False):
 
 
 def normalise_topics(row) -> Tuple[str, Set[str]]:
-    keywords = row['keywords'].split(';')
+    keywords = row["keywords"].split(";")
     normalised_keywords = set()
     for keyword in keywords:
         normalized_keyword = _normalise_text(keyword.strip())
@@ -134,7 +142,7 @@ def normalise_topics(row) -> Tuple[str, Set[str]]:
             normalised_keywords.add(normalized_keyword)
     if not normalised_keywords:
         raise Exception("nope")
-    return row['topic_id'], normalised_keywords
+    return row["topic_id"], normalised_keywords
 
 
 def _seed_topics(df: DataFrame):
@@ -142,21 +150,24 @@ def _seed_topics(df: DataFrame):
     with create_db_session()() as session:
         for idx, row in df.iterrows():
             fields = {
-                'id': row['topic_id'],
-                'subfield_id': row['subfield_id'],
-                'field_id': row['field_id'],
-                'domain_id': row['domain_id'],
-
-                'topic_name': row['topic_name'],
-                'subfield_name': row['subfield_name'],
-                'field_name': row['field_name'],
-                'domain_name': row['domain_name'],
-
-                'keywords': row['keywords'],
-                'summary': row['summary'],
-                'wikipedia_url': row['wikipedia_url'],
+                "id": row["topic_id"],
+                "subfield_id": row["subfield_id"],
+                "field_id": row["field_id"],
+                "domain_id": row["domain_id"],
+                "topic_name": row["topic_name"],
+                "subfield_name": row["subfield_name"],
+                "field_name": row["field_name"],
+                "domain_name": row["domain_name"],
+                "keywords": row["keywords"],
+                "summary": row["summary"],
+                "wikipedia_url": row["wikipedia_url"],
             }
-            get_or_create(session, TopicOpenalexKeywordDensity, unique_key={"id": row['topic_id']}, **fields)
+            get_or_create(
+                session,
+                TopicOpenalexKeywordDensity,
+                unique_key={"id": row["topic_id"]},
+                **fields,
+            )
             if idx % 100 == 0:
                 session.commit()
                 session.expunge_all()
@@ -192,4 +203,4 @@ if __name__ == "__main__":
 
     load_topics(do_seed=True)
 
-    run_topic_modelling(BatchRequester(ResearchOutput), offset=916*64)
+    run_topic_modelling(BatchRequester(ResearchOutput), offset=916 * 64)

@@ -43,7 +43,7 @@ The following software is used:
 
 ## Database
 
-[This document](sql/README_DB.md) explains how you can control the PostgreSQL server locally and on the cluster.
+[This document](src/elt/transformation/README_DB.md) explains how you can control the PostgreSQL server locally and on the cluster.
 
 ## Orchestration
 
@@ -61,13 +61,13 @@ The following software is used:
 
 - Run extractions with `/src/extracer/run_extractor.py`.
 - This uses the sources extractors.
-- See more here [Link to Extractor Documentation](src/extractor/README.md)
+- See more here [Link to Extractor Documentation](src/elt/extraction/README.md)
 
 **Loading:**
 
 - Run loaders with `/src/loader/run_loader.py`.
 - This uses the sources loaders.
-- See more here [Link to Loader Documentation](src/loader/README.md)
+- See more here [Link to Loader Documentation](src/elt/loading/README.md)
 
 **Transformation:**
 

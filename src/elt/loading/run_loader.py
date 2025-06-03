@@ -9,9 +9,9 @@ from dotenv import load_dotenv
 
 from utils.config.config_loader import get_config, get_source_data_path
 from utils.logger.logger import setup_logging
-from loader.checkpoint_manager import CheckpointManager
-from lib.loader.create_db_session import create_db_session
-from lib.loader.get_or_create import ModelCreationMonitor
+from elt.loading.checkpoint_manager import CheckpointManager
+from lib.database.create_db_session import create_db_session
+from lib.database.get_or_create import ModelCreationMonitor
 from lib.file_handling.file_utils import (
     get_project_root_path,
 )
@@ -145,8 +145,8 @@ if __name__ == "__main__":
     }
 
     logging_path = (
-        get_project_root_path() / config["logging_path"] / "loader" / args.source
+        get_project_root_path() / config["logging_path"] / "loading" / args.source
     )
-    setup_logging(logging_path, "loader")
+    setup_logging(logging_path, "loading")
 
     run_data_loader(source_configs[args.source])
