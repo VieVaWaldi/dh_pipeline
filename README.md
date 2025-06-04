@@ -43,7 +43,7 @@ The following software is used:
 
 ## Database
 
-[This document](src/elt/transformation/README_DB.md) explains how you can control the PostgreSQL server locally and on the cluster.
+[This document](README_DB.md) explains how you can control the PostgreSQL server locally and on the cluster.
 
 ## Orchestration
 
