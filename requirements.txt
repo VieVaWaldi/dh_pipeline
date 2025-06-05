@@ -72,7 +72,6 @@ decorator==5.2.1
 deepdiff==7.0.1
 defusedxml==0.7.1
 Deprecated==1.2.18
--e git+https://github.com/VieVaWaldi/dh_pipeline@18e9cb2d7c2d2c8bb0b6d4c92e7ea2fad4373afe#egg=dh_pipeline
 dill==0.3.1.1
 distro==1.9.0
 dnspython==2.7.0
