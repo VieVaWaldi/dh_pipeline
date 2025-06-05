@@ -6,7 +6,7 @@ We use dbt for the transformation, see more information [Here](README_DBT.md).
 
 Go [Here](../../sources/README.md) for Source Extraction & Loading.
 
-Go [Here](README_DB.md) for the database documentation.
+Go [Here](../../../README_DB.md) for the database documentation.
 
 *General Process:*
 

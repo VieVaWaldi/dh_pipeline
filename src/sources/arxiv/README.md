@@ -1,7 +1,20 @@
 # Source: Arxiv
 
-* [API](https://info.arxiv.org/help/api/basics.html#quickstart) we are using 
-* [Data Schema](https://info.arxiv.org/help/api/user-manual.html#52-details-of-atom-results-returned)
+* [See the API here](https://info.arxiv.org/help/api/basics.html#quickstart)
+* [See the Data Schema here](https://info.arxiv.org/help/api/user-manual.html#52-details-of-atom-results-returned)
+
+Sort these notes
+* Arxiv automatically stems words eg same results for query: digital or digital, and humanities or human
+
+My new query
+http://export.arxiv.org/api/query?search_query=
+(all:digital+OR+all:heritage+OR+all:humanities+OR+all:cultural)
++AND+submittedDate:[199001010000+TO+202605010000]
+&sortBy=submittedDate&sortOrder=ascending
+
+[1990 01 01 00 00+TO+2026 05 01 00 00]
+
+
 
 ## Data Model
 
@@ -11,9 +24,12 @@
 
 ## Checkpoint
 
-Arxiv data gets returned as total results.
-We simply use the index 'start' and a 'range' to get the next n results.
-Simple restart query from last start
+
+
+NOOOO:
+    Arxiv data gets returned as total results.
+    We simply use the index 'start' and a 'range' to get the next n results.
+    Simple restart query from last start
 
 ## Rate Limits
 

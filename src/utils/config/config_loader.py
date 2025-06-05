@@ -4,23 +4,29 @@ from typing import Any, Dict
 
 from dotenv import load_dotenv
 
-from lib.extractor.utils import clean_extractor_name
+from elt.extraction.extractor_utils import clean_extractor_name
 from lib.file_handling.file_utils import get_project_root_path, load_json_file
 
 
-def get_source_data_path(source_name: str, config: Dict, run: int) -> Path:
+def get_source_data_path(source_name: str, config: Dict, run: int | None) -> Path:
     """
     This function returns the path to the raw source data.
     Gets path from project root for local development.
     """
     assert config, "config must be a non-empty dict"
     assert get_query_config().get(source_name), f"Faulty source name: {source_name}"
-    assert run >= 0
 
-    path = Path(config["data_path"]) / (
-        source_name
-        + "_"
-        + clean_extractor_name(get_query_config()[source_name]["runs"][run]["query"])
+    path = (
+        Path(config["data_path"])
+        / (
+            source_name
+            + "_"
+            + clean_extractor_name(
+                get_query_config()[source_name]["runs"][run]["query"]
+            )
+        )
+        if run
+        else Path(config["data_path"]) / source_name  # for meta_heritage ETL not ELT
     )
 
     if os.getenv("ENV") == "dev":

@@ -25,12 +25,13 @@
     ]
   },
   "arxiv": {
-    "checkpoint": "start",
+    "checkpoint": "submittedDateTo",
     "runs": [
       {
+        "query_NEW": "(all:digital+OR+all:heritage+OR+all:humanities+OR+all:cultural)",
         "query": "all:computing+AND+(all:humanities+OR+all:heritage)",
         "download_attachments": true,
-        "checkpoint_to_range": "100"
+        "checkpoint_range": "6 months?"
       }
     ]
   },
@@ -48,5 +49,8 @@
         "checkpoint_to_range": "0"
       }
     ]
+  },
+  "meta_heritage": {
+    "checkpoint": null
   }
 }

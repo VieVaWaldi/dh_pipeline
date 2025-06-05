@@ -13,7 +13,6 @@ select r.title, r.publication_date, j_rt.score, t.topic_name, t.subfield_name, t
 from core.j_researchoutput_topic_openalex_keyword_density as j_rt
 left join core.researchoutput r on r.id = j_rt.researchoutput_id
 left join core.topic_openalex_keyword_density t on t.id = j_rt.topic_openalex_keyword_density_id
-where j_rt.score < 0.3;
 where lower(t.keywords) ILIKE '%cultural heritage%'
 order by r.publication_date;
 

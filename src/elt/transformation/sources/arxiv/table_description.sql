@@ -1,7 +1,7 @@
 -----------------------------------------------
 -- ENTITIES COUNT
 
-select count(*) from arxiv.entry
+select count(*) from arxiv.entry;
 where doi is not null;
 -- 46_312
 -- 7_844 with doi

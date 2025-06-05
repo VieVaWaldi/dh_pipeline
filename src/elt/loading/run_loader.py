@@ -7,9 +7,8 @@ from typing import Type
 
 from dotenv import load_dotenv
 
-from utils.config.config_loader import get_config, get_source_data_path
-from utils.logger.logger import setup_logging
 from elt.loading.checkpoint_manager import CheckpointManager
+from interfaces.i_data_loader import IDataLoader
 from lib.database.create_db_session import create_db_session
 from lib.database.get_or_create import ModelCreationMonitor
 from lib.file_handling.file_utils import (
@@ -17,9 +16,13 @@ from lib.file_handling.file_utils import (
 )
 from lib.file_handling.file_walker import yield_all_documents
 from sources.arxiv.data_loader import ArxivDataLoader
-from sources.cordis.data_loader import CordisDataLoader
-from sources.coreac.data_loader import IDataLoader, CoreacDataLoader
-from sources.openaire.data_loader import OpenaireDataLoader
+
+# ToDo: Downgrade SQL Models because we now must use SQLAlchemy <2.0
+# from sources.cordis.data_loader import CordisDataLoader
+# from sources.coreac.data_loader import CoreacDataLoader
+# from sources.openaire.data_loader import OpenaireDataLoader
+from utils.config.config_loader import get_config, get_source_data_path
+from utils.logger.logger import setup_logging
 
 
 @dataclass
@@ -105,7 +108,7 @@ def log_run_time(start_time: datetime):
 if __name__ == "__main__":
     import sys
 
-    dev_args = ["--source", "cordis", "--run", "0"]
+    dev_args = ["--source", "arxiv", "--run", "0"]
     sys.argv.extend(dev_args)
 
     parser = argparse.ArgumentParser(description="Data Loader Runner")
@@ -124,24 +127,24 @@ if __name__ == "__main__":
             source_path=data_path,
             run_id=args.run,
         ),
-        "coreac": SourceConfig(
-            name="coreac",
-            data_loader=CoreacDataLoader,
-            source_path=data_path,
-            run_id=args.run,
-        ),
-        "cordis": SourceConfig(
-            name="cordis",
-            data_loader=CordisDataLoader,
-            source_path=data_path,
-            run_id=args.run,
-        ),
-        "openaire": SourceConfig(
-            name="openaire",
-            data_loader=OpenaireDataLoader,
-            source_path=data_path,
-            run_id=args.run,
-        ),
+        # "coreac": SourceConfig(
+        #     name="coreac",
+        #     data_loader=CoreacDataLoader,
+        #     source_path=data_path,
+        #     run_id=args.run,
+        # ),
+        # "cordis": SourceConfig(
+        #     name="cordis",
+        #     data_loader=CordisDataLoader,
+        #     source_path=data_path,
+        #     run_id=args.run,
+        # ),
+        # "openaire": SourceConfig(
+        #     name="openaire",
+        #     data_loader=OpenaireDataLoader,
+        #     source_path=data_path,
+        #     run_id=args.run,
+        # ),
     }
 
     logging_path = (

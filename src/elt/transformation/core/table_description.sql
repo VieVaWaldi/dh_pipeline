@@ -1,7 +1,7 @@
 -----------------------------------------------
 -- ENTITIES COUNT
 
-select * from core.researchoutput
+select count(*) from core.researchoutput;
 where full_text is null
 limit 1000;
 -- 451_800
@@ -13,7 +13,8 @@ select count(*) from core.person;
 -- 697_904
 select count(*) from core.publisher;
 -- 0
-select count(*) from core.journal;
+select distinct name from core.journal
+order by name;
 -- 44_259
 select count(*) from core.link;
 -- 891_010
@@ -31,8 +32,3 @@ select count(*) from core.j_researchoutput_journal;
 -- 112_451
 select count(*) from core.j_researchoutput_link;
 -- 895_712
-
-select id_original, id, title, abstract, fulltext
-from coreac.work
-where id_original = '50579246' or
- id_original = '57812024';

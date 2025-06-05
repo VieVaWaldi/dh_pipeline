@@ -15,17 +15,7 @@ def trim_excessive_whitespace(file_content: str) -> str:
     return trimmed_content
 
 
-def clean_extractor_name(extractor_name: str):
-    return (
-        extractor_name.replace(" ", "")
-        .replace("'", "")
-        .replace("*", "STAR")
-        .replace("=", "IS")
-        .replace("+", "PLUS")
-        .replace(":", "COLON")
-        .replace("(", "LB")
-        .replace(")", "RB")
-    )
+
 
 
 # ToDo: I thought this might belong to the extractors, but after the refactor i am not really certain anymore lul

@@ -1,32 +1,43 @@
-import argparse
 import logging
 import shutil
 import time
 import xml.etree.ElementTree as xml
-from abc import ABC
 from pathlib import Path
 from typing import Any, List, Dict
 
 import requests
-from dotenv import load_dotenv
 
-from utils.config.config_loader import get_query_config
-from utils.error_handling.error_handling import log_and_raise_exception
+from interfaces.i_extractor import IExtractor
 from lib.extractor.utils import trim_excessive_whitespace
 from lib.file_handling.file_utils import load_file, write_file
-from interfaces.i_extractor import IExtractor
+from lib.requests.requests import make_get_request
+from utils.error_handling.error_handling import log_and_raise_exception
 
 
-class ArxivExtractor(IExtractor, ABC):
+class ArxivExtractor(IExtractor):
     def __init__(
-        self, extractor_name: str, checkpoint_name: str, download_attachments: bool
+        self,
+        extractor_name: str,
+        checkpoint_name: str,
+        checkpoint_range: str,
+        query: str,
+        download_attachments: bool,
     ):
-        super().__init__(extractor_name, checkpoint_name)
-        self.processed_ids_file = self.data_path / "processed_ids.txt"
-        self.download_attachments = download_attachments
+        super().__init__(
+            extractor_name,
+            checkpoint_name,
+            checkpoint_range,
+            query,
+            download_attachments,
+        )
 
-    def extract_until_next_checkpoint(self, query: str) -> bool:
-        time.sleep(5)
+    def extract_until_next_checkpoint(self) -> bool:
+        logging.info(
+            f">>> Starting new data extraction run for {self.extractor_name} \
+            from checkpoint {self.last_checkpoint}.",
+        )
+
+        query = self.build_query()
         xml_content = self.fetch_arxiv_data(query)
 
         meta_data = self.print_arxiv_meta_data(xml_content)
@@ -51,40 +62,20 @@ class ArxivExtractor(IExtractor, ABC):
 
     def restore_checkpoint(self) -> str:
         checkpoint = load_file(self.checkpoint_path)
-        return checkpoint if checkpoint is not None else "0"
+        return checkpoint if checkpoint is not None else "199001010000"
 
     def get_new_checkpoint_from_data(self) -> int:
         return int(self.last_checkpoint) + 100
 
     def create_checkpoint_end_for_this_run(self, next_checkpoint: str) -> str:
-        """
-        Not needed when working with offsets.
-        """
-        raise NotImplementedError()
+        return "202001010000" # ToDo: Use checkpoint range and add 6 months
 
     def fetch_arxiv_data(self, query: str, max_retries=3, initial_delay=10) -> str:
         """Fetch data using retry when no entries received."""
         time.sleep(2)
         try:
-            for attempt in range(max_retries):
-                logging.info(
-                    f"Attempt {attempt+1}/{max_retries}: Fetching results {self.last_checkpoint} to {self.get_new_checkpoint_from_data()}..."
-                )
-                url = f"https://export.arxiv.org/api/query?{query}"
-                response = requests.get(url)
-
-                if response.status_code == 200 and "<entry" in response.text:
-                    logging.info(
-                        "GET Request status: %s", response.text.replace("\n", " ")[:512]
-                    )
-                    return response.text
-                else:
-                    # Calculate delay with exponential backoff
-                    delay = initial_delay * (4**attempt)
-                    logging.warning(
-                        f"Received empty or error response. Retrying in {delay} seconds..."
-                    )
-                    time.sleep(delay)
+            url = f"https://export.arxiv.org/api/query?{query}"
+            response = make_get_request(url)
 
             # If we've exhausted all retries and still don't have entries
             if "<entry" not in response.text:
@@ -98,6 +89,43 @@ class ArxivExtractor(IExtractor, ABC):
             return response.text
         except requests.RequestException as e:
             log_and_raise_exception(f"Error fetching data from {url}: {e}")
+
+    # def fetch_arxiv_data(self, query: str, max_retries=3, initial_delay=10) -> str:
+    #     """Fetch data using retry when no entries received."""
+    #     time.sleep(2)
+    #     try:
+    #         for attempt in range(max_retries):
+    #             logging.info(
+    #                 f"Attempt {attempt+1}/{max_retries}: Fetching results {self.last_checkpoint} to {self.get_new_checkpoint_from_data()}..."
+    #             )
+    #             url = f"https://export.arxiv.org/api/query?{query}"
+    #             response = requests.get(url)
+    #
+    #             if response.status_code == 200 and "<entry" in response.text:
+    #                 logging.info(
+    #                     "GET Request status: %s", response.text.replace("\n", " ")[:512]
+    #                 )
+    #                 return response.text
+    #             else:
+    #                 # Calculate delay with exponential backoff
+    #                 delay = initial_delay * (4**attempt)
+    #                 logging.warning(
+    #                     f"Received empty or error response. Retrying in {delay} seconds..."
+    #                 )
+    #                 time.sleep(delay)
+    #
+    #         # If we've exhausted all retries and still don't have entries
+    #         if "<entry" not in response.text:
+    #             logging.warning(
+    #                 "No entries found after all retries. This could be normal if there are no results in this range."
+    #             )
+    #             raise Exception(
+    #                 "Stopping the extraction after 3 retries, try again soon."
+    #             )
+    #
+    #         return response.text
+    #     except requests.RequestException as e:
+    #         log_and_raise_exception(f"Error fetching data from {url}: {e}")
 
     # Extract metadata as a dictionary: total_results, start_index, items_per_page
     # Log any errors
@@ -235,64 +263,13 @@ class ArxivExtractor(IExtractor, ABC):
         # Remove the original directory after processing all files
         shutil.rmtree(entry_dir)
 
-
-def start_extraction(
-    query: str,
-    extractor_name: str,
-    checkpoint_name: str,
-    checkpoint_to_range: str,
-    download_attachments: bool,
-) -> bool:
-    extractor = ArxivExtractor(
-        extractor_name=extractor_name,
-        checkpoint_name=checkpoint_name,
-        download_attachments=download_attachments,
-    )
-
-    checkpoint_from = extractor.restore_checkpoint()
-    # checkpoint_to = extract.create_checkpoint_end_for_this_run(checkpoint_to_range)
-
-    base_query = f"search_query={query}"
-    base_query += f"&start={checkpoint_from}&max_results={checkpoint_to_range}"
-    base_query += f"&sortBy=submittedDate&sortOrder=ascending"
-    base_query += f"&start_date=1990-01-01"
-
-    return extractor.extract_until_next_checkpoint(base_query)
-
-
-def main():
-    parser = argparse.ArgumentParser(description="Run Arxiv extract")
-    parser.add_argument(
-        "-r",
-        "--run_id",
-        type=int,
-        default=0,
-        help="Run ID to use from the config (default: 0)",
-    )
-    args = parser.parse_args()
-
-    load_dotenv()
-    config = get_query_config()["arxiv"]
-
-    run = config["runs"][args.run_id]
-
-    query = run["query"]
-    checkpoint_to_range = run["checkpoint_to_range"]
-    download_attachments = run["download_attachments"]
-
-    extractor_name = f"arxiv_{query}"
-    checkpoint_name = config["checkpoint"]
-
-    continue_running = True
-    while continue_running:
-        continue_running = start_extraction(
-            query,
-            extractor_name,
-            checkpoint_name,
-            checkpoint_to_range,
-            download_attachments,
+    def build_query(self) -> str:
+        checkpoint = self.restore_checkpoint()
+        checkpoint_range = self.create_checkpoint_end_for_this_run(
+            self.checkpoint_range
         )
 
-
-if __name__ == "__main__":
-    main()
+        query = f"search_query={self.query}"
+        query += f"+AND+submittedDate:[{checkpoint}+TO+{checkpoint_range}]"
+        query += f"&sortBy=submittedDate&sortOrder=ascending"
+        return query

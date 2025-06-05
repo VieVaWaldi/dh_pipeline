@@ -1,6 +1,8 @@
 -----------------------------------------------
 -- CORDIS ENTITIES
 
+select distinct framework_programme from cordis.fundingprogramme;
+
 select * from cordis.project;
 -- 12_792
 select count(*) from cordis.researchoutput;

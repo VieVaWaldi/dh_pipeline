@@ -1,63 +1,56 @@
 from datetime import datetime
-from typing import List, Optional
 
-from sqlalchemy import ForeignKey, ARRAY, String
-from sqlalchemy.orm import DeclarativeBase, relationship, Mapped, mapped_column
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, ARRAY
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship
 
-
-class Base(DeclarativeBase):
-    pass
+Base = declarative_base()
 
 
 class Entry(Base):
     __tablename__ = "entry"
     __table_args__ = {"schema": "arxiv"}
 
-    id: Mapped[int] = mapped_column(primary_key=True)
-    id_original: Mapped[str] = mapped_column(unique=True)
-    title: Mapped[str] = mapped_column(unique=True, nullable=False)
+    id = Column(Integer, primary_key=True)
+    id_original = Column(String, unique=True, nullable=False)
+    title = Column(String, unique=True, nullable=False)
 
-    doi: Mapped[Optional[str]] = mapped_column(unique=True)
-    summary: Mapped[Optional[str]] = mapped_column()
-    full_text: Mapped[Optional[str]] = mapped_column()
-    journal_ref: Mapped[Optional[str]] = mapped_column()
-    comment: Mapped[Optional[str]] = mapped_column()
-    primary_category: Mapped[Optional[str]] = mapped_column()
-    category_term: Mapped[Optional[str]] = mapped_column()
-    categories: Mapped[Optional[List[str]]] = mapped_column(ARRAY(String))
-    published_date: Mapped[Optional[datetime]] = mapped_column()
-    updated_date: Mapped[Optional[datetime]] = mapped_column()
+    doi = Column(String, unique=True)
+    summary = Column(String)
+    full_text = Column(String)
+    journal_ref = Column(String)
+    comment = Column(String)
+    primary_category = Column(String)
+    category_term = Column(String)
+    categories = Column(ARRAY(String))
+    published_date = Column(DateTime)
+    updated_date = Column(DateTime)
 
-    created_at: Mapped[datetime] = mapped_column(default=datetime.now)
-    updated_at: Mapped[datetime] = mapped_column(
-        default=datetime.now, onupdate=datetime.now
+    created_at = Column(DateTime, default=datetime.now)
+    updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
+
+    authors = relationship(
+        "Author", secondary="arxiv.j_entry_author", back_populates="entries"
+    )
+    links = relationship(
+        "Link", secondary="arxiv.j_entry_link", back_populates="entries"
     )
 
-    # Relationships
-    authors: Mapped[List["Author"]] = relationship(
-        secondary="arxiv.j_entry_author", back_populates="entries"
-    )
-    links: Mapped[List["Link"]] = relationship(
-        secondary="arxiv.j_entry_link", back_populates="entries"
-    )
 
 class Author(Base):
     __tablename__ = "author"
     __table_args__ = {"schema": "arxiv"}
 
-    id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(unique=True, nullable=False)
-    affiliation: Mapped[Optional[str]] = mapped_column()
-    affiliations: Mapped[Optional[List[str]]] = mapped_column(ARRAY(String))
+    id = Column(Integer, primary_key=True)
+    name = Column(String, unique=True, nullable=False)
+    affiliation = Column(String)
+    affiliations = Column(ARRAY(String))
 
-    created_at: Mapped[datetime] = mapped_column(default=datetime.now)
-    updated_at: Mapped[datetime] = mapped_column(
-        default=datetime.now, onupdate=datetime.now
-    )
+    created_at = Column(DateTime, default=datetime.now)
+    updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
-    # Relationships
-    entries: Mapped[List["Entry"]] = relationship(
-        secondary="arxiv.j_entry_author", back_populates="authors"
+    entries = relationship(
+        "Entry", secondary="arxiv.j_entry_author", back_populates="authors"
     )
 
 
@@ -65,20 +58,17 @@ class Link(Base):
     __tablename__ = "link"
     __table_args__ = {"schema": "arxiv"}
 
-    id: Mapped[int] = mapped_column(primary_key=True)
-    href: Mapped[str] = mapped_column(nullable=False)
-    title: Mapped[Optional[str]] = mapped_column()
-    rel: Mapped[Optional[str]] = mapped_column()
-    type: Mapped[Optional[str]] = mapped_column()
+    id = Column(Integer, primary_key=True)
+    href = Column(String, nullable=False)
+    title = Column(String)
+    rel = Column(String)
+    type = Column(String)
 
-    created_at: Mapped[datetime] = mapped_column(default=datetime.now)
-    updated_at: Mapped[datetime] = mapped_column(
-        default=datetime.now, onupdate=datetime.now
-    )
+    created_at = Column(DateTime, default=datetime.now)
+    updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
-    # Relationships
-    entries: Mapped[List["Entry"]] = relationship(
-        secondary="arxiv.j_entry_link", back_populates="links"
+    entries = relationship(
+        "Entry", secondary="arxiv.j_entry_link", back_populates="links"
     )
 
 
@@ -89,20 +79,14 @@ class JunctionEntryAuthor(Base):
     __tablename__ = "j_entry_author"
     __table_args__ = {"schema": "arxiv"}
 
-    entry_id: Mapped[int] = mapped_column(
-        ForeignKey("arxiv.entry.id"), primary_key=True
-    )
-    author_id: Mapped[int] = mapped_column(
-        ForeignKey("arxiv.author.id"), primary_key=True
-    )
-    author_position: Mapped[int] = mapped_column(nullable=False)
+    entry_id = Column(Integer, ForeignKey("arxiv.entry.id"), primary_key=True)
+    author_id = Column(Integer, ForeignKey("arxiv.author.id"), primary_key=True)
+    author_position = Column(Integer, nullable=False)
 
 
 class JunctionEntryLink(Base):
     __tablename__ = "j_entry_link"
     __table_args__ = {"schema": "arxiv"}
 
-    entry_id: Mapped[int] = mapped_column(
-        ForeignKey("arxiv.entry.id"), primary_key=True
-    )
-    link_id: Mapped[int] = mapped_column(ForeignKey("arxiv.link.id"), primary_key=True)
+    entry_id = Column(Integer, ForeignKey("arxiv.entry.id"), primary_key=True)
+    link_id = Column(Integer, ForeignKey("arxiv.link.id"), primary_key=True)

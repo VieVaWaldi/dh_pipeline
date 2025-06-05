@@ -102,6 +102,10 @@ The following software is used:
 - The directory `tests` mirrors the `src` directory
 - Run all tests like this: `python -m unittest discover tests`
 
+## Notes
+
+- Because of Airflow dependencies we have to use SQLAlchemy <2.0
+
 ## Development Guidelines
 
 - Use type hints always, for function parameters, return values and all member variables.
