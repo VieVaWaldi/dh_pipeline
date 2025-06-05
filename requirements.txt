@@ -72,6 +72,7 @@ decorator==5.2.1
 deepdiff==7.0.1
 defusedxml==0.7.1
 Deprecated==1.2.18
+-e git+https://github.com/VieVaWaldi/dh_pipeline@18e9cb2d7c2d2c8bb0b6d4c92e7ea2fad4373afe#egg=dh_pipeline
 dill==0.3.1.1
 distro==1.9.0
 dnspython==2.7.0
@@ -209,7 +210,7 @@ prison==0.2.1
 prometheus_client==0.21.1
 prompt_toolkit==3.0.50
 proto-plus==1.26.1
-protobuf==4.25.7
+protobuf==5.29.5
 prov==2.0.1
 psutil==7.0.0
 psycopg2==2.9.10
