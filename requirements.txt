@@ -319,5 +319,6 @@ wirerope==1.0.0
 wrapt==1.17.2
 wsproto==1.2.0
 WTForms==3.2.1
+xlrd==2.0.1
 xmltodict==0.13.0
 zipp==3.21.0
