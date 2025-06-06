@@ -9,11 +9,10 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 import lib.file_handling.file_parsing.xml_parser as xml
-from utils.config.config_loader import get_query_config
-from utils.error_handling.error_handling import log_and_raise_exception
+from interfaces.i_extractor import IExtractor
 from lib.extractor.utils import trim_excessive_whitespace
+from lib.file_handling.archive_utils import unpack_and_remove_zip
 from lib.file_handling.file_utils import (
-    unpack_and_remove_zip,
     load_file,
     write_file,
     ensure_path_exists,
@@ -26,7 +25,8 @@ from lib.requests.requests import (
     download_file,
     get_base_url,
 )
-from interfaces.i_extractor import IExtractor
+from utils.config.config_loader import get_query_config
+from utils.error_handling.error_handling import log_and_raise_exception
 
 
 class CordisExtractor(IExtractor):
@@ -44,7 +44,7 @@ class CordisExtractor(IExtractor):
         super().__init__(extractor_name, checkpoint_name)
         self.download_attachments = download_attachments
 
-    def extract_until_next_checkpoint(self, query: str) -> bool:
+    def extract_until_checkpoint_end(self, query: str) -> bool:
         api_key = os.getenv("API_KEY_CORDIS")
         if not api_key:
             log_and_raise_exception("API Key not found")
@@ -234,7 +234,7 @@ def start_extraction(
     base_query = f"{checkpoint_name}={checkpoint_from}-{checkpoint_to} AND "
     base_query += query
 
-    return extractor.extract_until_next_checkpoint(base_query)
+    return extractor.extract_until_checkpoint_end(base_query)
 
 
 def main(debug_2=0):

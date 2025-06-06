@@ -1,7 +1,6 @@
 import datetime
 import logging
 from concurrent.futures import as_completed, ProcessPoolExecutor
-from pathlib import Path
 from typing import List, Tuple, Set
 
 import numpy as np
@@ -10,15 +9,15 @@ import psutil
 import spacy
 from pandas import DataFrame
 
-from enrichment.data_model import (
+from elt.core_orm_model import (
     JResearchOutputTopicOpenalexKeywordDensity,
     TopicOpenalexKeywordDensity,
     ResearchOutput,
 )
 from enrichment.utils.batch_requester import BatchRequester
-from lib.file_handling.file_utils import get_project_root_path
 from lib.database.create_db_session import create_db_session
 from lib.database.get_or_create import get_or_create
+from lib.file_handling.path_utils import get_project_root_path
 from utils.logger.logger import setup_logging
 
 topic_keyword_map = {}
@@ -196,7 +195,7 @@ Mac M2:
 """
 
 if __name__ == "__main__":
-    setup_logging(Path(), "topic_modelling_open_alex_keyword_density")
+    setup_logging("enrichment-topic_modelling", "open_alex-keyword_density")
     logging.info(f"Starting topic enrichment.")
     logging.info(f"Got {max_workers} CPUs available.")
     logging.info(f"Using batch size {batch_size}.")

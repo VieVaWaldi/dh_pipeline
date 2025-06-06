@@ -4,6 +4,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from utils.config.config_loader import get_config
+from utils.error_handling.error_handling import log_and_raise_exception
 
 
 def create_db_session() -> sessionmaker:
@@ -20,5 +21,4 @@ def create_db_session() -> sessionmaker:
         logging.info(f"Successfully connected to: {database_url}")
         return sessionmaker(bind=engine)
     except Exception as e:
-        logging.error(f"Failed to connect to transformation: {str(e)}")
-        raise
+        log_and_raise_exception(f"Failed to connect to transformation: {e}")

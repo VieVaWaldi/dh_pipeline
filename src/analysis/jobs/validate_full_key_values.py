@@ -1,8 +1,8 @@
 from itertools import islice
 
 from analysis.utils.analysis_interface import IAnalysisJob
-from core.etl.transformer.utils import ensure_list, get_nested
-from lib.file_handling import yield_all_documents
+from lib.file_handling.dict_utils import ensure_list, get_nested
+from lib.file_handling.yield_documents import yield_all_documents
 
 
 class ValidateFullKeyValues(IAnalysisJob):
@@ -27,7 +27,7 @@ class ValidateFullKeyValues(IAnalysisJob):
             self.cordis_orga_people(document)
 
             if idx % 1000 == 0:
-                print("processed ", idx+1, " elements ...")
+                print("processed ", idx + 1, " elements ...")
 
         print("Result - Topic: \n", self.result_topic_set)
         print("Result - Orgas: \n", len(self.result_orgas_set))

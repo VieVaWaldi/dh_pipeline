@@ -5,7 +5,7 @@ the current database session. The models will be commited and loaded into the da
 
 ## Checkpoint
 
-All files to be loaded are generated using `yield_all_documents` in [file_walker.py](../../lib/file_handling/file_walker.py).
+All files to be loaded are generated using `yield_all_documents` in [file_walker.py](../../lib/file_handling/yield_documents.py).
 Given a source directory this function returns the `file_path` and the `last_file_update_time`.
 We use the `last_file_update_time` as the basis for the loader checkpoint mechanism.
 

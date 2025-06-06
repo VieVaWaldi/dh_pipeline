@@ -59,6 +59,8 @@ The following software is used:
 
 **Extraction:**
 
+- Source Config And Query Config to pick
+
 - Run extractions with `/src/extracer/run_extractor.py`.
 - This uses the sources extractors.
 - See more here [Link to Extractor Documentation](src/elt/extraction/README.md)

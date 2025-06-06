@@ -2,9 +2,9 @@ import datetime
 import logging
 from pathlib import Path
 
+from lib.file_handling.path_utils import get_project_root_path
 from utils.config.config_loader import get_config
 from lib.file_handling.file_utils import (
-    get_project_root_path,
     ensure_path_exists,
     load_file,
     write_file,
@@ -14,8 +14,8 @@ CP_FILE_NAME = "mtime.cp"
 
 
 class CheckpointManager:
-    def __init__(self, source_name: str, run_id: int):
-        self.source_name: str = f"{source_name}_{run_id}"
+    def __init__(self, source_name: str, query_id: int):
+        self.source_name: str = f"{source_name}_{query_id}"
         self.cp_time: datetime = self._load_cp()
         self.next_cp_time: datetime = self.cp_time
         self.err: datetime = datetime.timedelta(seconds=5)

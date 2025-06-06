@@ -4,22 +4,24 @@ from typing import Dict, List, Optional, Tuple
 
 from sqlalchemy.orm import Session
 
-from lib.database.dict_utils import ensure_list, get_nested
+from enrichment.ocr.pdf_ocr_reader import pdf_to_text
+from interfaces.i_loader import ILoader
 from lib.database.get_or_create import get_or_create
-from lib.sanitizers.sanitizer import (
-    parse_string,
-    parse_geolocation,
+from lib.file_handling.dict_utils import ensure_list, get_nested
+from lib.sanitizers.parse_primitives import (
     parse_bool,
     parse_float,
     parse_date,
-    parse_titles_and_labels,
-    parse_names_and_identifiers,
-    parse_web_resources,
-    parse_content,
 )
-from enrichment.ocr.pdf_ocr_reader import pdf_to_text
-from interfaces.i_data_loader import IDataLoader
-from sources.cordis.data_model import (
+from lib.sanitizers.parse_specialized import parse_geolocation
+from lib.sanitizers.parse_text import (
+    parse_string,
+    parse_titles_and_labels,
+    parse_content,
+    parse_web_resources,
+    parse_names_and_identifiers,
+)
+from sources.cordis.orm_model import (
     Person,
     Topic,
     Weblink,
@@ -50,7 +52,7 @@ PROGRAMME_PATH = f"{PRE}.programme"
 CATEGORIES_PATH = f"{RELATIONS}.categories.category"
 
 
-class CordisDataLoader(IDataLoader):
+class CordisLoader(ILoader):
     """
     Data loading for Cordis documents.
     Transforms JSON documents into SQLAlchemy ORM models and adds them to the session

@@ -44,7 +44,7 @@ class OpenAIREExtractor(IExtractor):
         )
         self.page_size = 50  # Default page size for project queries
 
-    def extract_until_next_checkpoint(self, query: str) -> bool:
+    def extract_until_checkpoint_end(self, query: str) -> bool:
         """
         Extract projects and their research products until we reach the next checkpoint.
         Returns True if there are more results to fetch, False otherwise.
@@ -262,7 +262,7 @@ def start_extraction(
     # checkpoint_to = extract.create_checkpoint_end_for_this_run(checkpoint_to_range)
 
     # For OpenAIRE, we use the raw query string
-    return extractor.extract_until_next_checkpoint(query)
+    return extractor.extract_until_checkpoint_end(query)
 
 
 def main():

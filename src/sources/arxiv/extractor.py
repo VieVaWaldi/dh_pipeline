@@ -7,7 +7,7 @@ from typing import Any, List, Dict
 
 import requests
 
-from interfaces.i_extractor import IExtractor
+from interfaces.i_extractor import IExtractor, ExtractorConfig
 from lib.extractor.utils import trim_excessive_whitespace
 from lib.file_handling.file_utils import load_file, write_file
 from lib.requests.requests import make_get_request
@@ -15,26 +15,13 @@ from utils.error_handling.error_handling import log_and_raise_exception
 
 
 class ArxivExtractor(IExtractor):
-    def __init__(
-        self,
-        extractor_name: str,
-        checkpoint_name: str,
-        checkpoint_range: str,
-        query: str,
-        download_attachments: bool,
-    ):
-        super().__init__(
-            extractor_name,
-            checkpoint_name,
-            checkpoint_range,
-            query,
-            download_attachments,
-        )
+    def __init__(self, extractor_config: ExtractorConfig):
+        super().__init__(extractor_config)
 
-    def extract_until_next_checkpoint(self) -> bool:
+    def extract_until_checkpoint_end(self) -> bool:
         logging.info(
-            f">>> Starting new data extraction run for {self.extractor_name} \
-            from checkpoint {self.last_checkpoint}.",
+            f">>> Starting new data extraction run from checkpoint {self.checkpoint} \
+            to {self.checkpoint_range}.",
         )
 
         query = self.build_query()
@@ -60,15 +47,11 @@ class ArxivExtractor(IExtractor):
         logging.info(">>> Successfully finished extraction")
         return True
 
-    def restore_checkpoint(self) -> str:
-        checkpoint = load_file(self.checkpoint_path)
-        return checkpoint if checkpoint is not None else "199001010000"
-
     def get_new_checkpoint_from_data(self) -> int:
         return int(self.last_checkpoint) + 100
 
     def create_checkpoint_end_for_this_run(self, next_checkpoint: str) -> str:
-        return "202001010000" # ToDo: Use checkpoint range and add 6 months
+        return "202001010000"  # ToDo: Use checkpoint range and add 6 months
 
     def fetch_arxiv_data(self, query: str, max_retries=3, initial_delay=10) -> str:
         """Fetch data using retry when no entries received."""

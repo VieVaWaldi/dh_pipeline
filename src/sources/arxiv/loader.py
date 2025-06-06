@@ -2,19 +2,21 @@ from typing import Dict, List, Tuple, Optional
 
 from sqlalchemy.orm import Session
 
-from lib.database.dict_utils import ensure_list, get_nested
-from lib.database.get_or_create import get_or_create
-from lib.sanitizers.sanitizer import (
-    parse_titles_and_labels,
-    parse_web_resources,
-    parse_names_and_identifiers,
-    parse_content,
-    parse_date,
-    parse_string,
-)
 from enrichment.ocr.pdf_ocr_reader import pdf_to_text
-from interfaces.i_data_loader import IDataLoader
-from sources.arxiv.data_model import (
+from interfaces.i_loader import ILoader
+from lib.database.get_or_create import get_or_create
+from lib.file_handling.dict_utils import ensure_list, get_nested
+from lib.sanitizers.parse_primitives import (
+    parse_date,
+)
+from lib.sanitizers.parse_text import (
+    parse_string,
+    parse_titles_and_labels,
+    parse_content,
+    parse_names_and_identifiers,
+    parse_web_resources,
+)
+from sources.arxiv.orm_model import (
     Entry,
     Author,
     Link,
@@ -23,7 +25,7 @@ from sources.arxiv.data_model import (
 )
 
 
-class ArxivDataLoader(IDataLoader):
+class ArxivLoader(ILoader):
     """
     Data loading for Arxiv documents.
     Transforms JSON documents into SQLAlchemy ORM models and adds them to the session.

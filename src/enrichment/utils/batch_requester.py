@@ -12,12 +12,14 @@ class BatchRequester:
         with self.session_factory() as session:
             offset = offset_start
             while True:
-                batch = session.query(self.model.id, self.model.full_text) \
-                    .filter(self.model.full_text.isnot(None)) \
-                    .order_by(self.model.id) \
-                    .offset(offset) \
-                    .limit(self.batch_size) \
+                batch = (
+                    session.query(self.model.id, self.model.full_text)
+                    .filter(self.model.full_text.isnot(None))
+                    .order_by(self.model.id)
+                    .offset(offset)
+                    .limit(self.batch_size)
                     .all()
+                )
 
                 if not batch:
                     break

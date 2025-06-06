@@ -37,7 +37,7 @@ class CoreExtractor(IExtractor):
         self.headers = {"Authorization": f"Bearer {self.api_key}"}
         self.download_attachments = download_attachments
 
-    def extract_until_next_checkpoint(self, query: str) -> bool:
+    def extract_until_checkpoint_end(self, query: str) -> bool:
         if not self.api_key:
             log_and_raise_exception("API Key not found")
 
@@ -209,7 +209,7 @@ def start_extraction(
     base_query = f"({checkpoint_name}>{checkpoint_from} AND {checkpoint_name}<{checkpoint_to}) AND "
     base_query += query
 
-    return extractor.extract_until_next_checkpoint(base_query)
+    return extractor.extract_until_checkpoint_end(base_query)
 
 
 def main():

@@ -8,15 +8,12 @@ from sqlalchemy.orm import Session
 
 from lib.database.create_db_session import create_db_session
 from lib.database.get_or_create import get_or_create, ModelCreationMonitor
-from lib.file_handling.file_utils import get_project_root_path
-from lib.sanitizers.sanitizer import (
-    parse_names_and_identifiers,
-    parse_content,
+from lib.file_handling.path_utils import get_source_data_path
+from lib.sanitizers.parse_primitives import (
     parse_float,
-    parse_geolocation,
-    parse_web_resources,
 )
-from sources.meta_heritage.data_model import (
+from lib.sanitizers.parse_text import parse_names_and_identifiers, parse_content
+from sources.meta_heritage.orm_model import (
     Stakeholder,
     NutsCode,
     OrganizationType,
@@ -24,7 +21,6 @@ from sources.meta_heritage.data_model import (
     JunctionStakeholderOrganizationType,
     JunctionStakeholderHeritageTopic,
 )
-from utils.config.config_loader import get_config, get_source_data_path
 from utils.logger.logger import setup_logging
 
 
@@ -167,17 +163,10 @@ if __name__ == "__main__":
     log_name = "Austria_Castles"
     batch_size = 100
 
-    config = get_config()
-    logging_path = (
-        get_project_root_path()
-        / Path(config["logging_path"])
-        / "loading"
-        / "meta_heritage"
-    )
-    setup_logging(logging_path, log_name)
+    setup_logging("meta_heritage", log_name)
 
     for file in files:
-        file_path = get_source_data_path(source_name, config, None) / file
+        file_path = get_source_data_path(source_name, None) / file
         run_loader(file_path, batch_size)
         ModelCreationMonitor.log_stats()
         logging.info(f"Loading completed.")

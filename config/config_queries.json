@@ -1,52 +1,57 @@
 {
   "cordis": {
     "checkpoint": "startDate",
-    "runs": [
+    "queries": [
       {
         "query": "cultural OR heritage",
         "download_attachments": true,
-        "checkpoint_to_range": "5"
+        "checkpoint_range": "5"
       },
       {
         "query": "contenttype='project' AND '*'",
         "download_attachments": false,
-        "checkpoint_to_range": "1"
+        "checkpoint_range": "1"
       }
     ]
   },
   "coreac": {
     "checkpoint": "publishedDate",
-    "runs": [
+    "queries": [
       {
         "query": "((computing AND cultural) OR (computing AND heritage))",
         "download_attachments": false,
-        "checkpoint_to_range": "10"
+        "checkpoint_range": "10"
       }
     ]
   },
   "arxiv": {
     "checkpoint": "submittedDateTo",
-    "runs": [
+    "queries": [
       {
-        "query_NEW": "(all:digital+OR+all:heritage+OR+all:humanities+OR+all:cultural)",
+        "query": "(all:digital+OR+all:heritage+OR+all:humanities+OR+all:cultural)",
+        "download_attachments": true,
+        "checkpoint_start":"199001010000",
+        "checkpoint_range": "6"
+      },
+      {
         "query": "all:computing+AND+(all:humanities+OR+all:heritage)",
         "download_attachments": true,
-        "checkpoint_range": "6 months?"
+        "checkpoint_range": "6"
       }
     ]
   },
   "openaire": {
     "checkpoint": "pagination",
-    "runs": [
+    "queries": [
       {
         "query": "cultural",
         "download_attachments": false,
-        "checkpoint_to_range": "0"
+        "checkpoint_range": "0"
       },
       {
         "query": "heritage",
         "download_attachments": false,
-        "checkpoint_to_range": "0"
+        "checkpoint_range": "0"
       }
     ]
   },

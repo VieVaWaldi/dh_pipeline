@@ -1,7 +1,9 @@
+import datetime
 import logging
-from pathlib import Path
 
 from lib.file_handling.file_utils import ensure_path_exists
+from lib.file_handling.path_utils import get_project_root_path
+from utils.config.config_loader import get_config
 
 LOG_LEVEL = logging.INFO
 
@@ -18,23 +20,24 @@ class CustomFormatter(logging.Formatter):
         return super().format(record)
 
 
-def setup_logging(log_path: Path, log_name: str) -> None:
+def setup_logging(module: str, log_name: str) -> None:
     """
     Sets up and configures the logger module.
     Call once at the beginning of each run.
     """
-    ensure_path_exists(log_path)
+    config = get_config()
+    logging_path = get_project_root_path() / config["logging_path"] / module
+    ensure_path_exists(logging_path)
 
     logger = logging.getLogger()
-
     if logger.hasHandlers():
         return
 
-    logger.setLevel(LOG_LEVEL)
-
-    file_handler = logging.FileHandler(log_path / f"{log_name}.log")
+    time_now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    file_handler = logging.FileHandler(logging_path / f"{log_name}_{time_now}.log")
     console_handler = logging.StreamHandler()
 
+    logger.setLevel(LOG_LEVEL)
     file_handler.setLevel(LOG_LEVEL)
     console_handler.setLevel(LOG_LEVEL)
 

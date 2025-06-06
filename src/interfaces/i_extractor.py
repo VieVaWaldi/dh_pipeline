@@ -1,95 +1,84 @@
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
 from pathlib import Path
 
 from lib.file_handling.file_utils import (
     ensure_path_exists,
-    get_project_root_path,
     write_file,
+    load_file,
 )
+from lib.file_handling.path_utils import get_source_data_path, get_project_root_path
 from utils.config.config_loader import get_config
+
+
+@dataclass
+class ExtractorConfig:
+    name: str
+    query: str
+    query_id: int
+    checkpoint_name: str
+    checkpoint_start: str
+    checkpoint_range: str
+    download_attachments: bool
 
 
 class IExtractor(ABC):
     """
-    All extractors must follow this pattern:
-    1. Create the end checkpoint for this run.
-    2. Extract data until next checkpoint.
-    3. Save the data.
-    4. Non contextually transform the data @see docs for more info.
-    5. Get the new checkpoint from the latest data point.
-    6. Save the checkpoint.
+    Base Extractor class that sets up paths and checkpoint.
+    Enforces
+    - extract_until_next_checkpoint(self) -> bool
+    -
     """
 
-    def __init__(
-        self,
-        extractor_name: str,
-        checkpoint_name: str,
-        checkpoint_range: str,
-        query: str,
-        download_attachments: bool,
-    ):
-        self.extractor_name = extractor_name
-        self.checkpoint_name = checkpoint_name
-        self.checkpoint_range = checkpoint_range
-        self.query = query
-        self.download_attachments = download_attachments
-
-        config = get_config()
-
-        self.checkpoint_path: Path = (
-            get_project_root_path()
-            / config["checkpoint_path"]
-            / "extraction"
-            / extractor_name
-            / f"{checkpoint_name}.cp"
+    def __init__(self, extractor_config: ExtractorConfig):
+        self.extractor_name: str = (
+            f"{extractor_config.name}-query_id-{extractor_config.query_id}"
         )
+        self.query: str = extractor_config.query
+        self.download_attachments: bool = extractor_config.download_attachments
+
+        self.checkpoint_name: str = extractor_config.checkpoint_name
+        self.checkpoint_start: str = extractor_config.checkpoint_start
+        self.checkpoint_range: str = extractor_config.checkpoint_range
+        self.checkpoint_path = self._get_checkpoint_path()
         ensure_path_exists(self.checkpoint_path)
-        self.last_checkpoint: str = self.restore_checkpoint()
+        self.checkpoint = self.restore_checkpoint()
 
-        if config["data_path"].startswith("/"):
-            base_data_path = Path(config["data_path"])
-        else:
-            base_data_path = get_project_root_path() / config["data_path"]
-
-        self.data_path = (
-            base_data_path
-            # / "extractors"
-            / extractor_name
-            / f"last_{checkpoint_name}_{self.last_checkpoint}/"
+        self.data_path = get_source_data_path(
+            extractor_config.name, extractor_config.query_id
         )
         ensure_path_exists(self.data_path)
 
-        # self.logging_path: Path = (
-        #         get_project_root_path() / config["logging_path"] / "extractors" / extractor_name
-        # )
-        # ensure_path_exists(self.logging_path)
-        #
-        # setup_logging(self.logging_path, "extract")
-        # logging.info(
-        #     "\n>>> Starting new data extraction run for %s from checkpoint %s.",
-        #     extractor_name,
-        #     (self.last_checkpoint if self.last_checkpoint else "No Checkpoint"),
-        # )
+    def _get_checkpoint_path(self) -> Path:
+        return Path(
+            get_project_root_path()
+            / get_config()["checkpoint_path"]
+            / "extractor"
+            / self.extractor_name
+            / f"{self.checkpoint_name}.cp"
+        )
 
     @abstractmethod
-    def extract_until_next_checkpoint(self) -> bool:
+    def extract_until_checkpoint_range(self) -> bool:
         """Extract until checkpoint end; return whether to continue extraction."""
 
     @abstractmethod
-    def restore_checkpoint(self) -> str | None:
+    def restore_checkpoint(self) -> str:
         """
-        Load the checkpoint from the checkpoint file and returns it.
-        Return BASE_CHECKPOINT when there is no file.
+        Loads the checkpoint from the checkpoint file and returns it.
+        Returns self.checkpoint_start when there is no checkpoint yet.
         """
+        checkpoint = load_file(self.checkpoint_path)
+        return checkpoint if checkpoint is not None else self.checkpoint_start
 
-    def save_checkpoint(self, new_checkpoint: str) -> None:
+    def save_checkpoint(self, new_checkpoint: str):
         """
         Overwrites the checkpoint file with the latest checkpoint.
         """
         return write_file(self.checkpoint_path, new_checkpoint)
 
     # @abstractmethod
-    # def create_checkpoint_end_for_this_run(self, next_checkpoint: str) -> str:
+    # def create_checkpoint_range_for_this_run(self, next_checkpoint: str) -> str:
     #     """
     #     Returns the maximum check point until this extraction should run.
     #     """

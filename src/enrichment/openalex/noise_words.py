@@ -1,5 +1,5 @@
-import unicodedata
 import re
+import unicodedata
 
 noise_words = [
     "the",
@@ -46,34 +46,31 @@ def normalize_institution_name(name: str) -> str:
     if not name:
         return ""
 
-    # Remove special characters
     name = name.replace("!", "").replace("|", "").replace("-", " ").replace(".", " ")
-    # Remove diacritics
     name = unicodedata.normalize("NFKD", name).encode("ASCII", "ignore").decode("utf-8")
-    # Convert to lowercase
     name = name.lower()
 
-    # Create a pattern to match these words as whole words only
     pattern = r"\b(" + "|".join(noise_words) + r")\b"
     name = re.sub(pattern, "", name)
 
-    # Standardize common institution type variations
-    name = name.replace("university", "univ")
-    name = name.replace("instituto", "inst")
-    name = name.replace("institute", "inst")
-    name = name.replace("laboratory", "lab")
-    name = name.replace("laboratoire", "lab")
-    name = name.replace("foundation", "found")
-    name = name.replace("national", "natl")
-    name = name.replace("international", "intl")
-    name = name.replace("research", "res")
-    name = name.replace("technology", "tech")
-    name = name.replace("technolog", "tech")
-    name = name.replace("sciences", "sci")
-    name = name.replace("center", "ctr")
-    name = name.replace("centre", "ctr")
-    name = name.replace("departement", "dept")
-    name = name.replace("department", "dept")
+    name = (
+        name.replace("university", "univ")
+        .replace("instituto", "inst")
+        .replace("institute", "inst")
+        .replace("laboratory", "lab")
+        .replace("laboratoire", "lab")
+        .replace("foundation", "found")
+        .replace("national", "natl")
+        .replace("international", "intl")
+        .replace("research", "res")
+        .replace("technology", "tech")
+        .replace("technolog", "tech")
+        .replace("sciences", "sci")
+        .replace("center", "ctr")
+        .replace("centre", "ctr")
+        .replace("departement", "dept")
+        .replace("department", "dept")
+    )
 
     name = re.sub(r"\s+", " ", name).strip()
 

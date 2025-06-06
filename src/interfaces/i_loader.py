@@ -5,7 +5,7 @@ from typing import Dict
 from sqlalchemy.orm import Session
 
 
-class IDataLoader(ABC):
+class ILoader(ABC):
     """
     Base Class for all Data Loaders.
     Takes a dict and transform it into respective ORM Models.

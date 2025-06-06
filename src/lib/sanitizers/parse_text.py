@@ -1,39 +1,7 @@
-from datetime import datetime
 from typing import Optional, Any
 
-""" Parse Primitives """
 
-
-def parse_bool(value: Any) -> Optional[bool]:
-    """Use for all booleans"""
-    if isinstance(value, bool):
-        return value
-    if isinstance(value, str):
-        return value.lower() == "true"
-    return None
-
-
-def parse_number(value: Optional[str]) -> Optional[int]:
-    """Use for all decimals"""
-    if not value:
-        return None
-    try:
-        return int(value)
-    except ValueError:
-        return None
-
-
-def parse_float(value: Any) -> Optional[float]:
-    """Use for all floats"""
-    if value is not None:
-        try:
-            return float(value)
-        except (ValueError, TypeError):
-            return None
-    return None
-
-
-""" Parse String
+""" 
 DOIs and acronyms should generally NOT be sanitized.
 """
 
@@ -149,41 +117,3 @@ def parse_web_resources(value: Optional[str]) -> Optional[str]:
     clean_str = clean_str.replace("\n", "").replace("\t", "")
 
     return clean_str or None
-
-
-""" Parse Date """
-
-
-def parse_date(date_str: Optional[str]) -> Optional[datetime]:
-    """Parse date string into datetime object."""
-    if not date_str:
-        return None
-    try:
-        return datetime.fromisoformat(date_str.replace("Z", "+00:00"))
-    except (ValueError, TypeError):
-        return None
-
-
-""" Parse Special Cases """
-
-
-def parse_geolocation(geolocation: str, swap_lat_lon: bool) -> Optional[list]:
-    """
-    Parse geolocation string and return as [lon, lat] array.
-    Returns None if coordinates are invalid.
-    Cordis geolocations with (brackets) are [lat, lon] in the raw data.
-    """
-    if not geolocation:
-        return None
-
-    cleaned = geolocation.replace("(", "").replace(")", "")
-    try:
-        lat, lon = map(lambda x: float(x.strip()), cleaned.split(","))
-        if swap_lat_lon and not geolocation.startswith("("):
-            lat, lon = lon, lat
-        if lat < -90 or lat > 90 or lon < -180 or lon > 180:
-            return None
-
-        return [lat, lon]
-    except (ValueError, TypeError):
-        return None

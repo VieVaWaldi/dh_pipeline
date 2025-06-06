@@ -5,7 +5,7 @@ from datetime import datetime
 import pandas as pd
 from dotenv import load_dotenv
 
-from _datamodels.digicher.entities import Institutions
+from datamodels.digicher.entities import Institutions
 from lib.database import create_db_session
 from enrichment.openalex.search_geolocations import search_geolocation
 
@@ -59,8 +59,7 @@ timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 csv_filename = f"cordis_2_openalex_geo_{timestamp}.csv"
 file_exists = os.path.isfile(csv_filename)
 
-session_factory = create_db_session()
-with session_factory() as session:
+with create_db_session()() as session:
     print(f"Starting the process at {timestamp}")
     print(f"Results will be saved to {csv_filename}")
 
