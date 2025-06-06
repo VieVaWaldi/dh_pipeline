@@ -2,9 +2,14 @@ import os
 from typing import Any, Dict
 
 from dotenv import load_dotenv
+from pathlib import Path
 
 from lib.file_handling.json_utils import load_json_file
-from lib.file_handling.path_utils import get_project_root_path
+
+
+def get_project_root_path() -> Path:
+    """Return the absolute path to the project root directory ending with /."""
+    return Path(__file__).parent.parent.parent.parent.absolute()
 
 
 def get_config() -> Dict[str, Any]:

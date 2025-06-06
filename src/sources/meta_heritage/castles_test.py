@@ -1,5 +1,6 @@
 import logging
 from pathlib import Path
+import re
 from typing import Optional, Tuple
 
 import pandas as pd
@@ -9,13 +10,10 @@ from sqlalchemy.orm import Session
 from lib.database.create_db_session import create_db_session
 from lib.database.get_or_create import get_or_create, ModelCreationMonitor
 from lib.file_handling.path_utils import get_source_data_path
-from lib.sanitizers.parse_primitives import (
-    parse_float,
-)
+from lib.sanitizers.parse_primitives import parse_float
 from lib.sanitizers.parse_text import parse_names_and_identifiers, parse_content
 from sources.meta_heritage.orm_model import (
     Stakeholder,
-    NutsCode,
     OrganizationType,
     CHTopic,
     JunctionStakeholderOrganizationType,
@@ -24,111 +22,86 @@ from sources.meta_heritage.orm_model import (
 from utils.logger.logger import setup_logging
 
 
-def extract_coordinates_from_point(
-    shape_str: str,
+def parse_coordinates_from_point(
+    point_str: Optional[str],
 ) -> Tuple[Optional[float], Optional[float]]:
-    """Extract longitude and latitude from POINT geometry string."""
-    if not shape_str or not shape_str.startswith("POINT"):
+    """Parse coordinates from POINT string format."""
+    if not point_str:
         return None, None
 
-    try:
-        # Extract coordinates from "POINT (longitude latitude)" format
-        coords_part = shape_str.replace("POINT (", "").replace(")", "")
-        lon_str, lat_str = coords_part.split()
-        longitude = parse_float(lon_str)
-        latitude = parse_float(lat_str)
-        return longitude, latitude
-    except (ValueError, AttributeError):
-        logging.warning(f"Could not parse coordinates from: {shape_str}")
-        return None, None
+    # Extract coordinates from POINT (longitude latitude) format
+    match = re.search(r"POINT \(([0-9.-]+) ([0-9.-]+)\)", point_str)
+    if match:
+        longitude = parse_float(match.group(1))
+        latitude = parse_float(match.group(2))
+        return latitude, longitude
 
-
-def create_stakeholder(session: Session, row: pd.Series) -> Stakeholder:
-    """Create stakeholder entity from CSV row."""
-    # Extract coordinates
-    longitude, latitude = extract_coordinates_from_point(row.get("SHAPE"))
-
-    # Create NUTS code for Vienna
-    nuts_code, _ = get_or_create(
-        session,
-        NutsCode,
-        unique_key={"country_code": "AT", "level_1": "AT1", "level_2": "AT13"},
-    )
-
-    stakeholder_data = {
-        "name": parse_names_and_identifiers(row.get("NAME")),
-        "description": parse_content(row.get("BESCHREIBUNG")),
-        "ownership": "public",
-        "city": "Wien",
-        "country": "Austria",
-        "latitude": latitude,
-        "longitude": longitude,
-        "nuts_code_id": nuts_code.id,
-        "data_source_type": "government_open_data",
-        "data_source_name": "Austria data.gv.at",
-    }
-
-    # Filter out None values
-    stakeholder_data = {k: v for k, v in stakeholder_data.items() if v is not None}
-
-    stakeholder, _ = get_or_create(
-        session,
-        Stakeholder,
-        unique_key={"name": stakeholder_data["name"]},
-        **stakeholder_data,
-    )
-
-    return stakeholder
-
-
-def create_organization_type_junction(session: Session, stakeholder: Stakeholder):
-    """Create junction between stakeholder and GLAM organization type."""
-    # Get GLAM organization type (type_number=1)
-    org_type, _ = get_or_create(
-        session, OrganizationType, unique_key={"type_number": 1}
-    )
-
-    # Create junction
-    junction, _ = get_or_create(
-        session,
-        JunctionStakeholderOrganizationType,
-        unique_key={
-            "stakeholder_id": stakeholder.id,
-            "organization_type_id": org_type.id,
-        },
-    )
-
-
-def create_heritage_topic_junction(session: Session, stakeholder: Stakeholder):
-    """Create junction between stakeholder and aristocratic heritage topic."""
-    # Get aristocratic heritage topic (topic_number=1)
-    ch_topic, _ = get_or_create(session, CHTopic, unique_key={"topic_number": 1})
-
-    # Create junction
-    junction, _ = get_or_create(
-        session,
-        JunctionStakeholderHeritageTopic,
-        unique_key={"stakeholder_id": stakeholder.id, "heritage_topic_id": ch_topic.id},
-    )
+    return None, None
 
 
 def process_batch(session: Session, batch_df: DataFrame):
     """Process a batch of castle records."""
     for _, row in batch_df.iterrows():
         try:
-            # Skip records without name
-            if not row.get("NAME"):
+            # Parse coordinates
+            latitude, longitude = parse_coordinates_from_point(row.get("SHAPE"))
+
+            # Create stakeholder
+            stakeholder_data = {
+                "name": parse_names_and_identifiers(row.get("NAME")),
+                "description": parse_content(row.get("BESCHREIBUNG")),
+                "ownership": "private",
+                "latitude": latitude,
+                "longitude": longitude,
+                "data_source_type": "Open Data",
+                "data_source_name": "Austria data.gv.at",
+            }
+
+            # Filter out None values
+            stakeholder_data = {
+                k: v for k, v in stakeholder_data.items() if v is not None
+            }
+
+            if not stakeholder_data.get("name"):
+                logging.warning(f"Skipping row with missing name: {row.to_dict()}")
                 continue
 
-            # Create stakeholder entity
-            stakeholder = create_stakeholder(session, row)
+            stakeholder, _ = get_or_create(
+                session,
+                Stakeholder,
+                unique_key={"name": stakeholder_data["name"]},
+                **{k: v for k, v in stakeholder_data.items() if k != "name"},
+            )
 
-            # Flush to ensure stakeholder has an ID
             session.flush()
 
-            # Create junctions
-            create_organization_type_junction(session, stakeholder)
-            create_heritage_topic_junction(session, stakeholder)
+            # Create organization type junction (GLAM - type_number 1)
+            org_type, _ = get_or_create(
+                session, OrganizationType, unique_key={"type_number": 1}
+            )
+
+            get_or_create(
+                session,
+                JunctionStakeholderOrganizationType,
+                unique_key={
+                    "stakeholder_id": stakeholder.id,
+                    "organization_type_id": org_type.id,
+                },
+            )
+
+            # Create heritage topic junction (Architectural heritage - topic_number 4)
+            heritage_topic, _ = get_or_create(
+                session, CHTopic, unique_key={"topic_number": 4}
+            )
+
+            get_or_create(
+                session,
+                JunctionStakeholderHeritageTopic,
+                unique_key={
+                    "stakeholder_id": stakeholder.id,
+                    "heritage_topic_id": heritage_topic.id,
+                },
+            )
 
         except Exception as e:
             logging.error(f"Error processing row {row.get('NAME', 'Unknown')}: {e}")

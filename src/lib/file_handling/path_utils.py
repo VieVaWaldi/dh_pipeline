@@ -1,12 +1,11 @@
 import os
 from pathlib import Path
 
-from utils.config.config_loader import get_query_config, get_config
-
-
-def get_project_root_path() -> Path:
-    """Return the absolute path to the project root directory ending with /."""
-    return Path(__file__).parent.parent.parent.parent.absolute()
+from utils.config.config_loader import (
+    get_query_config,
+    get_config,
+    get_project_root_path,
+)
 
 
 def get_source_data_path(source_name: str, query_id: int | None) -> Path:
