@@ -5,11 +5,12 @@ Use `airflow standalone` for local development and testing.
 Use the following for production:
 
 ```
+# Use & to run them in the background
 # Starts the scheduler (monitors DAGs, triggers tasks)
-airflow scheduler 
+airflow scheduler &
 
 # Starts the web UI (default port 8080)
-airflow webserver 
+airflow api-server &
 
 # Processes DAG files (optional, can run in scheduler)
 airflow dag-processor 
@@ -19,12 +20,14 @@ airflow dag-processor
 
 Ensure `export AIRFLOW_HOME=~/.airflow` is set up in .bashrc or in .zshrc
 
-Also, set up the config in `~/.airflow/airflow.cfg` with:
+Run `airflow db migrate` to initialize the database.
+
+Set up the config in `~/.airflow/airflow.cfg` with:
 
 - in line #7 `dags_folder = /path/from/root/.../dh_pipeline/orchestration`, to point to the correct DAG folder.
 - in line #150 `load_examples = False`.
 
-Then run `airflow db migrate` to initialize the database
+Finally run `airflow db migrate` to udpate the congfig.
 
 ## Reset Airflow
 
