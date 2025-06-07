@@ -1,7 +1,19 @@
 # Orchestration with Apache Airflow
 
-Use `$ airflow standalone` for local development and testing.
-Run Airflow webserver + scheduler on the login node in prod on the cluster > how?
+Use `airflow standalone` for local development and testing.
+
+Use the following for production:
+
+```
+# Starts the scheduler (monitors DAGs, triggers tasks)
+airflow scheduler 
+
+# Starts the web UI (default port 8080)
+airflow webserver 
+
+# Processes DAG files (optional, can run in scheduler)
+airflow dag-processor 
+```
 
 ## Setup
 
@@ -12,12 +24,7 @@ Also, set up the config in `~/.airflow/airflow.cfg` with:
 - in line #7 `dags_folder = /path/from/root/.../dh_pipeline/orchestration`, to point to the correct DAG folder.
 - in line #150 `load_examples = False`.
 
-Then do this for the first initialization:
-```
-airflow db migrate # initializes the database
-airflow users create --username admin --firstname Admin --lastname User \
-    --role Admin --email admin@example.com
-```
+Then run `airflow db migrate` to initialize the database
 
 ## Reset Airflow
 
@@ -25,7 +32,7 @@ airflow users create --username admin --firstname Admin --lastname User \
 # Kill airflow completely
 pkill -f airflow
 
-# Clear the database again (since examples are still there)
+# Clear the database
 airflow db reset
 
 # Restart airflow

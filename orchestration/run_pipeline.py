@@ -1,10 +1,5 @@
-import textwrap
 from datetime import datetime, timedelta
-
-# The DAG object; we'll need this to instantiate a DAG
 from airflow import DAG
-
-# Operators; we need this to operate!
 from airflow.providers.standard.operators.bash import BashOperator
 
 from utils.config.config_loader import get_config, get_project_root_path
@@ -46,13 +41,15 @@ with DAG(
         task_id="run_extractor_arxiv_q0",
         bash_command=f"sbatch --wait {WORKING_DIR}/sbatch/sbatch_extractor.sh arxiv 0",
         execution_timeout=timedelta(days=6),
-    ).doc_md = "Extraction runner for arxiv query_id=0"
+    )
+    extraction_arxiv_q0.doc_md = "Extraction runner for arxiv query_id=0"
 
     loader_arxiv_q0 = BashOperator(
         task_id="run_loader_arxiv_q0",
         bash_command=f"sbatch --wait {WORKING_DIR}/sbatch/sbatch_loader.sh arxiv 0",
         execution_timeout=timedelta(days=6),
-    ).doc_md = "Loading runner for arxiv query_id=0"
+    )
+    loader_arxiv_q0.doc_md = "Loading runner for arxiv query_id=0"
 
     """ CoreAc """
 
@@ -60,20 +57,22 @@ with DAG(
         task_id="run_extractor_coreac_q0",
         bash_command=f"sbatch --wait {WORKING_DIR}/sbatch/sbatch_extractor.sh coreac 0",
         execution_timeout=timedelta(days=6),
-    ).doc_md = "Extraction runner for coreac query_id=0"
+    )
+    extraction_coreac_q0.doc_md = "Extraction runner for coreac query_id=0"
 
     loader_coreac_q0 = BashOperator(
         task_id="run_loader_coreac_q0",
         bash_command=f"sbatch --wait {WORKING_DIR}/sbatch/sbatch_loader.sh coreac 0",
         execution_timeout=timedelta(days=6),
-    ).doc_md = "Loading runner for coreac query_id=0"
+    )
+    loader_coreac_q0.doc_md = "Loading runner for coreac query_id=0"
 
     """ Task Dependencies """
 
     # Loaders depend on their extractors
     extraction_arxiv_q0 >> loader_arxiv_q0
     extraction_coreac_q0 >> loader_coreac_q0
-    
+
     # Transformations wait for all loaders and run sequentially
     # [loader_arxiv_q0, loader_coreac_q0] >> transformation_arxiv
     # transformation_arxiv >> transformation_coreac
