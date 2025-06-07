@@ -99,7 +99,7 @@ class OpenAIREExtractor(IExtractor):
 
         except Exception as e:
             # On error, print the current page, size, and total
-            logging.error(f"Error during extraction: {e}")
+            logging.error(f"Error during extraction", e)
             logging.error(f"Current page: {current_page}, size: {self.page_size}")
             logging.error(traceback.format_exc())
 
@@ -137,7 +137,7 @@ class OpenAIREExtractor(IExtractor):
             else:
                 return [], total_projects, current_page
         except (KeyError, TypeError) as e:
-            log_and_raise_exception(f"Error parsing projects response: {e}")
+            log_and_raise_exception(f"Error parsing projects response", e)
 
     def _fetch_research_products(self, project_id: str) -> list:
         """
@@ -170,7 +170,7 @@ class OpenAIREExtractor(IExtractor):
                     break
             except Exception as e:
                 logging.warning(
-                    f"Error fetching research products for project {project_id}: {e}"
+                    f"Error fetching research products for project {project_id}: ", e
                 )
                 break
 
@@ -303,4 +303,4 @@ if __name__ == "__main__":
     try:
         main()
     except Exception as e:
-        logging.critical(f"Critical error: {e}\n{traceback.format_exc()}")
+        logging.critical(f"Critical error: \, en{traceback.format_exc()}")

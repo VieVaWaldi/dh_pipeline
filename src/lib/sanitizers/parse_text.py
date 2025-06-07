@@ -117,3 +117,22 @@ def parse_web_resources(value: Optional[str]) -> Optional[str]:
     clean_str = clean_str.replace("\n", "").replace("\t", "")
 
     return clean_str or None
+
+
+def flatten_string(value: Optional[str]) -> Optional[str]:
+    """
+    Used for cleaner log files.
+    Flattens a string by removing all newlines, tabs, and normalizing whitespace.
+    Converts multi-line content into a single line with normalized spacing.
+    Returns None if string ends up being empty.
+    """
+    value = _ensure_string(value)
+    if not value:
+        return None
+
+    clean_str = value.strip()
+    clean_str = clean_str.replace("\n", " ").replace("\r", "").replace("\t", " ")
+
+    clean_str = " ".join(filter(None, clean_str.split()))
+
+    return clean_str or None

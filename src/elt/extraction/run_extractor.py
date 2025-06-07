@@ -1,6 +1,7 @@
 import argparse
 import logging
 from datetime import datetime
+from typing import Type
 
 from dotenv import load_dotenv
 
@@ -17,7 +18,7 @@ from utils.logger.timer import log_run_time
 # from sources.openaire.extractor import OpenaireExtractor
 
 
-def run_extractor(config: ExtractorConfig, extractor: IExtractor):
+def run_extractor(config: ExtractorConfig, extractor_class: Type[IExtractor]):
     """Main extraction runner that handles the extraction loop."""
     start_time = datetime.now()
     logging.info(
@@ -31,9 +32,11 @@ def run_extractor(config: ExtractorConfig, extractor: IExtractor):
     continue_extraction = True
     while continue_extraction:
         try:
-            continue_extraction = extractor.extract_until_checkpoint_range()
+            extractor = extractor_class(extractor_config)
+            logging.info(f"Extracting from checkpoint {extractor.checkpoint}")
+            continue_extraction = extractor.extract_until_next_checkpoint()
         except Exception as e:
-            log_and_raise_exception(f"Error during extraction iteration: {e}")
+            log_and_raise_exception(f"Error during extraction iteration", e)
 
     log_run_time(start_time)
     logging.info(f"Successfully completed extraction for {config.name}")
@@ -41,11 +44,10 @@ def run_extractor(config: ExtractorConfig, extractor: IExtractor):
 
 if __name__ == "__main__":
 
-    # ToDo: REMOVE
-    import sys
-
-    dev_args = ["--source", "arxiv", "--query_id", "0"]
-    sys.argv.extend(dev_args)
+    # import sys
+    #
+    # dev_args = ["--source", "arxiv", "--query_id", "0"]
+    # sys.argv.extend(dev_args)
 
     parser = argparse.ArgumentParser(description="Extractor Runner")
     parser.add_argument("--source", help="Select data source", required=True)
@@ -58,7 +60,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     load_dotenv()
-    setup_logging("extractor", f"{args.source}_{args.query_id}")
+    setup_logging("extractor", f"{args.source}-query_id-{args.query_id}")
 
     source_config = get_query_config()[args.source]
     query_config = source_config["queries"][args.query_id]
@@ -79,6 +81,5 @@ if __name__ == "__main__":
         checkpoint_range=query_config["checkpoint_range"],
         download_attachments=query_config["download_attachments"],
     )
-    extractor_instance = extractor_classes[args.source](extractor_config)
 
-    run_extractor(extractor_config, extractor_instance)
+    run_extractor(extractor_config, extractor_classes[args.source])

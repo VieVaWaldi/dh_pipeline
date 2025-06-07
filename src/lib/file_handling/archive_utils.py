@@ -5,7 +5,7 @@ from pathlib import Path
 from utils.error_handling.error_handling import log_and_raise_exception
 
 
-def unpack_and_remove_zip(zip_path: Path) -> None:
+def unpack_and_remove_zip(zip_path: Path):
     """
     Unpacks a zip file given a path and places all contents in the same directory.
     Deletes the original zip file.
@@ -19,4 +19,4 @@ def unpack_and_remove_zip(zip_path: Path) -> None:
         zip_path.unlink()
         logging.info(f"Removed the zip file: {zip_path}")
     except Exception as e:
-        log_and_raise_exception(f"ERROR on handling the zip {zip_path}: ", e)
+        log_and_raise_exception(f"Error on handling the zip: {zip_path}", e)

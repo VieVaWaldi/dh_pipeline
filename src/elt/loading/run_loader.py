@@ -92,10 +92,10 @@ def validate(source_name: str, doc_count: int, skip_count: int):
 
 
 if __name__ == "__main__":
-    import sys
-
-    dev_args = ["--source", "arxiv", "--run", "0"]
-    sys.argv.extend(dev_args)
+    # import sys
+    #
+    # dev_args = ["--source", "arxiv", "--run", "0"]
+    # sys.argv.extend(dev_args)
 
     parser = argparse.ArgumentParser(description="Loader Runner")
     parser.add_argument("--source", help="Select data source", required=True)

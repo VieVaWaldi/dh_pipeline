@@ -1,6 +1,8 @@
+import time
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Any
 
 from lib.file_handling.file_utils import (
     ensure_path_exists,
@@ -30,7 +32,9 @@ class IExtractor(ABC):
     -
     """
 
-    def __init__(self, extractor_config: ExtractorConfig):
+    def __init__(
+        self, extractor_config: ExtractorConfig, sleep_between_extractions: int = 5
+    ):
         self.extractor_name: str = (
             f"{extractor_config.name}-query_id-{extractor_config.query_id}"
         )
@@ -44,25 +48,31 @@ class IExtractor(ABC):
         ensure_path_exists(self.checkpoint_path)
         self.checkpoint = self.restore_checkpoint()
 
-        self.data_path = get_source_data_path(
-            extractor_config.name, extractor_config.query_id
+        self.data_path = (
+            get_source_data_path(extractor_config.name, extractor_config.query_id)
+            / f"cp_{self.checkpoint}"
         )
         ensure_path_exists(self.data_path)
-
-    def _get_checkpoint_path(self) -> Path:
-        return Path(
-            get_project_root_path()
-            / get_config()["checkpoint_path"]
-            / "extractor"
-            / self.extractor_name
-            / f"{self.checkpoint_name}.cp"
-        )
+        time.sleep(sleep_between_extractions)
 
     @abstractmethod
-    def extract_until_checkpoint_range(self) -> bool:
-        """Extract until checkpoint end; return whether to continue extraction."""
+    def extract_until_next_checkpoint(self) -> bool:
+        """Extract until the next checkpoint and return whether to continue extraction."""
 
     @abstractmethod
+    def should_continue(self) -> bool:
+        """
+        Whether to continue this extraction; Should be returned by
+        @extract_until_checkpoint_range
+        """
+
+    @abstractmethod
+    def get_checkpoint_end(self, minus_1_day=False) -> Any:
+        """
+        Returns the end of this extraction by returning the max checkpoint value.
+        Use minus_1_day=True to stop this extraction 1 day before the next extraction starts.
+        """
+
     def restore_checkpoint(self) -> str:
         """
         Loads the checkpoint from the checkpoint file and returns it.
@@ -77,33 +87,11 @@ class IExtractor(ABC):
         """
         return write_file(self.checkpoint_path, new_checkpoint)
 
-    # @abstractmethod
-    # def create_checkpoint_range_for_this_run(self, next_checkpoint: str) -> str:
-    #     """
-    #     Returns the maximum check point until this extraction should run.
-    #     """
-    #
-    #
-    # @abstractmethod
-    # def save_extracted_data(self, data: Union[str, Dict[str, Any]]) -> Path:
-    #     """
-    #     Once the extraction is done, save all the data.
-    #     Returns path to saved data.
-    #     """
-    #
-    # @abstractmethod
-    # def non_contextual_transformation(self, data_path: Path) -> None:
-    #     """
-    #     1. Create a directory for each record dataset
-    #     2. Whitespace trimming
-    #     3. Character encoding normalization
-    #     4. Optionally find, download and save all attached links
-    #     """
-    #
-    # @abstractmethod
-    # def get_new_checkpoint_from_data(self) -> Any:
-    #     """
-    #     Once the extraction is done, retrieve the checkpoint and save it using
-    #     :func:`save_checkpoint`.
-    #     Returns the extracted checkpoint.
-    #     """
+    def _get_checkpoint_path(self) -> Path:
+        return Path(
+            get_project_root_path()
+            / get_config()["checkpoint_path"]
+            / "extractor"
+            / self.extractor_name
+            / f"{self.checkpoint_name}.cp"
+        )

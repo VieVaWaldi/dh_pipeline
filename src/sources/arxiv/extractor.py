@@ -2,117 +2,110 @@ import logging
 import shutil
 import time
 import xml.etree.ElementTree as xml
+from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any, List, Dict
 
 import requests
+from dateutil.relativedelta import relativedelta
 
 from interfaces.i_extractor import IExtractor, ExtractorConfig
 from lib.extractor.utils import trim_excessive_whitespace
-from lib.file_handling.file_utils import load_file, write_file
+from lib.file_handling.file_utils import load_file, write_file, ensure_path_exists
 from lib.requests.requests import make_get_request
+from lib.sanitizers.parse_text import parse_titles_and_labels
 from utils.error_handling.error_handling import log_and_raise_exception
 
 
 class ArxivExtractor(IExtractor):
     def __init__(self, extractor_config: ExtractorConfig):
-        super().__init__(extractor_config)
+        super().__init__(extractor_config, sleep_between_extractions=5)
+        self.base_url = "https://export.arxiv.org/api/query?"
+        self.ID = "{http://www.w3.org/2005/Atom}"
 
-    def extract_until_checkpoint_end(self) -> bool:
+    def extract_until_next_checkpoint(self) -> bool:
         logging.info(
-            f">>> Starting new data extraction run from checkpoint {self.checkpoint} \
-            to {self.checkpoint_range}.",
+            f"Starting new extraction from checkpoint {self.checkpoint} to {self.checkpoint_range}.",
         )
 
+        start_idx = 0
+        max_results = 50
+
+        has_results = True
+        while has_results:
+            params = {"start": start_idx, "max_results": max_results}
+            xml_content = self.request_arxiv_api(params)
+
+            entries = self.extract_entries(xml_content)
+            self.check_and_save_new_entries(entries)
+
+            meta_data = self.extract_meta_data(xml_content)
+            total_results = meta_data["total_results"]
+
+            start_idx += max_results
+            if start_idx > total_results:
+                has_results = False
+            time.sleep(5)
+
+        should_continue = self.should_continue()
+        if should_continue:
+            new_checkpoint = self.checkpoint_to_human(self.get_checkpoint_end())
+            self.save_checkpoint(new_checkpoint)
+        else:
+            # ToDo: Do not update checkpoint?
+            pass
+
+        return should_continue
+
+    def should_continue(self):
+        """Continue while checkpoint < today"""
+        return self.checkpoint_to_dt(self.checkpoint) < datetime.now()
+
+    def checkpoint_to_dt(self, checkpoint: str):
+        return datetime.strptime(checkpoint, "%Y-%m-%d-%H-%M")
+
+    def checkpoint_to_arxiv(self, checkpoint: datetime) -> str:
+        return checkpoint.strftime("%Y%m%d%H%M")
+
+    def checkpoint_to_human(self, checkpoint: datetime) -> str:
+        return checkpoint.strftime("%Y-%m-%d-%H-%M")
+
+    def get_checkpoint_end(self, minus_1_day: bool = False) -> datetime:
+        """."""
+        checkpoint_end_dt = datetime.strptime(
+            self.checkpoint, "%Y-%m-%d-%H-%M"
+        ) + relativedelta(months=int(self.checkpoint_range))
+        if minus_1_day:
+            checkpoint_end_dt -= timedelta(days=1)
+        return checkpoint_end_dt
+
+    def build_query(self) -> str:
+        start = self.checkpoint_to_arxiv(self.checkpoint_to_dt(self.checkpoint))
+        end = self.checkpoint_to_arxiv(self.get_checkpoint_end(minus_1_day=True))
+
+        query = f"search_query={self.query}"
+        query += f"+AND+submittedDate:[{start}+TO+{end}]"
+        query += f"&sortBy=submittedDate&sortOrder=ascending"
+        return query
+
+    def request_arxiv_api(self, params: dict) -> str:
         query = self.build_query()
-        xml_content = self.fetch_arxiv_data(query)
+        url = f"{self.base_url}{query}"
+        response = make_get_request(
+            url, params=params, expect_json=False, enable_retry=True
+        )
+        self.response_has_entries(response.text)
+        return response.text
 
-        meta_data = self.print_arxiv_meta_data(xml_content)
-        total_results = meta_data["total_results"]
-
-        entries = self.extract_entries(xml_content)
-        if len(entries) == 0 and self.get_new_checkpoint_from_data() < total_results:
-            raise Exception(
-                "Stopping the extraction after not getting entries, try again soon."
+    def response_has_entries(self, response_xml: str) -> bool:
+        if "<entry" not in response_xml:
+            logging.warning(
+                "No entries found after all retries. This could be normal if there are no results in this range."
             )
-
-        self.check_and_save_new_entries(entries)
-
-        if not self.get_new_checkpoint_from_data() < total_results:
-            logging.info(">>> Finished extraction, no more data")
             return False
-
-        self.save_checkpoint(str(self.get_new_checkpoint_from_data()))
-
-        logging.info(">>> Successfully finished extraction")
         return True
 
-    def get_new_checkpoint_from_data(self) -> int:
-        return int(self.last_checkpoint) + 100
-
-    def create_checkpoint_end_for_this_run(self, next_checkpoint: str) -> str:
-        return "202001010000"  # ToDo: Use checkpoint range and add 6 months
-
-    def fetch_arxiv_data(self, query: str, max_retries=3, initial_delay=10) -> str:
-        """Fetch data using retry when no entries received."""
-        time.sleep(2)
-        try:
-            url = f"https://export.arxiv.org/api/query?{query}"
-            response = make_get_request(url)
-
-            # If we've exhausted all retries and still don't have entries
-            if "<entry" not in response.text:
-                logging.warning(
-                    "No entries found after all retries. This could be normal if there are no results in this range."
-                )
-                raise Exception(
-                    "Stopping the extraction after 3 retries, try again soon."
-                )
-
-            return response.text
-        except requests.RequestException as e:
-            log_and_raise_exception(f"Error fetching data from {url}: {e}")
-
-    # def fetch_arxiv_data(self, query: str, max_retries=3, initial_delay=10) -> str:
-    #     """Fetch data using retry when no entries received."""
-    #     time.sleep(2)
-    #     try:
-    #         for attempt in range(max_retries):
-    #             logging.info(
-    #                 f"Attempt {attempt+1}/{max_retries}: Fetching results {self.last_checkpoint} to {self.get_new_checkpoint_from_data()}..."
-    #             )
-    #             url = f"https://export.arxiv.org/api/query?{query}"
-    #             response = requests.get(url)
-    #
-    #             if response.status_code == 200 and "<entry" in response.text:
-    #                 logging.info(
-    #                     "GET Request status: %s", response.text.replace("\n", " ")[:512]
-    #                 )
-    #                 return response.text
-    #             else:
-    #                 # Calculate delay with exponential backoff
-    #                 delay = initial_delay * (4**attempt)
-    #                 logging.warning(
-    #                     f"Received empty or error response. Retrying in {delay} seconds..."
-    #                 )
-    #                 time.sleep(delay)
-    #
-    #         # If we've exhausted all retries and still don't have entries
-    #         if "<entry" not in response.text:
-    #             logging.warning(
-    #                 "No entries found after all retries. This could be normal if there are no results in this range."
-    #             )
-    #             raise Exception(
-    #                 "Stopping the extraction after 3 retries, try again soon."
-    #             )
-    #
-    #         return response.text
-    #     except requests.RequestException as e:
-    #         log_and_raise_exception(f"Error fetching data from {url}: {e}")
-
-    # Extract metadata as a dictionary: total_results, start_index, items_per_page
-    # Log any errors
-    def print_arxiv_meta_data(self, xml_content: str) -> Dict[str, Any]:
+    def extract_meta_data(self, xml_content: str) -> Dict[str, Any]:
         try:
             root = xml.fromstring(xml_content)
             ns = {
@@ -122,19 +115,14 @@ class ArxivExtractor(IExtractor):
             total_results = int(root.find("opensearch:totalResults", ns).text)
             start_index = int(root.find("opensearch:startIndex", ns).text)
             items_per_page = int(root.find("opensearch:itemsPerPage", ns).text)
-            logging.info(f"Total Results: {total_results}")
-            logging.info(f"Start Index: {start_index}")
-            logging.info(f"Items Per Page: {items_per_page}")
             return {
                 "total_results": total_results,
                 "start_index": start_index,
                 "items_per_page": items_per_page,
             }
         except Exception as e:
-            log_and_raise_exception(f"Error parsing metadata: {e}")
+            log_and_raise_exception(f"Error parsing metadata", e)
 
-    # Parse XML content, extract individual entries and return them as a list of strings
-    # Log any errors
     def extract_entries(self, xml_content: str) -> List[str]:
         try:
             root = xml.fromstring(xml_content)
@@ -142,117 +130,52 @@ class ArxivExtractor(IExtractor):
             entries = root.findall("atom:entry", ns)
             return [xml.tostring(entry, encoding="unicode") for entry in entries]
         except Exception as e:
-            log_and_raise_exception(f"Error extracting entries: {e}")
+            log_and_raise_exception(f"Error extracting entries", e)
 
-    def check_and_save_new_entries(self, entries):
+    def check_and_save_new_entries(self, entries: List[str]):
         for entry in entries:
-            # Parse the XML entry
             try:
-                entry_element = xml.fromstring(
-                    entry
-                )  # Convert XML string into ElementTree object
-                title = entry_element.find(
-                    "{http://www.w3.org/2005/Atom}title"
-                ).text  # Extract title
-                category = entry_element.find(
-                    "{http://www.w3.org/2005/Atom}category"
-                ).attrib.get(
-                    "term", "No Category"
-                )  # Extract Category. If no category found: No category
-                published_date = entry_element.find(
-                    "{http://www.w3.org/2005/Atom}published"
-                ).text  # Extract published date
-                safe_title = (
-                    f"{published_date}_"
-                    + "".join([c if c.isalnum() else "_" for c in title])[:40]
-                )  # title: replace non-alphanumeric characters with underscores
+                element = xml.fromstring(entry)
+                title = parse_titles_and_labels(element.find(f"{self.ID}title").text)[
+                    :80
+                ]
+                published_date = element.find(f"{self.ID}published").text
+                dt = datetime.fromisoformat(
+                    published_date.replace("Z", "+00:00")
+                ).strftime("%Y-%m-%d_%H-%M")
 
-                # Create a directory for an entry
-                entry_dir = self.data_path / safe_title
-                entry_dir.mkdir(
-                    parents=True, exist_ok=True
-                )  # Creates the directory if it doesn’t already exist.
+                entry_path = self.data_path / f"{dt}-{title}"
+                ensure_path_exists(entry_path)
+                file_path = entry_path / f"{title}.xml"
 
-                # Define the path for the XML file of the entry
-                xml_file_path = entry_dir / f"entry_{safe_title}.xml"
+                # category_element = xml.Element("category_term")
+                # category = element.find(f"{self.ID}category").attrib.get(
+                #     "term", "No Category"
+                # )
+                # category_element.text = category
+                # element.append(category_element)
 
-                # Add the 'category_term' element to the XML file
-                category_element = xml.Element(
-                    "category_term"
-                )  # Creates a new XML element for the category term.
-                category_element.text = (
-                    category  # Sets the text of the new category element
-                )
-                entry_element.append(
-                    category_element
-                )  # Appends the new category element to the original XML entry.
-                tree = xml.ElementTree(
-                    entry_element
-                )  # Creates an ElementTree object from the updated XML element.
-                tree.write(
-                    xml_file_path, encoding="utf-8", xml_declaration=True
-                )  # Writes the XML data to the specified file path
+                tree = xml.ElementTree(element)
+                tree.write(file_path, encoding="utf-8", xml_declaration=True)
 
-                # Find and save the PDF file
-                pdf_url = None  # Initializes the PDF URL variable
-                # Iterates over all link elements in the XML
-                for link in entry_element.findall("{http://www.w3.org/2005/Atom}link"):
-                    if (
-                        link.attrib.get("title") == "pdf"
-                    ):  # Checks if the link’s title attribute is 'pdf'.
-                        pdf_url = link.attrib["href"]  # Extracts the URL if found.
-                        break
-
-                # IF found, download and save the PDF File
-                if pdf_url:
-                    try:
-                        pdf_file_path = (
-                            entry_dir / f"paper_{safe_title}.pdf"
-                        )  # Defines the path for the PDF file
-                        response = requests.get(
-                            pdf_url
-                        )  # GET request to download the PDF.
-                        response.raise_for_status()
-                        with pdf_file_path.open("wb") as f:
-                            f.write(response.content)
-                        logging.info(f"Saved {pdf_file_path}")
-                    except Exception as e:
-                        logging.info("Couldnt download pdf.")
+                attachment_path = entry_path / "attachments"
+                ensure_path_exists(attachment_path)
+                self.try_save_pdf(element, attachment_path, title)
 
             except Exception as e:
-                log_and_raise_exception(f"Error saving entries and papers to file: {e}")
+                log_and_raise_exception(f"Error saving entries and papers to file", e)
 
-    def save_extracted_data(self, data: str | Dict[str, Any]) -> Path:
-        raise NotImplementedError
-
-    # Trim excessive whitespace from the XML content
-    def non_contextual_transformation(self, data_path: Path):
-        # iteriate over each item in directoy data_path
-        for entry_dir in Path(data_path).iterdir():
-            if not entry_dir.is_dir():
-                log_and_raise_exception(f"Expected directory but found {entry_dir}")
-
-        # within each directory iterates over files to find xml suffix
-        for file_path in entry_dir.iterdir():
-            if not file_path.is_file() or file_path.suffix != ".xml":
-                log_and_raise_exception(f"Found non-XML file: {file_path}")
-
-            # Read and trim excessive whitespace from XML content
-            xml_content_transformed = trim_excessive_whitespace(load_file(file_path))
-
-            # Write the transformed XML content back to the file
-            write_file(file_path, xml_content_transformed)
-
-        # Remove the original directory after processing all files
-        shutil.rmtree(entry_dir)
-
-    def build_query(self) -> str:
-        checkpoint = self.restore_checkpoint()
-        checkpoint_range = self.create_checkpoint_end_for_this_run(
-            self.checkpoint_range
-        )
-
-        query = f"search_query={self.query}"
-        query += f"+AND+submittedDate:[{checkpoint}+TO+{checkpoint_range}]"
-        query += f"&sortBy=submittedDate&sortOrder=ascending"
-        return query
+    def try_save_pdf(self, element: Any, path: Path, title: str):
+        pdf_links = [
+            link
+            for link in element.findall(f"{self.ID}link")
+            if link.attrib.get("title") == "pdf"
+        ]
+        for link in pdf_links:
+            file_path = path / f"{title}.pdf"
+            response = make_get_request(link.attrib["href"])
+            # response = requests.get(link.attrib["href"])
+            # response.raise_for_status()
+            with file_path.open("wb") as f:
+                f.write(response.content)
+            logging.info(f"Saved {file_path}")

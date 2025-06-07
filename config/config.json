@@ -4,6 +4,7 @@
     "checkpoint_path": "data/checkpoints/",
     "logging_path": "data/logs/",
     "data_path": "data/pile/",
+    "orchestration_path": "orchestration/",
     "db": {
       "url": "wehrenberger@localhost",
       "port": "5432",
@@ -15,6 +16,7 @@
     "checkpoint_path": "data/checkpoints/",
     "logging_path": "data/logs/",
     "data_path": "/vast/lu72hip/data/pile/",
+    "orchestration_path": "orchestration/",
     "db": {
       "url": "lu72hip@localhost",
       "port": "5433",

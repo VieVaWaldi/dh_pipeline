@@ -1,40 +1,42 @@
 import json
 import logging
+import time
 from pathlib import Path
 from typing import Dict
 from urllib.parse import urlparse
 
 import requests
+from requests import Response
 
+from lib.requests.retry_request import retry_on_failure
+from lib.sanitizers.parse_text import flatten_string
 from utils.error_handling.error_handling import log_and_raise_exception
 
-MAX_RESPONSE_LOG_LENGTH = 2048
+MAX_RESPONSE_LOG_LENGTH = 1024
 
 
-def make_get_request(url: str, params: Dict, header: Dict = None) -> Dict:
+@retry_on_failure()
+def make_get_request(
+    url: str, params: Dict = None, header: Dict = None, expect_json: bool = True
+) -> dict | Response:
     """
-    Makes a get request given a url and params.
-    Returns a json Dict or raises an exception.
+    Makes a get request given an url and optional params and header.
+    Returns a json Dict for expect_json else text or raises an exception.
     """
     try:
-        if header:
-            response = requests.get(url, params=params, headers=header, timeout=60)
-        else:
-            response = requests.get(url, params=params, timeout=60)
-        if response.status_code == 200:
-            logging.info(
-                "GET Request status: %s",
-                json.dumps(response.json(), separators=(",", ":"))[
-                    :MAX_RESPONSE_LOG_LENGTH
-                ],
-            )
-            return response.json()
-        else:
+        response = requests.get(url, params=params, headers=header, timeout=60)
+        if response.status_code != 200:
             log_and_raise_exception(
                 f"Error fetching data: {response.status_code}, {response.text[:MAX_RESPONSE_LOG_LENGTH]}"
             )
+
+        logging.info(
+            "GET Request status: %s",
+            flatten_string(response.text[:MAX_RESPONSE_LOG_LENGTH]),
+        )
+        return response.json() if expect_json else response
     except Exception as e:
-        log_and_raise_exception(f"Error fetching data: {e}")
+        log_and_raise_exception(f"Error fetching data", e)
 
 
 def make_delete_request(url: str, params: Dict) -> Dict:
@@ -57,7 +59,7 @@ def make_delete_request(url: str, params: Dict) -> Dict:
                 f"Error fetching data: {response.status_code}, {response.text[:MAX_RESPONSE_LOG_LENGTH]}"
             )
     except Exception as e:
-        log_and_raise_exception(f"Error fetching data: {e}")
+        log_and_raise_exception(f"Error fetching data", e)
 
 
 def download_file(url: str, save_path: Path) -> Path:
@@ -77,7 +79,7 @@ def download_file(url: str, save_path: Path) -> Path:
             logging.info(f"File downloaded successfully to {file_path}")
         return file_path
     except Exception as e:
-        log_and_raise_exception(f"Error fetching data: {e}")
+        log_and_raise_exception(f"Error fetching data", e)
 
 
 def get_base_url(url: str):

@@ -15,6 +15,8 @@ class CustomFormatter(logging.Formatter):
     """
 
     def format(self, record):
+        if record.levelname == "WARNING":
+            record.levelname = "WARN"
         record.levelname = f"{record.levelname:<5}"
         record.filename = f"{record.filename:<17}"
         return super().format(record)

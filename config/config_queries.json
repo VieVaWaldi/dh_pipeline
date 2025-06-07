@@ -1,4 +1,20 @@
 {
+  "arxiv": {
+    "checkpoint": "submittedDateTo",
+    "queries": [
+      {
+        "query": "(all:digital+OR+all:heritage+OR+all:humanities+OR+all:cultural)",
+        "download_attachments": true,
+        "checkpoint_start": "1990-01-01-00-00",
+        "checkpoint_range": "6"
+      },
+      {
+        "query": "all:computing+AND+(all:humanities+OR+all:heritage)",
+        "download_attachments": true,
+        "checkpoint_range": "6"
+      }
+    ]
+  },
   "cordis": {
     "checkpoint": "startDate",
     "queries": [
@@ -21,22 +37,6 @@
         "query": "((computing AND cultural) OR (computing AND heritage))",
         "download_attachments": false,
         "checkpoint_range": "10"
-      }
-    ]
-  },
-  "arxiv": {
-    "checkpoint": "submittedDateTo",
-    "queries": [
-      {
-        "query": "(all:digital+OR+all:heritage+OR+all:humanities+OR+all:cultural)",
-        "download_attachments": true,
-        "checkpoint_start":"199001010000",
-        "checkpoint_range": "6"
-      },
-      {
-        "query": "all:computing+AND+(all:humanities+OR+all:heritage)",
-        "download_attachments": true,
-        "checkpoint_range": "6"
       }
     ]
   },

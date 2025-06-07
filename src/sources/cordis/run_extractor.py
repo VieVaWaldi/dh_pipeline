@@ -97,7 +97,7 @@ class CordisExtractor(IExtractor):
             # need to overwrite the existing folders if we want to update in place
 
             if not file_path.is_file() or not (file_path.suffix == ".xml"):
-                log_and_raise_exception("We got a cordis record that is not an XML.")
+                log_and_raise_exception("We got a cordis record that is not an XML")
 
             record_dataset_path = self.data_path / file_path.stem
             ensure_path_exists(record_dataset_path)
