@@ -33,7 +33,7 @@ def run_extractor(config: ExtractorConfig, extractor_class: Type[IExtractor]):
     while continue_extraction:
         try:
             extractor = extractor_class(extractor_config)
-            logging.info(f"Extracting from checkpoint {extractor.checkpoint}")
+            logging.info(f"Next extraction iteration from checkpoint {extractor.checkpoint}")
             continue_extraction = extractor.extract_until_next_checkpoint()
         except Exception as e:
             log_and_raise_exception(f"Error during extraction iteration", e)

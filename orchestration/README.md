@@ -16,6 +16,14 @@ airflow api-server &
 airflow dag-processor 
 ```
 
+## Orchestration Flow WIP
+
+- In `run_pipeline.py`.
+- Starts extractors and loaders as sbatch scripts with --wait and retries when an error occurred.
+- Each loader waits for its extractor
+- Transformation starts after all loaders are done
+- Enrichment starts sequentially after transformation is done.
+
 ## Setup
 
 Ensure `export AIRFLOW_HOME=~/.airflow` is set up in .bashrc or in .zshrc

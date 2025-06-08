@@ -1,47 +1,43 @@
 # Extraction
 
-General information on extraction.
+Extractions are split into checkpoints, which are updated after each extraction iteration. The `run_extraction.py`
+script continues running extraction loops as long as individual extractors indicate they have more data to extract
+via `should_continue()`. This continuation logic is domain-specific.
 
-## Extractor Runner
+All extractors are configured in [config_queries.json](../../../config/config_queries.json). An extractors starts
+from `checkpoint_start` as defined in the config.
+All extractors must inherit the `IExtractor`interface which sets up all parameters, path and the checkpoints.
 
-- Config
-- Should Continue
+**Examples:**
 
-## Extractor Interface
-
-- Parent of all extractors
-- ...
-
-> Should just explain the methods and interface
+- **Arxiv**: Uses `submittedDate` and continues until `datetime.now()` is reached. When the final checkpoint is reached,
+  the checkpoint is *not* advanced, allowing the next run to collect newly submitted papers within the same time window.
+- **Cordis**: Uses `startDate` and continues until `datetime.now() + 10 years` to collect projects starting in the
+  future. When the final checkpoint is reached, the checkpoint is reset to 5 years ago to collect project updates in the
+  next run, overwriting previously extracted projects with their latest state.
 
 ## Saving data
 
-- Data has to be saved under `self.data_path` which is configured in `i_extractor.py`
-- Each response gets its own folder, preferably named: `YYYY-MM-DD_HH-MM-sanitize(title)`
-- Files are saved as `response_folder/sanitize(title)`
-- Attachments are saved under `response_folder/atachments/sanitize(title)`
-- When extracting the same data again, it will overwrite existing data if given the same name. This is also updates the
-  file mtime which is important for the loader checkpoint
+- Each API response (publication, project etc.) is called a **record_dataset**.
+- Each record_dataset gets its own folder, named: `YYYY-MM-DD_HH-MM-sanitize(title)`.
+- This folder has to be saved in `self.data_path` which is preconfigured in `i_extractor.py`.
+- Attachments are saved under `YYYY-MM-DD_HH-MM-record_dataset/attachments/sanitize(title)`
+- When extracting the same data again, it will overwrite existing data if given the same name. This also updates the
+  file `mtime` which is important for the loader checkpoint
 
-## Checkpoint
+## Checkpoint Notes
 
-> Should continue extraction ? usually we want to extract until today (minus 1 day to start next extraction not with
-> overlap),
-> Or until a time in the future, eg for cordis where there is more data in the future
-
-> Save checkpoint: for simple cases, when should not continue extraction, save last checkpoint, dont update it. so we
-> get the later data next run.
-> for cases like cordis we might want to store a checkpoint from n years ago to
-> refetch updates for past projects.
-
-Each extractor needs their custom checkpoint logic.
-
-The relevant thoughts to make are:
-
-- Is it date, total results etc. ?
-- Do we need to update older data? (Loader checks file modification dates and gets updates)
+- When extracting, 1 day should be removed in `get_checkpoint_end(minus_1_day=True)` to not have the checkpoint runs
+  overlap each other.
+- In simple cases, like submission dates which can not lie in the future, after `should_continue()` is reached the
+  checkpoint should not be saved, to collect updates within the checkpoint range in the next run.
+- In more complicated cases, like projects which get updated over time and are planned for the future,
+  after `should_continue()` returns false, an old checkpoint should be saved to overwrite existing record_datasets with
+  relevant
+  updates. It is important to pick an existing checkpoint which points to the right data, so that it can be overwritten.
 
 ## Sleep between requests
 
-- Generally advised between pagination and next extraction
-- A retry mechanism with exponential backoff is available for making requests, use as @decorator
+- Generally advised between pagination and next extraction. Each extraction automatically
+  uses `sleep_between_extractions=5`.
+- A retry mechanism with exponential backoff decorator is available for `make_get_request(enable_retry=True)`.

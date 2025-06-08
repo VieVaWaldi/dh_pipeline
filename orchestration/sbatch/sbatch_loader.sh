@@ -15,6 +15,12 @@ fi
 SOURCE=$1
 QUERY_ID=$2
 
+
+
+# DONT FORGET DATABASE :)
+
+
+
 cd /home/lu72hip/DIGICHer/dh_pipeline || exit
 source venv/bin/activate
 
