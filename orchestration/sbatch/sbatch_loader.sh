@@ -1,8 +1,8 @@
 #!/bin/bash
 
 #SBATCH --job-name=loader
-#SBATCH --partition=long
-#SBATCH --time=144:00:00
+#SBATCH --partition=standard
+#SBATCH --time=72:00:00
 #SBATCH --output=/home/lu72hip/DIGICHer/dh_pipeline/data/logs/orchestration/loader/run_%j.log
 
 mkdir -p /home/lu72hip/DIGICHer/dh_pipeline/data/logs/orchestration/loader/
