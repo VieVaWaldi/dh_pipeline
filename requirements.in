@@ -1,0 +1,17 @@
+datamodels
+numpy
+openai
+pandas
+pip-tools
+protobuf
+psutil
+psycopg2
+PyPDF2
+python-dotenv
+python-dateutil
+selenium
+spacy
+SQLAlchemy==1.4.54  # Needed for Airflow
+urllib3
+xmltodict
+xlrd

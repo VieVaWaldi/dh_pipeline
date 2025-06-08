@@ -36,8 +36,8 @@ class LoaderConfig:
 def run_loader(config: LoaderConfig):
     start_time = datetime.now()
     logging.info(
-        f"Starting extraction for {config.name}, query_id: {config.query_id}\
-        \n\t- for query: {get_query_config()[config.name][config.query_id]['query']}"
+        f"Starting loading for {config.name}, query_id: {config.query_id}\
+        \n\t- for query: {get_query_config()[config.name]['queries'][config.query_id]['query']}"
     )
 
     cp = CheckpointManager(config.name, config.query_id)
@@ -92,10 +92,10 @@ def validate(source_name: str, doc_count: int, skip_count: int):
 
 
 if __name__ == "__main__":
-    # import sys
-    #
-    # dev_args = ["--source", "arxiv", "--run", "0"]
-    # sys.argv.extend(dev_args)
+    import sys
+
+    dev_args = ["--source", "arxiv", "--query_id", "0"]
+    sys.argv.extend(dev_args)
 
     parser = argparse.ArgumentParser(description="Loader Runner")
     parser.add_argument("--source", help="Select data source", required=True)
@@ -121,7 +121,7 @@ if __name__ == "__main__":
         name=args.source,
         loader_class=loader_classes[args.source],
         source_path=get_source_data_path(args.source, query_id=args.query_id),
-        query_id=args.run,
+        query_id=args.query_id,
     )
 
     run_loader(loader_config)

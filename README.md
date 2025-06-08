@@ -34,6 +34,12 @@ Installs the repo as an editable package and install all requirements:
 
 > pip install -e .
 
+## Installing new packages
+
+1. Add new package to `requirements.in`
+2. `pip-compile requirements.in` (generates locked requirements.txt)
+3. `pip-sync requirements.txt` (installs new packages, removes unused ones)
+
 ### Database
 
 A `PostgreSQL DB 17.2` is being used for the project.

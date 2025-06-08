@@ -3,9 +3,11 @@
 
 -- CREATE SCHEMA IF NOT EXISTS meta_heritage;
 
-select * from meta_heritage.stakeholder;
+select s.id, s.name, o.name from meta_heritage.stakeholder s
+join meta_heritage.j_stakeholder_organization_type so on s.id = so.stakeholder_id
+join meta_heritage.organization_type o on o.id = so.organization_type_id;
 
-select * from meta_heritage.nuts_code;
+select * from meta_heritage.j_stakeholder_heritage_topic;
 
 -- select * from meta_heritage.stakeholder s
 -- JOIN meta_heritage.j_stakeholder_organization_type so on so.stakeholder_id = s.id

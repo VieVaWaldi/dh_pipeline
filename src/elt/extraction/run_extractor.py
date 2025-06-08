@@ -43,11 +43,6 @@ def run_extractor(config: ExtractorConfig, extractor_class: Type[IExtractor]):
 
 if __name__ == "__main__":
 
-    import sys
-
-    dev_args = ["--source", "arxiv", "--query_id", "0"]
-    sys.argv.extend(dev_args)
-
     parser = argparse.ArgumentParser(description="Extractor Runner")
     parser.add_argument("--source", help="Select data source", required=True)
     parser.add_argument(
