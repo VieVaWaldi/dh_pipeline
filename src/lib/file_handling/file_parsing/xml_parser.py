@@ -5,7 +5,7 @@ from typing import List, Dict, Iterator, Any
 
 import xmltodict
 
-from utils.error_handling.error_handling import log_and_raise_exception
+from utils.error_handling.error_handling import log_and_exit
 
 
 def get_xml_as_dict_recursively(file_path: Path) -> Iterator[Dict[str, Any]]:
@@ -48,7 +48,7 @@ def extract_xml_as_dict(file_path: Path) -> Dict[str, Any]:
         root = tree.getroot()
         return element_to_dict(root)
     except eT.ParseError:
-        log_and_raise_exception(f"Error parsing XML file: {file_path}")
+        log_and_exit(f"Error parsing XML file: {file_path}")
 
 
 def extract_element_as_dict(file_path: Path, element_name: str) -> List[Dict[str, str]]:
@@ -63,7 +63,7 @@ def extract_element_as_dict(file_path: Path, element_name: str) -> List[Dict[str
             element_to_dict(elem) for elem in root.iter() if elem.tag == element_name
         ]
     except eT.ParseError:
-        log_and_raise_exception(f"Error parsing XML file: {file_path}")
+        log_and_exit(f"Error parsing XML file: {file_path}")
 
 
 def element_to_dict(element: eT.Element) -> Dict[str, str]:
@@ -90,4 +90,4 @@ def extract_element_texts(file_path: Path, element_name: str) -> List[str]:
             if elem.tag == element_name and elem.text is not None
         ]
     except eT.ParseError:
-        log_and_raise_exception(f"Error parsing XML file: {file_path}")
+        log_and_exit(f"Error parsing XML file: {file_path}")

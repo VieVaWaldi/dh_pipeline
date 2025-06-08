@@ -18,8 +18,8 @@ airflow dag-processor
 
 ## Orchestration Flow WIP
 
-- In `run_pipeline.py`.
-- Starts extractors and loaders as sbatch scripts with --wait and retries when an error occurred.
+- In `run_pipeline.py`, runs every 30 days.
+- Starts extractors and loaders as sbatch scripts with --wait and retries up to 3 times when an error occurred.
 - Each loader waits for its extractor
 - Transformation starts after all loaders are done
 - Enrichment starts sequentially after transformation is done.

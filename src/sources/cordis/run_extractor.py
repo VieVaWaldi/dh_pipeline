@@ -26,7 +26,7 @@ from lib.requests.requests import (
     get_base_url,
 )
 from utils.config.config_loader import get_query_config
-from utils.error_handling.error_handling import log_and_raise_exception
+from utils.error_handling.error_handling import log_and_exit
 
 
 class CordisExtractor(IExtractor):
@@ -47,7 +47,7 @@ class CordisExtractor(IExtractor):
     def extract_until_checkpoint_end(self, query: str) -> bool:
         api_key = os.getenv("API_KEY_CORDIS")
         if not api_key:
-            log_and_raise_exception("API Key not found")
+            log_and_exit("API Key not found")
 
         task_id = self._cordis_get_extraction_task_id(api_key, query)
         download_uri, number_of_records = self._cordis_get_download_uri(
@@ -97,7 +97,7 @@ class CordisExtractor(IExtractor):
             # need to overwrite the existing folders if we want to update in place
 
             if not file_path.is_file() or not (file_path.suffix == ".xml"):
-                log_and_raise_exception("We got a cordis record that is not an XML")
+                log_and_exit("We got a cordis record that is not an XML")
 
             record_dataset_path = self.data_path / file_path.stem
             ensure_path_exists(record_dataset_path)
@@ -121,7 +121,7 @@ class CordisExtractor(IExtractor):
             try:
                 return datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S")
             except ValueError:
-                log_and_raise_exception(f"Could not parse date {date_str}")
+                log_and_exit(f"Could not parse date {date_str}")
 
     def _cordis_get_extraction_task_id(self, key: str, query: str) -> str:
         """
@@ -137,7 +137,7 @@ class CordisExtractor(IExtractor):
 
         response = make_get_request(base_url, params)
         if response["payload"].get("error"):
-            log_and_raise_exception(f"Response error: {response['payload']['error']}")
+            log_and_exit(f"Response error: {response['payload']['error']}")
 
         return response["payload"]["taskID"]
 
@@ -159,12 +159,12 @@ class CordisExtractor(IExtractor):
                 )
 
             if response["payload"].get("error"):
-                log_and_raise_exception(
+                log_and_exit(
                     f"Response error: {response['payload']['error']}"
                 )
 
             if datetime.now() - start_time >= timedelta(hours=12):
-                log_and_raise_exception(
+                log_and_exit(
                     "Error: Aborted because 12 hours passed since request start."
                 )
 

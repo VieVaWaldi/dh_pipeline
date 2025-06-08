@@ -18,7 +18,7 @@ from lib.requests.requests import (
 )
 from interfaces.i_extractor import IExtractor
 from utils.config.config_loader import get_query_config
-from utils.error_handling.error_handling import log_and_raise_exception
+from utils.error_handling.error_handling import log_and_exit
 
 
 class OpenAIREExtractor(IExtractor):
@@ -137,7 +137,7 @@ class OpenAIREExtractor(IExtractor):
             else:
                 return [], total_projects, current_page
         except (KeyError, TypeError) as e:
-            log_and_raise_exception(f"Error parsing projects response", e)
+            log_and_exit(f"Error parsing projects response", e)
 
     def _fetch_research_products(self, project_id: str) -> list:
         """

@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 from typing import List, Dict, Any, Callable, Iterator
 
-from utils.error_handling.error_handling import log_and_raise_exception
+from utils.error_handling.error_handling import log_and_exit
 
 
 def get_json_as_dict_recursively(file_path: Path) -> Iterator[Dict[str, Any]]:
@@ -41,7 +41,7 @@ def extract_json_as_dict(file_path: Path) -> Dict[str, Any]:
         with open(file_path, "r") as f:
             return json.load(f)
     except json.JSONDecodeError:
-        log_and_raise_exception(f"Error parsing JSON file: {file_path}")
+        log_and_exit(f"Error parsing JSON file: {file_path}")
 
 
 def extract_key_values(file_path: Path, key: str) -> List[Any]:

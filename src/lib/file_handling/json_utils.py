@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Any, Dict
 
 from lib.file_handling.file_utils import ensure_path_exists, ENCODING
-from utils.error_handling.error_handling import log_and_raise_exception
+from utils.error_handling.error_handling import log_and_exit
 
 
 def load_json_file(path: Path) -> Dict[str, Any] | None:
@@ -19,7 +19,7 @@ def load_json_file(path: Path) -> Dict[str, Any] | None:
             data = json.load(file)
         return data
     except Exception as e:
-        log_and_raise_exception(f"Error loading json: {path}", e)
+        log_and_exit(f"Error loading json: {path}", e)
 
 
 def save_json_dict(dictionary: Dict[str, Any], path: Path):
@@ -29,4 +29,4 @@ def save_json_dict(dictionary: Dict[str, Any], path: Path):
         with open(path, "w", encoding=ENCODING) as f:
             json.dump(dictionary, f, indent=4, ensure_ascii=False)
     except Exception as e:
-        log_and_raise_exception(f"Error saving json: {path}", e)
+        log_and_exit(f"Error saving json: {path}", e)

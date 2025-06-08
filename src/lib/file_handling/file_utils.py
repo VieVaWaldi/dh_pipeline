@@ -1,7 +1,7 @@
 import shutil
 from pathlib import Path
 
-from utils.error_handling.error_handling import log_and_raise_exception
+from utils.error_handling.error_handling import log_and_exit
 
 ENCODING = "utf-8"
 
@@ -19,7 +19,7 @@ def load_file(path: Path) -> str | None:
             data = file.read().strip()
         return data
     except Exception as e:
-        log_and_raise_exception(f"Error loading file: {path}", e)
+        log_and_exit(f"Error loading file: {path}", e)
 
 
 def write_file(path: Path, content: str) -> None:
@@ -29,7 +29,7 @@ def write_file(path: Path, content: str) -> None:
         with open(path, "w", encoding=ENCODING) as file:
             file.write(content)
     except Exception as e:
-        log_and_raise_exception(f"Error writing file: {path}", e)
+        log_and_exit(f"Error writing file: {path}", e)
 
 
 def ensure_path_exists(path: Path) -> None:
@@ -49,7 +49,7 @@ def delete_if_empty(folder_path: Path) -> None:
         try:
             shutil.rmtree(folder_path)
         except OSError as e:
-            log_and_raise_exception(f"Error deleting folder: {folder_path} ", e)
+            log_and_exit(f"Error deleting folder: {folder_path} ", e)
 
 
 def raise_error_if_directory_does_not_exist(directory_path: Path) -> None:
@@ -57,4 +57,4 @@ def raise_error_if_directory_does_not_exist(directory_path: Path) -> None:
     Check if a directory exists and raise an error if it doesn't.
     """
     if not directory_path.is_dir():
-        log_and_raise_exception(f"The directory does not exist: {directory_path}")
+        log_and_exit(f"The directory does not exist: {directory_path}")

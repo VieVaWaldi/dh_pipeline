@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 from interfaces.i_extractor import IExtractor, ExtractorConfig
 from sources.arxiv.extractor import ArxivExtractor
 from utils.config.config_loader import get_query_config
-from utils.error_handling.error_handling import log_and_raise_exception
+from utils.error_handling.error_handling import log_and_exit
 from utils.logger.logger import setup_logging
 from utils.logger.timer import log_run_time
 
@@ -33,10 +33,9 @@ def run_extractor(config: ExtractorConfig, extractor_class: Type[IExtractor]):
     while continue_extraction:
         try:
             extractor = extractor_class(extractor_config)
-            logging.info(f"Next extraction iteration from checkpoint {extractor.checkpoint}")
             continue_extraction = extractor.extract_until_next_checkpoint()
         except Exception as e:
-            log_and_raise_exception(f"Error during extraction iteration", e)
+            log_and_exit(f"Error during extraction iteration", e)
 
     log_run_time(start_time)
     logging.info(f"Successfully completed extraction for {config.name}")
@@ -44,10 +43,10 @@ def run_extractor(config: ExtractorConfig, extractor_class: Type[IExtractor]):
 
 if __name__ == "__main__":
 
-    # import sys
-    #
-    # dev_args = ["--source", "arxiv", "--query_id", "0"]
-    # sys.argv.extend(dev_args)
+    import sys
+
+    dev_args = ["--source", "arxiv", "--query_id", "0"]
+    sys.argv.extend(dev_args)
 
     parser = argparse.ArgumentParser(description="Extractor Runner")
     parser.add_argument("--source", help="Select data source", required=True)

@@ -87,9 +87,10 @@ A `PostgreSQL DB 17.2` is being used for the project.
 **Utils:**
 
 - Utils for config, logging and errors under `/src/utils`.
-- Use `config_loader` to load the configuration files.
+- Use `get_config()` to load the configuration files and `get_query_config()` for the source parameters.
 - Use `load_dotenv()` to make the API key available.
 - Use the logger like this: `setup_logging('module','name')`
+- Fail Fast: `log_and_exit(...)` is used whenever a non-clearable exception happens.
 
 **Tests**
 
@@ -107,4 +108,4 @@ A `PostgreSQL DB 17.2` is being used for the project.
 - Use Black Formatter for clean code `pip install black`.
 - Use utils for reusable code like request, file handling, file parsing, data validation, sanitization or others.
 - Use the logging module to log info's and errors.
-- Use a defensive approach. When a request fails: Log error, don't save the data and try again.
+- Use a defensive approach. When a request fails, fail fast: Log error, don't save the data and try again.

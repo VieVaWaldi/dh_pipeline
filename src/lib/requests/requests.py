@@ -8,35 +8,52 @@ from urllib.parse import urlparse
 import requests
 from requests import Response
 
-from lib.requests.retry_request import retry_on_failure
+from lib.requests.retry_request import retry_on_failure, get_connection_retry_session
 from lib.sanitizers.parse_text import flatten_string
-from utils.error_handling.error_handling import log_and_raise_exception
+from utils.error_handling.error_handling import log_and_exit
 
 MAX_RESPONSE_LOG_LENGTH = 1024
 
 
 @retry_on_failure()
 def make_get_request(
-    url: str, params: Dict = None, header: Dict = None, expect_json: bool = True
+    url: str,
+    params: Dict = None,
+    header: Dict = None,
+    log_response=True,
+    expect_json: bool = True,
 ) -> dict | Response:
     """
     Makes a get request given an url and optional params and header.
     Returns a json Dict for expect_json else text or raises an exception.
+    The standard keep-alive should help to endure some connections better.
+    @retry_on_failure can be enabled with enable_retry=True.
+    Uses get_connection_retry_session() to retry failed connection establishments.
     """
     try:
-        response = requests.get(url, params=params, headers=header, timeout=60)
+        default_headers = {"Connection": "keep-alive"}
+        if header:
+            default_headers.update(header)
+        response = get_connection_retry_session().get(
+            url, params=params, headers=default_headers, timeout=60
+        )
         if response.status_code != 200:
-            log_and_raise_exception(
+            log_and_exit(
                 f"Error fetching data: {response.status_code}, {response.text[:MAX_RESPONSE_LOG_LENGTH]}"
             )
 
         logging.info(
-            "GET Request status: %s",
-            flatten_string(response.text[:MAX_RESPONSE_LOG_LENGTH]),
+            "GET Request status for request %s: %s",
+            url,
+            (
+                flatten_string(response.text[:MAX_RESPONSE_LOG_LENGTH])
+                if log_response
+                else ""
+            ),
         )
         return response.json() if expect_json else response
     except Exception as e:
-        log_and_raise_exception(f"Error fetching data", e)
+        log_and_exit(f"Error fetching data", e)
 
 
 def make_delete_request(url: str, params: Dict) -> Dict:
@@ -55,11 +72,11 @@ def make_delete_request(url: str, params: Dict) -> Dict:
             )
             return response.json()
         else:
-            log_and_raise_exception(
+            log_and_exit(
                 f"Error fetching data: {response.status_code}, {response.text[:MAX_RESPONSE_LOG_LENGTH]}"
             )
     except Exception as e:
-        log_and_raise_exception(f"Error fetching data", e)
+        log_and_exit(f"Error fetching data", e)
 
 
 def download_file(url: str, save_path: Path) -> Path:
@@ -79,7 +96,7 @@ def download_file(url: str, save_path: Path) -> Path:
             logging.info(f"File downloaded successfully to {file_path}")
         return file_path
     except Exception as e:
-        log_and_raise_exception(f"Error fetching data", e)
+        log_and_exit(f"Error fetching data", e)
 
 
 def get_base_url(url: str):

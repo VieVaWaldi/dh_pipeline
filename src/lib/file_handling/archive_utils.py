@@ -2,7 +2,7 @@ import logging
 import zipfile
 from pathlib import Path
 
-from utils.error_handling.error_handling import log_and_raise_exception
+from utils.error_handling.error_handling import log_and_exit
 
 
 def unpack_and_remove_zip(zip_path: Path):
@@ -19,4 +19,4 @@ def unpack_and_remove_zip(zip_path: Path):
         zip_path.unlink()
         logging.info(f"Removed the zip file: {zip_path}")
     except Exception as e:
-        log_and_raise_exception(f"Error on handling the zip: {zip_path}", e)
+        log_and_exit(f"Error on handling the zip: {zip_path}", e)

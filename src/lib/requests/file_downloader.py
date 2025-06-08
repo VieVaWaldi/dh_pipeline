@@ -6,7 +6,7 @@ from pathlib import Path
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
-from utils.error_handling.error_handling import log_and_raise_exception
+from utils.error_handling.error_handling import log_and_exit
 from lib.file_handling.file_utils import ensure_path_exists
 from lib.requests.requests import get_base_url
 
@@ -39,7 +39,7 @@ class SeleniumFileDownloader:
 
     def download_file(self, url: str, only_from_url: str) -> bool:
         if get_base_url(url) != only_from_url:
-            log_and_raise_exception(
+            log_and_exit(
                 f"Trying to download a non {only_from_url} cordis pdf file."
             )
         try:

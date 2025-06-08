@@ -14,7 +14,7 @@ from lib.extractor.utils import trim_excessive_whitespace
 from lib.file_handling.file_utils import load_file, write_file, ensure_path_exists
 from lib.requests.requests import make_get_request
 from lib.sanitizers.parse_text import parse_titles_and_labels
-from utils.error_handling.error_handling import log_and_raise_exception
+from utils.error_handling.error_handling import log_and_exit
 
 
 class ArxivExtractor(IExtractor):
@@ -121,7 +121,7 @@ class ArxivExtractor(IExtractor):
                 "items_per_page": items_per_page,
             }
         except Exception as e:
-            log_and_raise_exception(f"Error parsing metadata", e)
+            log_and_exit(f"Error parsing metadata", e)
 
     def extract_entries(self, xml_content: str) -> List[str]:
         try:
@@ -130,7 +130,7 @@ class ArxivExtractor(IExtractor):
             entries = root.findall("atom:entry", ns)
             return [xml.tostring(entry, encoding="unicode") for entry in entries]
         except Exception as e:
-            log_and_raise_exception(f"Error extracting entries", e)
+            log_and_exit(f"Error extracting entries", e)
 
     def check_and_save_new_entries(self, entries: List[str]):
         for entry in entries:
@@ -148,13 +148,6 @@ class ArxivExtractor(IExtractor):
                 ensure_path_exists(entry_path)
                 file_path = entry_path / f"{title}.xml"
 
-                # category_element = xml.Element("category_term")
-                # category = element.find(f"{self.ID}category").attrib.get(
-                #     "term", "No Category"
-                # )
-                # category_element.text = category
-                # element.append(category_element)
-
                 tree = xml.ElementTree(element)
                 tree.write(file_path, encoding="utf-8", xml_declaration=True)
 
@@ -163,7 +156,7 @@ class ArxivExtractor(IExtractor):
                 self.try_save_pdf(element, attachment_path, title)
 
             except Exception as e:
-                log_and_raise_exception(f"Error saving entries and papers to file", e)
+                log_and_exit(f"Error saving entries and papers to file", e)
 
     def try_save_pdf(self, element: Any, path: Path, title: str):
         pdf_links = [
@@ -173,9 +166,9 @@ class ArxivExtractor(IExtractor):
         ]
         for link in pdf_links:
             file_path = path / f"{title}.pdf"
-            response = make_get_request(link.attrib["href"])
-            # response = requests.get(link.attrib["href"])
-            # response.raise_for_status()
+            response = make_get_request(
+                link.attrib["href"], log_response=False, expect_json=False
+            )
             with file_path.open("wb") as f:
                 f.write(response.content)
             logging.info(f"Saved {file_path}")

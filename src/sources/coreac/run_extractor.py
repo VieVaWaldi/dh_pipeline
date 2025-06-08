@@ -12,7 +12,7 @@ from dateutil.relativedelta import relativedelta
 from dotenv import load_dotenv
 
 from utils.config.config_loader import get_query_config
-from utils.error_handling.error_handling import log_and_raise_exception
+from utils.error_handling.error_handling import log_and_exit
 from lib.file_handling.file_parsing.json_parser import get_all_keys_value_recursively
 from lib.file_handling.file_utils import load_file
 from lib.requests.requests import make_get_request
@@ -39,7 +39,7 @@ class CoreExtractor(IExtractor):
 
     def extract_until_checkpoint_end(self, query: str) -> bool:
         if not self.api_key:
-            log_and_raise_exception("API Key not found")
+            log_and_exit("API Key not found")
 
         core_data, total_hits = self._paginated_search_core(query)
 
@@ -96,7 +96,7 @@ class CoreExtractor(IExtractor):
             date_objects.append(self.parse_date_to_obj(date_str[0]))
 
         if not date_objects:
-            log_and_raise_exception("Lost json elements when converting to datatime.")
+            log_and_exit("Lost json elements when converting to datatime.")
 
         return max(date_objects).strftime("%Y-%m-%d")
 
