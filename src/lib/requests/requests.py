@@ -1,6 +1,5 @@
 import json
 import logging
-import time
 from pathlib import Path
 from typing import Dict
 from urllib.parse import urlparse
@@ -20,15 +19,17 @@ def make_get_request(
     url: str,
     params: Dict = None,
     header: Dict = None,
-    log_response=True,
+    can_fail=False,
     expect_json: bool = True,
-) -> dict | Response:
+) -> dict | Response | None:
     """
     Makes a get request given an url and optional params and header.
     Returns a json Dict for expect_json else text or raises an exception.
     The standard keep-alive should help to endure some connections better.
     @retry_on_failure can be disabled with disable_retry=True.
     Uses get_connection_retry_session() to retry failed connection establishments.
+    Set can_fail to fail silently.
+    Set expect_json to return response instead of response.json.
     """
     try:
         default_headers = {"Connection": "keep-alive"}
@@ -37,23 +38,19 @@ def make_get_request(
         response = get_connection_retry_session().get(
             url, params=params, headers=default_headers, timeout=60
         )
-        if response.status_code != 200:
-            log_and_exit(
+        logging.info(
+            f"GET Request status for request {url}: {flatten_string(response.text[:MAX_RESPONSE_LOG_LENGTH])}"
+        )
+        if response.status_code != 200 and not can_fail:
+            raise Exception(
                 f"Error fetching data: {response.status_code}, {response.text[:MAX_RESPONSE_LOG_LENGTH]}"
             )
-
-        logging.info(
-            "GET Request status for request %s: %s",
-            url,
-            (
-                flatten_string(response.text[:MAX_RESPONSE_LOG_LENGTH])
-                if log_response
-                else ""
-            ),
-        )
+        if response.status_code != 200 and can_fail:
+            return None  # ToDo: Could also try to retry with can_fail
         return response.json() if expect_json else response
     except Exception as e:
-        log_and_exit(f"Error fetching data", e)
+        if not can_fail:
+            raise Exception(f"Error fetching data", e)
 
 
 def make_delete_request(url: str, params: Dict) -> Dict:

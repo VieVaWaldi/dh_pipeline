@@ -139,8 +139,8 @@ class ArxivExtractor(IExtractor):
                 ).strftime("%Y-%m-%d_%H-%M")
 
                 entry_path = self.data_path / f"{dt}-{title}"
-                ensure_path_exists(entry_path)
                 file_path = entry_path / f"{title}.xml"
+                ensure_path_exists(file_path)
 
                 tree = xml.ElementTree(element)
                 tree.write(file_path, encoding="utf-8", xml_declaration=True)
@@ -150,7 +150,7 @@ class ArxivExtractor(IExtractor):
                 self.try_save_pdf(element, attachment_path, title)
 
             except Exception as e:
-                log_and_exit(f"Error saving entries and papers to file", e)
+                log_and_exit(f"Error saving entries to file", e)
 
     def try_save_pdf(self, element: Any, path: Path, title: str):
         pdf_links = [
@@ -161,8 +161,14 @@ class ArxivExtractor(IExtractor):
         for link in pdf_links:
             file_path = path / f"{title}.pdf"
             response = make_get_request(
-                link.attrib["href"], log_response=False, expect_json=False
+                link.attrib["href"], can_fail=True, expect_json=False
             )
-            with file_path.open("wb") as f:
-                f.write(response.content)
+            if response is None:
+                logging.warning(f"Failed saving PDF")
+                return
+            try:
+                with file_path.open("wb") as f:
+                    f.write(response.content)
+            except Exception as e:
+                logging.warning(f"Failed saving PDF", e)
             logging.info(f"Saved {file_path}")

@@ -6,8 +6,12 @@ from requests import Session
 from requests.adapters import HTTPAdapter
 from urllib3 import Retry
 
+from utils.error_handling.error_handling import log_and_exit
 
-def retry_on_failure(max_retries=3, initial_delay=10, power_base=4, disable_retry=False):
+
+def retry_on_failure(
+    max_retries=3, initial_delay=10, power_base=4, disable_retry=False
+):
     """Decorator that retries the same request with delayed backoff."""
 
     def decorator(func):
@@ -21,7 +25,7 @@ def retry_on_failure(max_retries=3, initial_delay=10, power_base=4, disable_retr
                     return func(*args, **kwargs)
                 except Exception as e:
                     if attempt == max_retries:
-                        raise e
+                        log_and_exit(str(e))
                     delay = initial_delay * (power_base**attempt)
                     logging.info(
                         f"Request failed (attempt {attempt+1}/{max_retries}). Retrying in {delay} seconds..."

@@ -77,11 +77,10 @@ def parse_file_names(value: Optional[str]) -> Optional[str]:
         clean_str,
     )
 
-    max_length = 200
+    max_length = 195
     if len(clean_str.encode("utf-8")) > max_length:
 
         truncated = clean_str[:max_length]
-
         last_break = max(
             truncated.rfind(" "), truncated.rfind("-"), truncated.rfind("_")
         )
