@@ -21,10 +21,20 @@ ps aux | grep airflow
 pkill -f "airflow webserver"
 pkill -f "airflow scheduler"
 
-# Hard stop all airflow processes (if needed)
+# Hard stop all airflow processes
 pkill -9 -f airflow
+```
+
+## Errors :(
+
+```bash
+# Airflow doesnt find ur DAGs:
+airflow dags reserialize
+
+# WebApp running even though u used pkill?
 lsof -i :8080
 lsof -i :8793
+kill [the processes in lsof]
 ```
 
 ## Orchestration Flow WIP
@@ -49,8 +59,7 @@ Set up the config in `~/.airflow/airflow.cfg` with:
 Finally run `airflow db reset` to ud-pate the config.
 
 Test using `airflow dags list`, this should show the pipeline_dag (if not check `airflow standalone` first, sometimes it
-takes time). Check errors
-with `airflow info ` & `airflow dags list-import-errors`.
+takes time). Check errors with `airflow info ` & `airflow dags list-import-errors`.
 
 ## Reset Airflow
 
