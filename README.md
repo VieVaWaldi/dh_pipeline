@@ -9,9 +9,9 @@ All sources can be used independently, meaning if you just want to get data from
 simple as (optionally) configuring the queries, entering the api keys as needed and running the extractor.
 All sources have ORM models in SQL-Alchemy, meaning they can be loaded into any database.
 
-Configure queries for the sources and paths [Here](config/README.md).
+Configure queries for the sources and paths in the [Config Documentation](config/README.md).
 
-Find more information about the specific sources [Here](src/sources/README.md).
+Find more information about the specific sources in the [Query Documentation](src/sources/README.md).
 
 ## Installation
 
@@ -45,12 +45,12 @@ Run `pip install pip-tools`, then do:
 
 ### Database
 
-A `PostgreSQL DB 17.2` is being used for the project.
-[This document](README_DB.md) explains how you can control the PostgreSQL server locally and on the cluster.
+The [Database Documentation](README_DB.md) explains how you can control the PostgreSQL server locally and on the
+cluster. A `PostgreSQL DB 17.5` is being used for the project.
 
 ### Orchestration
 
-[This document](orchestration/README.md) explains how orchestration with Airflow is set up and works.
+The [Orchestration Documentation](orchestration/README.md) explains how orchestration with Airflow is set up and works.
 
 ## Project Structure
 
@@ -58,25 +58,25 @@ A `PostgreSQL DB 17.2` is being used for the project.
 
 - Use `/configs/configs_queries.json`, to configure queries for sources and extraction runs.
 - Use `/configs/configs.json`, to configure paths and database connections.
-- Click [Here](config/README.md) to get more information.
-- Raw data for each sources is saved as `{source_name}-query_id-{id}`.
+- Raw data for each source is identified using `{source_name}-query_id-{id}`.
+- See more in the [Config Documentation](config/README.md).
 
 **Extraction:**
 
 - Run extractions with `/src/extraction/run_extractor.py`.
 - This uses the sources extractors.
-- See more here [Link to Extractor Documentation](src/elt/extraction/README.md)
+- See more in the [Extractor Documentation](src/elt/extraction/README.md)
 
 **Loading:**
 
 - Run loaders with `/src/loading/run_loader.py`.
 - This uses the sources loaders.
-- See more [Link to Loader Documentation](src/elt/loading/README.md)
+- See more in the [Loader Documentation](src/elt/loading/README.md)
 
 **Sources:**
 
 - Code for source specific extraction and loading is in `/src/sources`.
-- See more here [Link to Source Documentation](src/sources/README.md)
+- See more here in the [Source Documentation](src/sources/README.md)
 
 **Transformation:**
 

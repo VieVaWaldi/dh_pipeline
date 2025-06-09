@@ -1,10 +1,9 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
+
 from airflow import DAG
 from airflow.providers.standard.operators.bash import BashOperator
 
 from utils.config.config_loader import get_project_root_path, get_config
-
-# from utils.config.config_loader import get_config, get_project_root_path
 
 with DAG(
     "airflow_test",
