@@ -9,7 +9,7 @@
 
 pg_ctl -D $PGDATA stop
 
-sleep 5
+sleep 10
 
 pg_ctl -D $PGDATA start
 
