@@ -15,11 +15,9 @@ fi
 SOURCE=$1
 QUERY_ID=$2
 
-
-
-# DONT FORGET DATABASE :)
-
-
+pg_ctl -D $PGDATA stop
+sleep 10
+pg_ctl -D $PGDATA start
 
 cd /home/lu72hip/DIGICHer/dh_pipeline || exit
 source venv/bin/activate
