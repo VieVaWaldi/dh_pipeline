@@ -1,19 +1,36 @@
 # Orchestration with Apache Airflow
 
+## Local Development
 Use `airflow standalone` for local development and testing.
 
-Use the following for production:
+## Production/Cluster Deployment
+Use screen for production. Screen creates persistent virtual terminal sessions that keep running even when you logout from the cluster, allowing you to monitor and interact with Airflow services.
 
+```bash
+# Start webserver in detached screen session
+screen -dmS airflow-webserver bash -c 'airflow webserver --port 8080'
+
+# Start scheduler in detached screen session  
+screen -dmS airflow-scheduler bash -c 'airflow scheduler'
 ```
-# Use & to run them in the background
-# Starts the scheduler (monitors DAGs, triggers tasks)
-airflow scheduler &
 
-# Starts the web UI (default port 8080)
-airflow api-server &
+**Managing Screen Sessions**
+```bash
+# List all running screen sessions
+screen -ls
 
-# Processes DAG files (optional, can run in scheduler)
-airflow dag-processor 
+# Reattach to a session (see live logs and interact)
+screen -r airflow-webserver
+screen -r airflow-scheduler
+
+# Detach from session, press: Ctrl+A, then D
+
+# Kill a specific session
+screen -S airflow-webserver -X quit
+screen -S airflow-scheduler -X quit
+
+# Check process status
+ps aux | grep airflow
 ```
 
 ## Orchestration Flow WIP
