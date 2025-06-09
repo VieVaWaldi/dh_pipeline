@@ -35,3 +35,7 @@ def _get_config(config_name: str) -> Dict[str, Any]:
     if env not in config:
         return config
     return config[env]
+
+
+if __name__ == "__main__":
+    print("Project root at: ", get_project_root_path())

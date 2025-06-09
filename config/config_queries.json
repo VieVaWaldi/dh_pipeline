@@ -36,6 +36,7 @@
       {
         "query": "((computing AND cultural) OR (computing AND heritage))",
         "download_attachments": false,
+        "checkpoint_start": "1990-01-01",
         "checkpoint_range": "10"
       }
     ]

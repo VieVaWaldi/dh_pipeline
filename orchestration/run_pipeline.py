@@ -2,7 +2,9 @@ from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.providers.standard.operators.bash import BashOperator
 
-from utils.config.config_loader import get_config, get_project_root_path
+from utils.config.config_loader import get_project_root_path, get_config
+
+# from utils.config.config_loader import get_config, get_project_root_path
 
 with DAG(
     "dh_pipeline",
@@ -26,20 +28,14 @@ with DAG(
         # 'trigger_rule': 'all_success'
     },
     description="DAG of the entire pipeline",
-    schedule=timedelta(days=30),
-    start_date=datetime(2025, 1, 1),
+    # schedule=timedelta(days=30),
+    # start_date=datetime(2025, 1, 1),
     catchup=False,
 ) as dag:
 
     WORKING_DIR = get_project_root_path() / get_config()["orchestration_path"]
 
     """ Configure Tasks """
-
-    test_task = BashOperator(
-        task_id="run_test",
-        bash_command=f"echo 'Working dir: {WORKING_DIR}' && ls -la {WORKING_DIR}/sbatch/ && which sbatch",
-        execution_timeout=timedelta(hours=1),
-    )
 
     """ Arxiv """
 
@@ -59,25 +55,24 @@ with DAG(
 
     """ CoreAc """
 
-    extraction_coreac_q0 = BashOperator(
-        task_id="run_extractor_coreac_q0",
-        bash_command=f"sbatch --wait {WORKING_DIR}/sbatch/sbatch_extractor.sh coreac 0",
-        execution_timeout=timedelta(days=3),
-    )
-    extraction_coreac_q0.doc_md = "Extraction runner for coreac query_id=0"
-
-    loader_coreac_q0 = BashOperator(
-        task_id="run_loader_coreac_q0",
-        bash_command=f"sbatch --wait {WORKING_DIR}/sbatch/sbatch_loader.sh coreac 0",
-        execution_timeout=timedelta(days=3),
-    )
-    loader_coreac_q0.doc_md = "Loading runner for coreac query_id=0"
+    # extraction_coreac_q0 = BashOperator(
+    #     task_id="run_extractor_coreac_q0",
+    #     bash_command=f"sbatch --wait {WORKING_DIR}/sbatch/sbatch_extractor.sh coreac 0",
+    #     execution_timeout=timedelta(days=3),
+    # )
+    # extraction_coreac_q0.doc_md = "Extraction runner for coreac query_id=0"
+    #
+    # loader_coreac_q0 = BashOperator(
+    #     task_id="run_loader_coreac_q0",
+    #     bash_command=f"sbatch --wait {WORKING_DIR}/sbatch/sbatch_loader.sh coreac 0",
+    #     execution_timeout=timedelta(days=3),
+    # )
+    # loader_coreac_q0.doc_md = "Loading runner for coreac query_id=0"
 
     """ Task Dependencies """
-    test_task
 
     # Loaders depend on their extractors
-    # extraction_arxiv_q0 >> loader_arxiv_q0
+    extraction_arxiv_q0 >> loader_arxiv_q0
     # extraction_coreac_q0 >> loader_coreac_q0
 
     # Transformations wait for all loaders and run sequentially

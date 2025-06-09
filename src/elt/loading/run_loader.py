@@ -14,11 +14,9 @@ from lib.database.get_or_create import ModelCreationMonitor
 from lib.file_handling.path_utils import get_source_data_path
 from lib.file_handling.yield_documents import yield_all_documents
 from sources.arxiv.loader import ArxivLoader
-
-# ToDo: Downgrade SQL Models because we now must use SQLAlchemy <2.0
-# from sources.cordis.loader import CordisLoader
-# from sources.coreac.loader import CoreacLoader
-# from sources.openaire.loader import OpenaireLoader
+from sources.cordis.loader import CordisLoader
+from sources.coreac.loader import CoreacLoader
+from sources.openaire.loader import OpenaireLoader
 from utils.config.config_loader import get_query_config
 from utils.logger.logger import setup_logging
 from utils.logger.timer import log_run_time
@@ -37,7 +35,8 @@ def run_loader(config: LoaderConfig):
     start_time = datetime.now()
     logging.info(
         f"Starting loading for {config.name}, query_id: {config.query_id}\
-        \n\t- for query: {get_query_config()[config.name]['queries'][config.query_id]['query']}"
+        \n\t- for query: {get_query_config()[config.name]['queries'][config.query_id]['query']}\
+        \n\t- at path: {config.source_path}"
     )
 
     cp = CheckpointManager(config.name, config.query_id)
@@ -45,10 +44,6 @@ def run_loader(config: LoaderConfig):
     skip_count = 0
 
     with create_db_session()() as session:
-        logging.info(
-            f"Starting document processing for {config.name} with path {config.source_path}"
-        )
-
         for doc_idx, (document, path, mtime) in enumerate(
             yield_all_documents(config.source_path)
         ):
@@ -76,11 +71,11 @@ def run_loader(config: LoaderConfig):
                 raise
 
         session.commit()  # Also commit leftovers
-        cp.update_cp()  # Only update at the end, because files are not ordered
+        cp.update_cp()  # Only update cp at the end, because files are not ordered
 
     ModelCreationMonitor.log_stats()
-    log_run_time(start_time)
     validate(config.name, doc_count, skip_count)
+    log_run_time(start_time)
 
 
 def validate(source_name: str, doc_count: int, skip_count: int):
@@ -88,14 +83,10 @@ def validate(source_name: str, doc_count: int, skip_count: int):
         f"{source_name}: Files processed {doc_count} and files skipped {skip_count}, used {doc_count-skip_count} files."
     )
     # ToDo: Monitor OCR converter, skips and processed
-    # ToDo: Validate that row count = skipped + not skipped for all sources
+    # ToDo: Validate, that row count = skipped + not skipped for all sources
 
 
 if __name__ == "__main__":
-    import sys
-
-    dev_args = ["--source", "arxiv", "--query_id", "0"]
-    sys.argv.extend(dev_args)
 
     parser = argparse.ArgumentParser(description="Loader Runner")
     parser.add_argument("--source", help="Select data source", required=True)
@@ -108,13 +99,13 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     load_dotenv()
-    setup_logging("loader", f"{args.source}_{args.query_id}")
+    setup_logging("loader", f"{args.source}-query_id-{args.query_id}")
 
     loader_classes = {
         "arxiv": ArxivLoader,
-        # "cordis": CordisLoader,
-        # "coreac": CoreacLoader,
-        # "openaire": OpenaireLoader,
+        "cordis": CordisLoader,
+        "coreac": CoreacLoader,
+        "openaire": OpenaireLoader,
     }
 
     loader_config = LoaderConfig(

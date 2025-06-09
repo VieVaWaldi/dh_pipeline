@@ -36,9 +36,12 @@ Installs the repo as an editable package and install all requirements:
 
 ## Installing new packages
 
+Run `pip install pip-tools`, then do:
+
 1. Add new package to `requirements.in`
 2. `pip-compile requirements.in` (generates locked requirements.txt)
 3. `pip-sync requirements.txt` (installs new packages, removes unused ones)
+4. `pip install -e .`
 
 ### Database
 
@@ -68,7 +71,12 @@ A `PostgreSQL DB 17.2` is being used for the project.
 
 - Run loaders with `/src/loading/run_loader.py`.
 - This uses the sources loaders.
-- See more here [Link to Loader Documentation](src/elt/loading/README.md)
+- See more [Link to Loader Documentation](src/elt/loading/README.md)
+
+**Sources:**
+
+- Code for source specific extraction and loading is in `/src/sources`.
+- See more here [Link to Source Documentation](src/sources/README.md)
 
 **Transformation:**
 

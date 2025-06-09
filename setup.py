@@ -13,9 +13,9 @@ setup(
     packages=find_packages(where="src", exclude=["tests*"]),
     package_dir={"": "src"},
     python_requires=">=3.11",
-    options={
-        "build": {"build_base": ".build/"},
-        "bdist_egg": {"dist_dir": ".dist/"},
-        "egg_info": {"egg_base": ".build/"},  # This will put egg-info in build/
-    },
+    # options={
+    #     "build": {"build_base": ".build/"},
+    #     "bdist_egg": {"dist_dir": ".dist/"},
+    #     "egg_info": {"egg_base": ".build/"},  # This will put egg-info in build/
+    # },
 )

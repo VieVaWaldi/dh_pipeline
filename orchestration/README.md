@@ -28,20 +28,24 @@ airflow dag-processor
 
 Ensure `export AIRFLOW_HOME=~/.airflow` is set up in .bashrc or in .zshrc
 
-Run `airflow db init` to initialize the database.
+Run `airflow db migrate` to initialize the database.
 
 Set up the config in `~/.airflow/airflow.cfg` with:
 
 - in line #7 `dags_folder = /path/from/root/.../dh_pipeline/orchestration`, to point to the correct DAG folder.
 - in line #150 `load_examples = False`.
 
-Finally run `airflow db migrate` to udpate the congfig.
+Finally run `airflow db reset` to ud-pate the config.
+
+Test using `airflow dags list`, this should show the pipeline_dag (if not check `airflow standalone` first, sometimes it
+takes time). Check errors
+with `airflow info ` & `airflow dags list-import-errors`.
 
 ## Reset Airflow
 
 ```
 # Kill airflow completely
-pkill -f airflow
+pkill -9 -f airflow
 
 # Clear the database
 airflow db reset
@@ -57,7 +61,7 @@ airflow standalone
 * Because of a bug in the new Airflow version we are using 2.11
 
 ```
-AIRFLOW_VERSION=2.11.0;
+AIRFLOW_VERSION=3.0.1
 PYTHON_VERSION="3.11";
 CONSTRAINT_URL="https://raw.githubusercontent.com/apache/airflow/constraints-${AIRFLOW_VERSION}/constraints-${PYTHON_VERSION}.txt";
 pip install "apache-airflow==${AIRFLOW_VERSION}" --constraint "${CONSTRAINT_URL}";

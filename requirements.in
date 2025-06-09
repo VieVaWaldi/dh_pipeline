@@ -1,7 +1,9 @@
+-c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
+apache-airflow==3.0.1
+black
 datamodels
-numpy
+graphviz
 openai
-pandas
 pip-tools
 protobuf
 psutil
@@ -10,8 +12,8 @@ PyPDF2
 python-dotenv
 python-dateutil
 selenium
-spacy
-SQLAlchemy==1.4.54  # Needed for Airflow
+sqlalchemy[asyncio]==1.4.54  # Airflow constraint
+xlrd
 urllib3
 xmltodict
 xlrd

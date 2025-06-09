@@ -7,13 +7,13 @@ from requests.adapters import HTTPAdapter
 from urllib3 import Retry
 
 
-def retry_on_failure(max_retries=3, initial_delay=10, power_base=4, enable_retry=True):
+def retry_on_failure(max_retries=3, initial_delay=10, power_base=4, disable_retry=False):
     """Decorator that retries the same request with delayed backoff."""
 
     def decorator(func):
         def wrapper(*args, **kwargs):
-            call_enable_retry = kwargs.pop("enable_retry", enable_retry)
-            if not call_enable_retry:
+            call_disable_retry = kwargs.pop("disable_retry", disable_retry)
+            if call_disable_retry:
                 return func(*args, **kwargs)
 
             for attempt in range(max_retries + 1):

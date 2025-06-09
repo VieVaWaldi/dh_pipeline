@@ -5,7 +5,8 @@ the current database session. The models will be commited and loaded into the da
 
 ## Checkpoint
 
-All files to be loaded are generated using `yield_all_documents` in [file_walker.py](../../lib/file_handling/yield_documents.py).
+All files to be loaded are generated using `yield_all_documents`
+in [yield_documents.py](../../lib/file_handling/yield_documents.py).
 Given a source directory this function returns the `file_path` and the `last_file_update_time`.
 We use the `last_file_update_time` as the basis for the loader checkpoint mechanism.
 
@@ -25,9 +26,9 @@ and the updated timestamp of the file changed.
 
 **Possible issues**:
 
-* We can only save the cp after walking through all files, so an error no progress is saved and you have to process all files again. Which is alright because of get_or_create
+* We can only save the cp after walking through all files, so an error no progress is saved and you have to process all
+  files again. Which is alright because of get_or_create
 * Different time zones: Local Dev and Cluster are both in germany
-* ...
 
 ## Checkpoint Validation
 

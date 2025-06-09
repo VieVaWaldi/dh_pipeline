@@ -1,17 +1,14 @@
 import logging
-import shutil
 import time
 import xml.etree.ElementTree as xml
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any, List, Dict
 
-import requests
 from dateutil.relativedelta import relativedelta
 
 from interfaces.i_extractor import IExtractor, ExtractorConfig
-from lib.extractor.utils import trim_excessive_whitespace
-from lib.file_handling.file_utils import load_file, write_file, ensure_path_exists
+from lib.file_handling.file_utils import ensure_path_exists
 from lib.requests.requests import make_get_request
 from lib.sanitizers.parse_text import parse_titles_and_labels
 from utils.error_handling.error_handling import log_and_exit
@@ -22,6 +19,19 @@ class ArxivExtractor(IExtractor):
         super().__init__(extractor_config, sleep_between_extractions=5)
         self.base_url = "https://export.arxiv.org/api/query?"
         self.ID = "{http://www.w3.org/2005/Atom}"
+
+    def should_continue(self):
+        """Continue while checkpoint < today"""
+        return self.checkpoint_to_dt(self.checkpoint) < datetime.now()
+
+    def build_query(self) -> str:
+        start = self.checkpoint_to_arxiv(self.checkpoint_to_dt(self.checkpoint))
+        end = self.checkpoint_to_arxiv(self.get_checkpoint_end(minus_1_day=True))
+
+        query = f"search_query={self.query}"
+        query += f"+AND+submittedDate:[{start}+TO+{end}]"
+        query += f"&sortBy=submittedDate&sortOrder=ascending"
+        return query
 
     def extract_until_next_checkpoint(self) -> bool:
         logging.info(
@@ -57,10 +67,6 @@ class ArxivExtractor(IExtractor):
 
         return should_continue
 
-    def should_continue(self):
-        """Continue while checkpoint < today"""
-        return self.checkpoint_to_dt(self.checkpoint) < datetime.now()
-
     def checkpoint_to_dt(self, checkpoint: str):
         return datetime.strptime(checkpoint, "%Y-%m-%d-%H-%M")
 
@@ -79,21 +85,10 @@ class ArxivExtractor(IExtractor):
             checkpoint_end_dt -= timedelta(days=1)
         return checkpoint_end_dt
 
-    def build_query(self) -> str:
-        start = self.checkpoint_to_arxiv(self.checkpoint_to_dt(self.checkpoint))
-        end = self.checkpoint_to_arxiv(self.get_checkpoint_end(minus_1_day=True))
-
-        query = f"search_query={self.query}"
-        query += f"+AND+submittedDate:[{start}+TO+{end}]"
-        query += f"&sortBy=submittedDate&sortOrder=ascending"
-        return query
-
     def request_arxiv_api(self, params: dict) -> str:
         query = self.build_query()
         url = f"{self.base_url}{query}"
-        response = make_get_request(
-            url, params=params, expect_json=False, enable_retry=True
-        )
+        response = make_get_request(url, params=params, expect_json=False)
         self.response_has_entries(response.text)
         return response.text
 

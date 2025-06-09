@@ -27,7 +27,7 @@ def make_get_request(
     Makes a get request given an url and optional params and header.
     Returns a json Dict for expect_json else text or raises an exception.
     The standard keep-alive should help to endure some connections better.
-    @retry_on_failure can be enabled with enable_retry=True.
+    @retry_on_failure can be disabled with disable_retry=True.
     Uses get_connection_retry_session() to retry failed connection establishments.
     """
     try:
