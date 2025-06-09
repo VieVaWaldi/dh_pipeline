@@ -10,6 +10,7 @@ from dateutil.relativedelta import relativedelta
 from interfaces.i_extractor import IExtractor, ExtractorConfig
 from lib.file_handling.file_utils import ensure_path_exists
 from lib.requests.requests import make_get_request
+from lib.sanitizers.parse_files import parse_file_names
 from lib.sanitizers.parse_text import parse_titles_and_labels
 from utils.error_handling.error_handling import log_and_exit
 
@@ -131,9 +132,7 @@ class ArxivExtractor(IExtractor):
         for entry in entries:
             try:
                 element = xml.fromstring(entry)
-                title = parse_titles_and_labels(element.find(f"{self.ID}title").text)[
-                    :80
-                ]
+                title = parse_file_names(element.find(f"{self.ID}title").text)
                 published_date = element.find(f"{self.ID}published").text
                 dt = datetime.fromisoformat(
                     published_date.replace("Z", "+00:00")
