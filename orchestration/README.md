@@ -4,33 +4,27 @@
 Use `airflow standalone` for local development and testing.
 
 ## Production/Cluster Deployment
-Use screen for production. Screen creates persistent virtual terminal sessions that keep running even when you logout from the cluster, allowing you to monitor and interact with Airflow services.
+Use nohup for production deployment. This approach runs processes in the background and keeps them running even when you logout from the cluster.
 
+**Start Airflow:**
 ```bash
-# Start webserver in detached screen session
-screen -dmS airflow-webserver bash -c 'airflow webserver --port 8080'
-
-# Start scheduler in detached screen session  
-screen -dmS airflow-scheduler bash -c 'airflow scheduler'
+nohup airflow api-server --port 8080 &> data/logs/airflow/airflow-api-server.log &
+nohup airflow scheduler &> data/logs/airflow/airflow-scheduler.log &
 ```
 
-**Managing Screen Sessions**
+**Managing nohup Services:**
 ```bash
-# List all running screen sessions
-screen -ls
-
-# Reattach to a session (see live logs and interact)
-screen -r airflow-webserver
-screen -r airflow-scheduler
-
-# Detach from session, press: Ctrl+A, then D
-
-# Kill a specific session
-screen -S airflow-webserver -X quit
-screen -S airflow-scheduler -X quit
-
-# Check process status
+# Check if services are running
 ps aux | grep airflow
+
+# Stop services
+pkill -f "airflow webserver"
+pkill -f "airflow scheduler"
+
+# Hard stop all airflow processes (if needed)
+pkill -9 -f airflow
+lsof -i :8080
+lsof -i :8793
 ```
 
 ## Orchestration Flow WIP
