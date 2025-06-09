@@ -21,7 +21,7 @@ def get_source_data_path(source_name: str, query_id: int | None) -> Path:
     config = get_config()
     path = (
         Path(config["data_path"]) / f"{source_name}-query_id-{query_id}"
-        if query_id  # for data without queries, e.g. meta_heritage
+        if query_id is not None  # for data without queries, e.g. meta_heritage
         else Path(config["data_path"]) / source_name
     )
 
