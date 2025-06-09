@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 from airflow import DAG
 from airflow.providers.standard.operators.bash import BashOperator
@@ -11,7 +11,7 @@ with DAG(
     # You can override them on a per-task basis during operator initialization
     default_args={
         "depends_on_past": False,
-        "retries": 3,
+        "retries": 10,
         "retry_delay": timedelta(minutes=60),
         # 'queue': 'bash_queue',
         # 'pool': 'backfill',
@@ -27,8 +27,8 @@ with DAG(
         # 'trigger_rule': 'all_success'
     },
     description="DAG of the entire pipeline",
-    # schedule=timedelta(days=30),
-    # start_date=datetime(2025, 1, 1),
+    schedule=timedelta(days=10),
+    start_date=datetime(2025, 1, 1),
     catchup=False,
 ) as dag:
 
