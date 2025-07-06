@@ -22,8 +22,8 @@ class ArxivExtractor(IExtractor):
         self.ID = "{http://www.w3.org/2005/Atom}"
 
     def should_continue(self):
-        """Continue while checkpoint < today"""
-        return self.checkpoint_to_dt(self.checkpoint) < datetime.now()
+        """Continue while next checkpoint < today"""
+        return self.get_checkpoint_end() < datetime.now() < datetime.now()
 
     def build_query(self) -> str:
         start = self.checkpoint_to_arxiv(self.checkpoint_to_dt(self.checkpoint))
