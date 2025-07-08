@@ -47,7 +47,7 @@ def create_stakeholder(session: Session, row: pd.Series) -> Stakeholder:
         'latitude': parse_float(row.get('latitudine')),
         'longitude': parse_float(row.get('longitudine')),
         'data_source_type': 'Open Data',
-        'data_source_name': 'Italy dati.gov.it GLAM Emilia Romagna'
+        'data_source_name': 'Italy dati.gov.it GLAM'
     }
     
     # Filter out None values for unique key

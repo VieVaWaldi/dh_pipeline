@@ -1,6 +1,6 @@
 import logging
 from pathlib import Path
-from typing import List
+from typing import Tuple, Optional
 
 import pandas as pd
 from pandas import DataFrame
@@ -11,8 +11,8 @@ from lib.database.get_or_create import get_or_create, ModelCreationMonitor
 from lib.file_handling.path_utils import get_source_data_path
 from lib.sanitizers.parse_primitives import parse_float
 from lib.sanitizers.parse_text import (
-    parse_names_and_identifiers,
-    parse_content,
+    parse_names_and_identifiers, 
+    parse_content, 
     parse_web_resources,
     parse_string
 )
@@ -21,256 +21,226 @@ from sources.meta_heritage.orm_model import (
     NutsCode,
     NaceCode,
     OrganizationType,
+    Network,
     CHTopic,
     JunctionStakeholderOrganizationType,
+    JunctionStakeholderNetworkMembership,
     JunctionStakeholderHeritageTopic,
 )
 from utils.logger.logger import setup_logging
 
 
-def parse_address(address_str: str) -> tuple:
-    """Parse Italian address string to extract street name, house number, and postal code."""
+def parse_address(address_str: str) -> Tuple[Optional[str], Optional[str]]:
+    """Parse address string to extract street name and house number."""
     if not address_str:
-        return None, None, None
+        return None, None
     
-    # Clean the address string
-    address = parse_string(address_str)
-    if not address:
-        return None, None, None
+    address_str = address_str.strip()
     
-    street_name = None
-    house_number = None
-    postal_code = None
+    # Try splitting by comma first
+    if ',' in address_str:
+        parts = address_str.split(',', 1)
+        street_name = parse_string(parts[0])
+        house_number = parse_string(parts[1])
+        return street_name, house_number
     
-    # Split by commas and dashes to handle formats like "Via Melloni, 3/A - 43121 - Parma (PR)"
-    parts = [part.strip() for part in address.replace(' - ', ', ').split(',')]
+    # Try splitting by single quote
+    if "'" in address_str:
+        parts = address_str.split("'", 1)
+        street_name = parse_string(parts[0])
+        house_number = parse_string(parts[1])
+        return street_name, house_number
     
-    for i, part in enumerate(parts):
-        # Check if this part contains a 5-digit postal code
-        postal_match = None
-        for word in part.split():
-            if word.isdigit() and len(word) == 5:
-                postal_code = word
-                postal_match = word
-                break
-        
-        # If we found a postal code, remove it from this part
-        if postal_match:
-            part = part.replace(postal_match, '').strip()
-        
-        # First part is likely street name with possible house number
-        if i == 0:
-            # Look for house number patterns (numbers, possibly with letters/slashes)
-            words = part.split()
-            street_words = []
-            house_parts = []
-            
-            for word in words:
-                # Check if word contains digits (potential house number)
-                if any(char.isdigit() for char in word):
-                    house_parts.append(word)
-                else:
-                    street_words.append(word)
-            
-            if street_words:
-                street_name = ' '.join(street_words)
-            if house_parts:
-                house_number = ' '.join(house_parts)
-        
-        # If no house number found in first part, check second part
-        elif i == 1 and not house_number and part:
-            # This might be just a house number
-            if any(char.isdigit() for char in part):
-                house_number = part
+    # If no separator found, extract any numbers for house_number
+    import re
+    numbers = re.findall(r'\d+', address_str)
+    if numbers:
+        # Extract the last number as house number
+        last_number = numbers[-1]
+        # Remove the number from the string for street name
+        street_name = re.sub(rf'\b{re.escape(last_number)}\b', '', address_str).strip()
+        street_name = parse_string(street_name)
+        house_number = parse_string(last_number)
+        return street_name, house_number
     
-    return street_name, house_number, postal_code
+    # If no numbers found, treat entire string as street name
+    return parse_string(address_str), None
 
 
-def create_stakeholder(session: Session, row: pd.Series) -> Stakeholder:
-    """Create a stakeholder from a row of data."""
-    # Determine city - use localita if different from comune, otherwise use comune
-    city = parse_names_and_identifiers(row.get('localita'))
-    if not city or city == parse_names_and_identifiers(row.get('comune')):
-        city = parse_names_and_identifiers(row.get('comune'))
+def determine_ownership(name: str) -> str:
+    """Determine ownership based on cinema name."""
+    if not name:
+        return "private"
     
-    # Parse address to extract street name, house number, and postal code
-    address_str = row.get('indirizzo')
-    street_name, house_number, parsed_postal_code = parse_address(address_str)
+    name_upper = name.upper()
     
-    # Use parsed postal code if available, otherwise use ISTATcomune
-    postal_code = parsed_postal_code if parsed_postal_code else parse_string(row.get('ISTATcomune'))
-    
-    stakeholder_data = {
-        'name': parse_names_and_identifiers(row.get('titolo')),
-        'description': parse_content(row.get('descrizione')),
-        'webpage_url': parse_web_resources(row.get('url scheda')),
-        'ownership': 'public',
-        'street_name': street_name,
-        'house_number': house_number,
-        'postal_code': postal_code,
-        'city': city,
-        'country': 'Italy',
-        'latitude': parse_float(row.get('latitudine')),
-        'longitude': parse_float(row.get('longitudine')),
-        'data_source_type': 'Open Data',
-        'data_source_name': 'dati.gov.it GLAM'
-    }
-    
-    # Filter out None values for unique key
-    unique_key = {}
-    if stakeholder_data['name']:
-        unique_key['name'] = stakeholder_data['name']
-    if stakeholder_data['city']:
-        unique_key['city'] = stakeholder_data['city']
-    
-    stakeholder, created = get_or_create(
-        session, 
-        Stakeholder, 
-        unique_key, 
-        **{k: v for k, v in stakeholder_data.items() if v is not None}
-    )
-    
-    return stakeholder
-
-
-def create_nuts_code(session: Session) -> NutsCode:
-    """Create or get the NUTS code for Emilia-Romagna."""
-    nuts_data = {
-        'country_code': 'IT - Italy',
-        'level_1': 'ITH - Nord-East',
-        'level_2': 'ITH5 - Emilia-Romagna'
-    }
-    
-    nuts_code, created = get_or_create(
-        session,
-        NutsCode,
-        nuts_data
-    )
-    
-    return nuts_code
-
-
-def create_nace_code(session: Session) -> NaceCode:
-    """Create or get the NACE code for cultural activities."""
-    nace_data = {
-        'level_1': 'S. Arts, Sports an Recreation',
-        'level_2': 'S91. Libraries, archives, museums and other cultural activities'
-    }
-    
-    nace_code, created = get_or_create(
-        session,
-        NaceCode,
-        nace_data
-    )
-    
-    return nace_code
-
-
-def get_organization_type(session: Session) -> OrganizationType:
-    """Get the GLAM organization type."""
-    org_type, created = get_or_create(
-        session,
-        OrganizationType,
-        {'name': 'Gallery, Library, Archive, Museum (GLAM)'}
-    )
-    
-    return org_type
-
-
-def get_heritage_topics(session: Session) -> List[CHTopic]:
-    """Get all heritage topics for GLAM entries."""
-    topic_names = [
-        'Architectural heritage',
-        'Local history', 
-        'Religious heritage',
-        'Aristocratic heritage',
-        'Industrial heritage',
-        'Archeological heritage',
-        'Automotive heritage'
-    ]
-    
-    topics = []
-    for topic_name in topic_names:
-        topic, created = get_or_create(
-            session,
-            CHTopic,
-            {'name': topic_name}
-        )
-        topics.append(topic)
-    
-    return topics
+    if any(keyword in name_upper for keyword in ["ALADDIN", "ASTRA", "ELISEO"]):
+        return "private"
+    elif any(keyword in name_upper for keyword in ["ARENA SAN BIAGIO", "SAN BIAGIO"]):
+        return "public"
+    elif any(keyword in name_upper for keyword in ["BOGART", "VICTOR"]):
+        return "mixed"
+    else:
+        return "private"
 
 
 def process_batch(session: Session, batch_df: DataFrame):
-    """Process a batch of GLAM records."""
-    # Create shared entities once per batch
-    nuts_code = create_nuts_code(session)
-    nace_code = create_nace_code(session)
-    organization_type = get_organization_type(session)
-    heritage_topics = get_heritage_topics(session)
+    """Process a batch of cinema records."""
+    
+    # Get or create required reference entities
+    nuts_code, _ = get_or_create(
+        session, 
+        NutsCode,
+        unique_key={"country_code": "IT", "level_1": "ITH - Nord-East", "level_2": "ITH5 - Emilia-Romagna"}
+    )
+    
+    nace_code, _ = get_or_create(
+        session,
+        NaceCode,
+        unique_key={"level_1": "S. Arts, Sports an Recreation", "level_2": "S91. Libraries, archives, museums and other cultural activities"}
+    )
+    
+    organization_type, _ = get_or_create(
+        session,
+        OrganizationType,
+        unique_key={"name": "Gallery, Library, Archive, Museum (GLAM)"},
+        type_number=1
+    )
+    
+    heritage_topic, _ = get_or_create(
+        session,
+        CHTopic,
+        unique_key={"name": "Film and cinematic Heritage"},
+        is_predefined=False
+    )
+    
+    session.flush()
     
     for _, row in batch_df.iterrows():
         try:
+            # Parse address
+            street_name, house_number = parse_address(row.get('INDIRIZZO'))
+            
+            # Determine ownership
+            ownership = determine_ownership(row.get('NOME'))
+            
+            # Parse coordinates
+            latitude = parse_float(row.get('Latitudine'))
+            longitude = parse_float(row.get('Longitudine'))
+            
+            # Create description from manager/owner info
+            description_parts = []
+            if pd.notna(row.get('GESTOREPROPRIETA')):
+                description_parts.append(f"Manager/Owner: {row.get('GESTOREPROPRIETA')}")
+            if pd.notna(row.get('TIPON_SCHERMI')):
+                description_parts.append(f"Type: {row.get('TIPON_SCHERMI')}")
+            if pd.notna(row.get('MI_SCHERMI')):
+                description_parts.append(f"Screens: {row.get('MI_SCHERMI')}")
+            if pd.notna(row.get('TOT_POSTI')):
+                description_parts.append(f"Total seats: {row.get('TOT_POSTI')}")
+            
+            description = parse_content(" | ".join(description_parts)) if description_parts else None
+            
             # Create stakeholder
-            stakeholder = create_stakeholder(session, row)
+            stakeholder, _ = get_or_create(
+                session,
+                Stakeholder,
+                unique_key={"name": parse_names_and_identifiers(row.get('NOME'))},
+                street_name=street_name,
+                house_number=house_number,
+                city="Cesena",
+                country="Italy",
+                contact_phone=parse_string(row.get('TELEFONO')),
+                contact_email=parse_string(row.get('EMAIL')),
+                webpage_url=parse_web_resources(row.get('SITO_WEB')),
+                description=description,
+                ownership=ownership,
+                latitude=latitude,
+                longitude=longitude,
+                nuts_code_id=nuts_code.id,
+                nace_code_id=nace_code.id,
+                data_source_type="government_open_data",
+                data_source_name="dati.gov.it Cinema"
+            )
             
-            # Set NUTS and NACE codes
-            stakeholder.nuts_code = nuts_code
-            stakeholder.nace_code = nace_code
-            
-            # Flush to get stakeholder ID
             session.flush()
             
             # Create organization type junction
-            org_junction = JunctionStakeholderOrganizationType(
-                stakeholder_id=stakeholder.id,
-                organization_type_id=organization_type.id
+            org_type_junction, _ = get_or_create(
+                session,
+                JunctionStakeholderOrganizationType,
+                unique_key={
+                    "stakeholder_id": stakeholder.id,
+                    "organization_type_id": organization_type.id
+                }
             )
-            session.add(org_junction)
             
-            # Create heritage topic junctions
-            for topic in heritage_topics:
-                topic_junction = JunctionStakeholderHeritageTopic(
-                    stakeholder_id=stakeholder.id,
-                    heritage_topic_id=topic.id
+            # Create heritage topic junction
+            heritage_topic_junction, _ = get_or_create(
+                session,
+                JunctionStakeholderHeritageTopic,
+                unique_key={
+                    "stakeholder_id": stakeholder.id,
+                    "heritage_topic_id": heritage_topic.id
+                }
+            )
+            
+            # Handle network membership if association exists
+            association = row.get('ASSOCIAZIO')
+            if pd.notna(association) and association.strip():
+                network, _ = get_or_create(
+                    session,
+                    Network,
+                    unique_key={"name": parse_names_and_identifiers(association)},
+                    is_predefined=False
                 )
-                session.add(topic_junction)
                 
+                session.flush()
+                
+                network_junction, _ = get_or_create(
+                    session,
+                    JunctionStakeholderNetworkMembership,
+                    unique_key={
+                        "stakeholder_id": stakeholder.id,
+                        "network_id": network.id
+                    }
+                )
+
         except Exception as e:
-            logging.error(f"Error processing row {row.get('titolo', 'Unknown')}: {e}")
+            logging.error(f"Error processing row {row.get('NOME', 'Unknown')}: {e}")
             continue
 
 
 def run_loader(file_path: Path, batch_size: int):
-    """Load GLAM data from XLS file."""
+    """Load cinema data from Excel file."""
     logging.info(f"Starting to load data from {file_path}")
     df = pd.read_excel(file_path, engine='xlrd')
-    
+
     for i in range(0, len(df), batch_size):
         batch_df = df.iloc[i : i + batch_size]
-        
+
         try:
             with create_db_session()() as session:
                 logging.info(
                     f"Processing batch {i//batch_size + 1}: rows {i+1} to {min(i+batch_size, len(df))}"
                 )
-                
+
                 process_batch(session, batch_df)
                 session.commit()
-                
+
         except Exception as e:
             logging.error(f"Error in batch {i//batch_size + 1}: {e}")
             session.rollback()
 
 
 if __name__ == "__main__":
-    files = ["Public/Italy dati.gov.it/GLAM of historical-artistic interest Emilia Romagna/GLAM.xls"]
+    files = ["Public/Italy dati.gov.it/Cinema Emilia-Romagna/List and location of cinemas in the Municipality of Cesena.xls"]
     source_name = "meta_heritage"
-    log_name = "Italy_GLAM_Emilia_Romagna"
+    log_name = "Italy_Cinemas_Cesena"
     batch_size = 100
-    
+
     setup_logging("meta_heritage", log_name)
-    
+
     for file in files:
         file_path = get_source_data_path(source_name, None) / file
         run_loader(file_path, batch_size)
