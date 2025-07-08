@@ -1,22 +1,13 @@
 -------------------------------------------------------------------
 --- Core Data Model
 
+-------------------------------------------------------------------
+--- Schema & Types
+
 CREATE SCHEMA IF NOT EXISTS core;
 CREATE SCHEMA IF NOT EXISTS core_enrichment;
 
 CREATE TYPE core.source_type AS ENUM ('cordis', 'arxiv', 'coreac', 'openaire');
-
--- DeDup title
-
--- CREATE EXTENSION IF NOT EXISTS pg_trgm;
-
--- SELECT t1.id as id1, t2.id as id2, 
---        t1.title as title1, t2.title as title2,
---        similarity(LOWER(t1.title), LOWER(t2.title)) as similarity_score
--- FROM core.researchoutput t1
--- JOIN core.researchoutput t2 ON t1.id < t2.id
--- WHERE similarity(LOWER(t1.title), LOWER(t2.title)) > 0.7
--- ORDER BY similarity_score DESC;
 
 -------------------------------------------------------------------
 --- Main Models

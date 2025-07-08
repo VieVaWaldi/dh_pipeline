@@ -560,6 +560,8 @@ structlog==25.3.0
     # via
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
     #   apache-airflow-task-sdk
+supervisor==4.2.5
+    # via -r requirements.in
 svcs==25.1.0
     # via
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
