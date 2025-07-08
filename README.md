@@ -34,6 +34,13 @@ Installs the repo as an editable package and install all requirements:
 
 > pip install -e .
 
+The next part sucks, to enable dbt, you know have to manually install it:
+
+> pip install dbt-core==1.10.3
+> pip install dbt-postgres==1.9.0
+
+If someone reading this manages to add these to the requirements.in successfully i would be so happy.
+
 ## Installing new packages
 
 Run `pip install pip-tools`, then do:

@@ -83,8 +83,6 @@ ORDER BY count DESC;
 -----------------------------------------------
 -- Temporal Analysis
 
--- Note: I dont have all papers for 2024 so far and none for 2025, thats why the number is lower
-
 select extract(year from published_date) as year, count(*) as pub_count
 from arxiv.entry
 where published_date is not null

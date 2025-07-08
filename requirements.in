@@ -5,8 +5,8 @@ datamodels
 graphviz
 openai
 pip-tools
-protobuf
 psutil
+protobuf
 psycopg2
 PyPDF2
 python-dotenv

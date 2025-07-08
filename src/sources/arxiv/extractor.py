@@ -62,9 +62,13 @@ class ArxivExtractor(IExtractor):
         if should_continue:
             new_checkpoint = self.checkpoint_to_human(self.get_checkpoint_end())
             self.save_checkpoint(new_checkpoint)
+            logging.info(
+                f"Updated to new checkpoint: {self.checkpoint_to_human(self.get_checkpoint_end())}"
+            )
         else:
-            # ToDo: Do not update checkpoint?
-            pass
+            logging.info(
+                f"Checkpoint is in the future, not updating. Checkpoint remains {self.checkpoint}"
+            )
 
         return should_continue
 
