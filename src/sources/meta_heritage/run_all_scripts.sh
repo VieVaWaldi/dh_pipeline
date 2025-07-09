@@ -4,6 +4,7 @@ echo "Starting execution of all Python scripts..."
 echo
 
 scripts=(
+    "B2B_event_participants.py"
     "brussels_cinemas.py"
     "brussels_museums.py"
     "brussels_theatres.py"
@@ -15,6 +16,7 @@ scripts=(
     "germany_tourism.py"
     "porto_points_of_interest.py"
     "porto_wine_tourism.py"
+    "TMO_members.py"
     "vienna_castles.py"
     "vienna_hotels.py"
     "vienna_innovative_companies.py"
