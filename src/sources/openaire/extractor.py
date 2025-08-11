@@ -117,11 +117,11 @@ class OpenAIREExtractor(IExtractor):
         page = 1
         while True:
             try:
-                projects, total_in_year, current_page = self._fetch_projects_for_year(
+                projects, total_in_year, current_page, is_malformed = self._fetch_projects_for_year(
                     current_year, page
                 )
 
-                if not projects:
+                if not projects and not is_malformed:
                     logging.info(
                         f"No more projects on page {page} for year {current_year}"
                     )
@@ -131,7 +131,7 @@ class OpenAIREExtractor(IExtractor):
                     self._process_project(project)
                     total_projects_found += 1
 
-                if page * self.page_size >= total_in_year:
+                if not is_malformed and page * self.page_size >= total_in_year:
                     logging.info(
                         f"Retrieved all {total_in_year} projects for year {current_year}"
                     )
@@ -154,7 +154,7 @@ class OpenAIREExtractor(IExtractor):
             f"Processed {total_projects_found} projects for year {current_year}"
         )
 
-    def _fetch_projects_for_year(self, year: int, page: int) -> Tuple[List, int, int]:
+    def _fetch_projects_for_year(self, year: int, page: int) -> Tuple[List, int, int, bool]:
         """
         Fetch projects that started in a specific year using pagination.
         Returns (projects_list, total_projects, current_page).
@@ -171,13 +171,10 @@ class OpenAIREExtractor(IExtractor):
         logging.debug(f"Fetching projects: year={year}, page={page}")
 
         try:
-            response = make_get_request(self.base_project_url, params, timeout=300)
-        except json.JSONDecodeError as e:
-            logging.error(f"JSON decode error on page {page} of year {year}, skipping page: {e}")
-            return [], 0, page
+            response = make_get_request(self.base_project_url, params, timeout=300, disable_retry=True)
         except Exception as e:
             logging.error(f"Request error on page {page} of year {year}, skipping page: {e}")
-            return [], 0, page
+            return [], 0, page, True # A project json in 2011 is malformed fml
 
         try:
             header = response.get("response", {}).get("header", {})
@@ -201,11 +198,11 @@ class OpenAIREExtractor(IExtractor):
                 f"Retrieved {len(projects)} projects "
                 f"(page {current_page}, total: {total_projects})"
             )
-            return projects, total_projects, current_page
+            return projects, total_projects, current_page, False
 
         except (KeyError, TypeError, ValueError) as e:
             logging.error(f"Error parsing projects response: {e}")
-            return [], 0, page
+            return [], 0, page, False
 
     def _process_project(self, project: Dict[str, Any]):
         """
