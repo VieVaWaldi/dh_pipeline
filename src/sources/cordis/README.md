@@ -4,6 +4,13 @@
 * [Searching](https://cordis.europa.eu/about/search/en) the cordis website
 * [Swagger](https://cordis.europa.eu/dataextractions/api-docs-ui) for cordis
 
+The Cordis API works is asynchronous and works with jobs. A search result in the website can look like this
+```https://cordis.europa.eu/search?q=
+contenttype%3D%27project%27%20AND%20
+(%27cultural%27%20OR%20%27heritage%27%20OR%20%27digital%27%20OR%20%27humanities%27)
+&p=1&num=10&srt=Relevance:decreasing&archived=true
+```
+
 ## Data Model
 
 The Cordis data model is quite extensive, find more information in the pdf attached above. 
@@ -22,11 +29,7 @@ All with various metadata like organizations and authors etc.
 
 ## Checkpoint
 
-So the big issue here is that projects may lie in the future. so we have to save the actual date of the last cordis extraction as a checkpoint.
-Issue: we want the new extraction to overwrite the old data, therefore we want it to go in the same directory, meaning it would be sensible to use 
-last_startDate_2020-01-01 for all data before 2025, and last_startDate_2025-01-01 as the stable checkpoint for all data until we reach the year 2030,
-as dumb as that sounds thats the easiest way. It automatically overwrites the raw cordis data with the latest updates.
--> Always load from last checkpoint
+Get data until 10 years in the future from today, reset checkpoint to closest checkpoint thats 5 years in the past.
 
 ## Rate Limits
 

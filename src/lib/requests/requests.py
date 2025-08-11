@@ -29,7 +29,7 @@ def make_get_request(
     @retry_on_failure can be disabled with disable_retry=True.
     Uses get_connection_retry_session() to retry failed connection establishments.
     Set can_fail to fail silently.
-    Set expect_json to return response instead of response.json.
+    Set expect_json=False to return the response instead of response.json.
     """
     try:
         default_headers = {"Connection": "keep-alive"}
@@ -81,7 +81,6 @@ def download_file(url: str, save_path: Path) -> Path:
     Downloads a file given an url and stores it under the specified path.
     Expects path to be valid. Returns path of saved file.
     """
-
     file_path = save_path / "tmp.zip"
 
     try:

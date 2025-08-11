@@ -22,7 +22,7 @@ class ArxivExtractor(IExtractor):
 
     def should_continue(self):
         """Continue while next checkpoint < today"""
-        return self.get_checkpoint_end() < datetime.now() < datetime.now()
+        return self.get_checkpoint_end() < datetime.now()
 
     def build_query(self) -> str:
         start = self.checkpoint_to_arxiv(self.checkpoint_to_dt(self.checkpoint))
@@ -35,7 +35,7 @@ class ArxivExtractor(IExtractor):
 
     def extract_until_next_checkpoint(self) -> bool:
         logging.info(
-            f"Starting new extraction from checkpoint {self.checkpoint} to {self.checkpoint_range}.",
+            f"Starting extraction from checkpoint {self.checkpoint} to {self.checkpoint_range}.",
         )
 
         start_idx = 0
@@ -71,15 +71,6 @@ class ArxivExtractor(IExtractor):
 
         return should_continue
 
-    def checkpoint_to_dt(self, checkpoint: str):
-        return datetime.strptime(checkpoint, "%Y-%m-%d-%H-%M")
-
-    def checkpoint_to_arxiv(self, checkpoint: datetime) -> str:
-        return checkpoint.strftime("%Y%m%d%H%M")
-
-    def checkpoint_to_human(self, checkpoint: datetime) -> str:
-        return checkpoint.strftime("%Y-%m-%d-%H-%M")
-
     def get_checkpoint_end(self, minus_1_day: bool = False) -> datetime:
         """."""
         checkpoint_end_dt = datetime.strptime(
@@ -88,6 +79,15 @@ class ArxivExtractor(IExtractor):
         if minus_1_day:
             checkpoint_end_dt -= timedelta(days=1)
         return checkpoint_end_dt
+
+    def checkpoint_to_dt(self, checkpoint: str):
+        return datetime.strptime(checkpoint, "%Y-%m-%d-%H-%M")
+
+    def checkpoint_to_arxiv(self, checkpoint: datetime) -> str:
+        return checkpoint.strftime("%Y%m%d%H%M")
+
+    def checkpoint_to_human(self, checkpoint: datetime) -> str:
+        return checkpoint.strftime("%Y-%m-%d-%H-%M")
 
     def request_arxiv_api(self, params: dict) -> str:
         query = self.build_query()

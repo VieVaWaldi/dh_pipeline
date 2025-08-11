@@ -7,15 +7,13 @@ from dotenv import load_dotenv
 
 from interfaces.i_extractor import IExtractor, ExtractorConfig
 from sources.arxiv.extractor import ArxivExtractor
+from sources.cordis.extractor import CordisExtractor
+# from sources.coreac.extractor import CoreacExtractor
+from sources.openaire.extractor import OpenAIREExtractor
 from utils.config.config_loader import get_query_config
 from utils.error_handling.error_handling import log_and_exit
 from utils.logger.logger import setup_logging
 from utils.logger.timer import log_run_time
-
-
-# from sources.cordis.extractor import CordisExtractor
-# from sources.coreac.extractor import CoreacExtractor
-# from sources.openaire.extractor import OpenaireExtractor
 
 
 def run_extractor(config: ExtractorConfig, extractor_class: Type[IExtractor]):
@@ -61,9 +59,9 @@ if __name__ == "__main__":
 
     extractor_classes = {
         "arxiv": ArxivExtractor,
-        # "cordis": CordisExtractor,
+        "cordis": CordisExtractor,
         # "coreac": CoreacExtractor,
-        # "openaire": OpenaireExtractor,
+        "openaire": OpenAIREExtractor,
     }
 
     extractor_config = ExtractorConfig(

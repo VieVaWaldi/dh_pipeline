@@ -19,7 +19,7 @@ All extractors must inherit the `IExtractor`interface which sets up all paramete
 ## Saving data
 
 - Each API response (publication, project etc.) is called a **record_dataset**.
-- Each record_dataset gets its own folder, named: `YYYY-MM-DD_HH-MM-sanitize(title)`.
+- Each record_dataset gets its own folder, named: `YYYY-MM-DD(optional: _HH-MM)-sanitize(title)`.
 - This folder has to be saved in `self.data_path` which is preconfigured in `i_extractor.py`.
 - Attachments are saved under `YYYY-MM-DD_HH-MM-record_dataset/attachments/sanitize(title)`
 - When extracting the same data again, it will overwrite existing data if given the same name. This also updates the
@@ -33,8 +33,7 @@ All extractors must inherit the `IExtractor`interface which sets up all paramete
   checkpoint should not be saved, to collect updates within the checkpoint range in the next run.
 - In more complicated cases, like projects which get updated over time and are planned for the future,
   after `should_continue()` returns false, an old checkpoint should be saved to overwrite existing record_datasets with
-  relevant
-  updates. It is important to pick an existing checkpoint which points to the right data, so that it can be overwritten.
+  relevant updates. It is important to pick an existing checkpoint which points to the right data, so that it can be overwritten.
 
 ## Sleep between requests
 

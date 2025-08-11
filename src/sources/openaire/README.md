@@ -6,9 +6,9 @@
 Graph Has cursor, but without sorting.
 Getting orgs from graph seems impossible
 
-Search only allows AND for queries, we can make 2 queries.
+Search only allows AND for queries, so we got to use multiple runs.
 
-Probably best strategy is to query by year. Error when results in year > 9000.
+Probably the best strategy is to query by year. Error when results in year > 9000.
 
 Make checkpoint easy and just query the projects again beginning from todays year.
 
