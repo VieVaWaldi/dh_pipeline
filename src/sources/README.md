@@ -21,10 +21,8 @@ Data Source we are considering to add:
 2. Sanitize and transform raw data into SQL Alchemy models that mimic the source data model
 3. Load SQL Alchemy models into the database
 
-4? Deduplicate the source, its part of tranformation
-
 ## Notes for self
 
 * For SQLAlchemy, get_or_create only finds existing entities after flushing, so deduplicate lists with possible
-  duplicates prior using a have seen set
+  duplicates prior using a `have seen set`
 

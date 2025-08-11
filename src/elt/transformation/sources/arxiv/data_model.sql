@@ -35,8 +35,8 @@ CREATE TABLE arxiv.author ( -- junction core.author
 );
 
 CREATE TABLE arxiv.j_entry_author (
-    entry_id INTEGER REFERENCES arxiv.entry(id),
-    author_id INTEGER REFERENCES arxiv.author(id),
+    entry_id INTEGER REFERENCES arxiv.entry(id) ON DELETE CASCADE,
+    author_id INTEGER REFERENCES arxiv.author(id) ON DELETE CASCADE,
     author_position INTEGER NOT NULL,
     PRIMARY KEY (entry_id, author_id)
 );
@@ -52,8 +52,8 @@ CREATE TABLE arxiv.link ( -- junction to core.link
 );
 
 CREATE TABLE arxiv.j_entry_link (
-    entry_id INTEGER REFERENCES arxiv.entry(id),
-    link_id INTEGER REFERENCES arxiv.link(id),
+    entry_id INTEGER REFERENCES arxiv.entry(id) ON DELETE CASCADE,
+    link_id INTEGER REFERENCES arxiv.link(id) ON DELETE CASCADE,
     PRIMARY KEY (entry_id, link_id)
 );
 
@@ -64,6 +64,7 @@ CREATE INDEX idx_entry_title ON arxiv.entry(title);
 CREATE INDEX idx_entry_published_date ON arxiv.entry(published_date);
 CREATE INDEX idx_entry_updated_date ON arxiv.entry(updated_date);
 CREATE INDEX idx_entry_primary_category ON arxiv.entry(primary_category);
+
 CREATE INDEX idx_author_name ON arxiv.author(name);
 
 -----------------------------------------------

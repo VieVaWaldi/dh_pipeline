@@ -5,7 +5,6 @@
 --- Schema & Types
 
 CREATE SCHEMA IF NOT EXISTS core;
-CREATE SCHEMA IF NOT EXISTS core_enrichment;
 
 CREATE TYPE core.source_type AS ENUM ('cordis', 'arxiv', 'coreac', 'openaire');
 
@@ -93,25 +92,25 @@ CREATE TABLE core.j_researchoutput_topic (
     PRIMARY KEY (researchoutput_id, topic_id)
 );
 
---- Person
+--- Author
 
-CREATE TABLE core.person (
+CREATE TABLE core.author (
     id SERIAL PRIMARY KEY,
     name TEXT UNIQUE NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX idx_person_name ON core.person(name);
-CREATE INDEX idx_person_name_search ON core.person USING gin(to_tsvector('english', name));
+CREATE INDEX idx_author_name ON core.author(name);
+CREATE INDEX idx_author_name_search ON core.author USING gin(to_tsvector('english', name));
 
 
-CREATE TABLE core.j_researchoutput_person (
+CREATE TABLE core.j_researchoutput_author (
     researchoutput_id INTEGER REFERENCES core.researchoutput(id) ON DELETE CASCADE,
-    person_id INTEGER REFERENCES core.person(id) ON DELETE CASCADE,
+    author_id INTEGER REFERENCES core.author(id) ON DELETE CASCADE,
     role TEXT NOT NULL,  -- 'author', 'contributor', etc.
     position INTEGER,
-    PRIMARY KEY (researchoutput_id, person_id)
+    PRIMARY KEY (researchoutput_id, author_id)
 );
 
 --- Publisher ---
@@ -171,24 +170,6 @@ CREATE TABLE core.j_researchoutput_link (
     PRIMARY KEY (researchoutput_id, link_id)
 );
 
--------------------------------------------------------------------
---- Enrichment Models
-
-CREATE TABLE core_enrichment.openalex (
--- Storing just JSON response for now,
--- Can query directly and use later for real data model
-    id SERIAL PRIMARY KEY,
-    openalex_id TEXT UNIQUE NOT NULL,
-    data JSONB NOT NULL,
-    fetched_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE core.j_researchoutput_openalex (
-    researchoutput_id INTEGER REFERENCES core.researchoutput(id) ON DELETE CASCADE,
-    openalex_id INTEGER REFERENCES core_enrichment.openalex(id) ON DELETE CASCADE,
-    PRIMARY KEY (researchoutput_id, openalex_id)
-);
-
 -----------------------------------------------
 -- Update Triggers
 
@@ -204,12 +185,14 @@ CREATE TRIGGER update_core_researchoutput_updated_at BEFORE UPDATE
 ON core.researchoutput FOR EACH ROW EXECUTE PROCEDURE
 core.update_updated_at_column();
 
+--- Same Create Trigger gor all updated_at's
+
 CREATE TRIGGER update_topic_updated_at BEFORE UPDATE
 ON core.topic FOR EACH ROW EXECUTE PROCEDURE
 core.update_updated_at_column();
 
-CREATE TRIGGER update_person_updated_at BEFORE UPDATE
-ON core.person FOR EACH ROW EXECUTE PROCEDURE
+CREATE TRIGGER update_author_updated_at BEFORE UPDATE
+ON core.author FOR EACH ROW EXECUTE PROCEDURE
 core.update_updated_at_column();
 
 CREATE TRIGGER update_publisher_updated_at BEFORE UPDATE

@@ -11,7 +11,6 @@ from interfaces.i_extractor import IExtractor, ExtractorConfig
 from lib.file_handling.file_utils import ensure_path_exists
 from lib.requests.requests import make_get_request
 from lib.sanitizers.parse_file_names import parse_file_names
-from lib.sanitizers.parse_text import parse_titles_and_labels
 from utils.error_handling.error_handling import log_and_exit
 
 

@@ -1,52 +1,71 @@
-# Source Transformation
+# Transformation with DBT
 
-Transform source data models into our core data model.
-
-We use dbt for the transformation, see more information [Here](README_DBT.md).
+DBT is used for the entire Transformation Process.
 
 Go [Here](../../sources/README.md) for Source Extraction & Loading.
 
 Go [Here](../../../README_DB.md) for the database documentation.
 
-*General Process:*
+Never worked with dbt? Start [here](https://www.blef.fr/get-started-dbt/), the docs are
+[here](https://docs.getdbt.com/docs/introduction).
 
-1. Analysis and Description of Source
-2. Deduplication of Source
-3. Transformation from Source to Core (with checkpoints)
-4. Deduplication of Core
-5. Enrichment of Core
+Connect to db_digicher_v2 database using: `ssh -N -L 5433:localhost:5433 draco`.
 
-*Dependencies:*
+ToDo:
 
-- Source Data Model, matching Source Schema
-- Core Data Model, our data schema
+* Do or remove this
+    * Important: dbt-postgres installs psycopg2-binary by default, @Claude:"which is fine for development but not
+      optimal for production PyPIdbt. For your 2-day sprint, stick with the default, but note for production you'd want
+      to compile psycopg2 from source for better performance."
 
-All source sql code is under `src/sql/sources`, each folder following the same pattern.
+## Process Overview
+
+* `src/elt/transformation` is the dbt working directory
+* [dbt_project.yml](dbt_project.yml) is dbt main config, defines main models and schemas
+* {}/{source}/_sources.yml for source and core table and column definition
+* Set db connection in `~/.dbt/profiles.yml` use target to chose PROD or DEV
+* There are reusable dbr sql macros under `macros`, however its more copypaste code.
+
+1. Loaders ingest raw data into sql DDL source tables in `sources/{source}/data_model.sql`, these have to be created manually
+2. DBT **staging** layer creates a view on those tables as a dbt buffer
+   * Do we actually need that?
+3. **Intermediate** creates physical tables for the deduplication of the staging tables
+   * `ref()` in e.g. junctions will make them run last due to DBT's dependency graph 
+4. We transform the intermediate tables with **marts** to the unified core data model
+   * DBT creates these tables (like for int) automatically based on the DBT SELECT statements
+5. Post: Create Constraints, Indexes, triggers etc
+6. Which we then clean and deduplicate again
+
+## Important commands
+
+* dbt run -> run everything
+* dbt debug -> test connection, version & configs
+* dbt run --select "type.schema.table" # e.g. "staging.arxiv.*" -> to select/ run specific tables
+* dbt ls --resource-type model --output name --output name -> Show all active models
+* dbt clean -> removes targets and stuff
 
 ## Core Data Model
 
-* enum source type for provenance, also including original id from sources
-    * shows only original source type, after deduplication and merging might change a bit
+* All core tables except junctions have a source_id and source_system to indicate which record in the source they refer to.
 * core models (ro, person, topic, link, publisher, journal) (later project, institution ...)
-* core enrichment models (open alex) (more later)
-
-## Transformation from Source to Core
-
-### Checkpoint Mechanism
-
-* Timestamp-based tracking using the `last_processed_timestamp` for each source table
-* Stored in `core.import_checkpoint` with source_system and table_name as composite key
-* Only need checkpoints for the "driving" tables from each source that contain the main entities
-* Works universally for both new additions and updates to existing records
+* core enrichment models (open alex) (more later) ???
 
 ## Deduplication
 
-1. Match on DOI
-2. Match on normalized titles with similarity
-3. Decide from here how to remove or combine duplicates
+-> We do not do fuzzy matching yet, as that takes a shit ton of time. This probably has to be done in python as well
+according to Claude
+-> We do not need to manage junctions of duplicate records as we only use non-duplicate records for the intermediate tables. 
+That means we currently ignore junctions from duplicate entries.
 
-*No:* 
-* Deduplication of Junctions, they are deleted on Cascade
+-> Always keep the latest record using 
+   * **updated_date DESC** for Arxiv
+
+* We can use DISTINCT or ROW_NUMBER() for DOI
+* We can use pg_trgm or levenshtein() or fuzzy similarity() for titles
+
+## Marts Unification
+1. For normal tables: Select the deduplicated table and all relevant columns, include source_id!
+2. For junctions: Join with both marts tables using source_id's
 
 ## Enrichment
 
@@ -62,3 +81,28 @@ All source sql code is under `src/sql/sources`, each folder following the same p
     * get language code
     * research output type given index for n characters
     * find funding number, maybe normal search better
+
+## Notes
+
+* We use custom schemas to clearly separate sources. This is defined in `macros/generate_schema_name.sql` and overrides
+  DBT's default schema naming.
+
+---
+
+# Key dbt Components
+
+* Models: SQL files that define a transformation or query that produces a table or view in your data warehouse
+* Sources: References to raw data tables already present in your warehouse
+* Snapshots: Tools for tracking historical changes to your data
+* Tests: Assertions about your data to ensure quality
+* Documentation: Automatic generation of docs for your dbt project
+* Macros: Reusable SQL snippets (similar to functions)
+
+## Materialization Types
+
+Dbt supports several ways to persist your transformed data:
+
+* Table: Creates a table for each model
+* View: Creates a view for each model
+* Incremental: Updates only new/changed records rather than rebuilding entire tables
+* Ephemeral: Does not persist in the database but can be referenced by other models
