@@ -146,7 +146,7 @@ class CordisExtractor(IExtractor):
             "archived": True,
         }
 
-        response = make_get_request(url, params)
+        response = make_get_request(url, params, timeout=300)
         if response.get("payload", {}).get("error"):
             log_and_exit(f"Cordis API error: {response['payload']['error']}")
 

@@ -21,6 +21,8 @@ def make_get_request(
     header: Dict = None,
     can_fail=False,
     expect_json: bool = True,
+    disable_session_retry=False,
+    timeout: int = 60,
 ) -> dict | Response | None:
     """
     Makes a get request given an url and optional params and header.
@@ -35,9 +37,13 @@ def make_get_request(
         default_headers = {"Connection": "keep-alive"}
         if header:
             default_headers.update(header)
-        response = get_connection_retry_session().get(
-            url, params=params, headers=default_headers, timeout=60
-        )
+
+        if disable_session_retry:
+            session = requests.Session()
+        else:
+            session = get_connection_retry_session()
+
+        response = session.get(url, params=params, headers=default_headers, timeout=timeout)
         logging.info(
             f"GET Request status for request {url}: {flatten_string(response.text[:MAX_RESPONSE_LOG_LENGTH])}"
         )

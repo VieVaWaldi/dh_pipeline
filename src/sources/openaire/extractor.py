@@ -169,7 +169,15 @@ class OpenAIREExtractor(IExtractor):
         }
 
         logging.debug(f"Fetching projects: year={year}, page={page}")
-        response = make_get_request(self.base_project_url, params)
+
+        try:
+            response = make_get_request(self.base_project_url, params, timeout=300)
+        except json.JSONDecodeError as e:
+            logging.error(f"JSON decode error on page {page} of year {year}, skipping page: {e}")
+            return [], 0, page
+        except Exception as e:
+            logging.error(f"Request error on page {page} of year {year}, skipping page: {e}")
+            return [], 0, page
 
         try:
             header = response.get("response", {}).get("header", {})
