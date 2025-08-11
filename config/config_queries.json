@@ -22,13 +22,13 @@
       {
         "query": "cultural OR heritage OR digital OR humanities",
         "download_attachments": true,
-        "checkpoint_start": "1981-01-01",
+        "checkpoint_start": "1985-01-01",
         "checkpoint_range": "1"
       },
       {
         "query": "contenttype='project' AND '*'",
         "download_attachments": false,
-        "checkpoint_start": "1981-01-01",
+        "checkpoint_start": "1985-01-01",
         "checkpoint_range": "1"
       }
     ]
