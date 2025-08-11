@@ -36,7 +36,7 @@ class OpenAIREExtractor(IExtractor):
         self.base_research_products_url = (
             "https://api.openaire.eu/graph/v1/researchProducts"
         )
-        self.page_size = 10
+        self.page_size = 50
         self.max_results_per_year = 10000
 
     def should_continue(self) -> bool:
@@ -295,13 +295,12 @@ class OpenAIREExtractor(IExtractor):
         Uses cursor-based pagination to handle large result sets.
         """
         all_results = []
-        page_size = 100
         cursor = "*"
 
         while cursor:
             params = {
                 "relProjectId": project_id,
-                "pageSize": page_size,
+                "pageSize": self.page_size,
                 "cursor": cursor,
             }
 
