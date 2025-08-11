@@ -36,7 +36,7 @@ class OpenAIREExtractor(IExtractor):
         self.base_research_products_url = (
             "https://api.openaire.eu/graph/v1/researchProducts"
         )
-        self.page_size = 10
+        self.page_size = 2
         self.max_results_per_year = 10000
 
     def should_continue(self) -> bool:
