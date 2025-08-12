@@ -123,6 +123,13 @@ class Institution(Base):
     city = Column(Text)
     country = Column(Text)
     geolocation = Column(ARRAY(Float))
+
+    type_title = Column(Text)
+    nuts_level_0 = Column(Text)
+    nuts_level_1 = Column(Text)
+    nuts_level_2 = Column(Text)
+    nuts_level_3 = Column(Text)
+
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
@@ -157,6 +164,14 @@ class ResearchOutput(Base):
     comment = Column(Text)
     fulltext = Column(Text)
     funding_number = Column(Text)
+
+    journal_number = Column(Text)
+    journal_title = Column(Text)
+    published_pages = Column(Text)
+    published_year = Column(Text)
+    publisher = Column(Text)
+    issn = Column(Text)
+
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 

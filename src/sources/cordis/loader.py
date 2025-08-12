@@ -238,6 +238,10 @@ class CordisLoader(ILoader):
             if geo_data:
                 coordinates = parse_geolocation(geo_data, True)
 
+            nuts_codes = self._extract_nuts_hierarchy(org_data)
+            organized_nuts = self._organize_nuts_codes(nuts_codes)
+            institution_type = self._extract_institution_type(org_data)
+
             institution, _ = get_or_create(
                 session,
                 Institution,
@@ -252,6 +256,8 @@ class CordisLoader(ILoader):
                 city=parse_string(get_nested(org_data, "address.city")),
                 country=parse_string(get_nested(org_data, "address.country")),
                 geolocation=coordinates,
+                type_title=institution_type,
+                **organized_nuts,
             )
 
             # ToDo: Check if flush needed here?
@@ -304,6 +310,68 @@ class CordisLoader(ILoader):
 
         return people
 
+    def _extract_institution_type(self, org_data: Dict) -> Optional[str]:
+        """Extract institution activity type"""
+        categories = get_nested(org_data, "relations.categories.category")
+        for cat in ensure_list(categories):
+            if cat.get("@classification") == "organizationActivityType":
+                return parse_string(cat.get("title"))
+        return None
+
+    def _extract_nuts_hierarchy(self, org_data: Dict) -> List[str]:
+        """Extract full NUTS hierarchy for institution"""
+        nuts_codes = []
+
+        regions = get_nested(org_data, "relations.regions.region")
+        for region in ensure_list(regions):
+            if region.get("@type") == "relatedNutsCode":
+                nuts_code = parse_string(region.get("nutsCode"))
+                if nuts_code:
+                    nuts_codes.append(nuts_code)
+
+                def extract_parent_nuts(parent_region):
+                    if parent_region:
+                        parent_nuts = parse_string(parent_region.get("nutsCode"))
+                        if parent_nuts and parent_nuts not in nuts_codes:
+                            nuts_codes.append(parent_nuts)
+
+                        parents = get_nested(parent_region, "parents.region")
+                        if parents:
+                            for p in ensure_list(parents):
+                                extract_parent_nuts(p)
+
+                parents = get_nested(region, "parents.region")
+                if parents:
+                    for parent in ensure_list(parents):
+                        extract_parent_nuts(parent)
+
+        return nuts_codes
+
+    def _organize_nuts_codes(self, nuts_codes: List[str]) -> Dict[str, str]:
+        """Organize NUTS codes by their hierarchy level (length-based)"""
+        organized = {
+            "nuts_level_0": None,
+            "nuts_level_1": None,
+            "nuts_level_2": None,
+            "nuts_level_3": None,
+        }
+
+        for code in nuts_codes:
+            if not code:
+                continue
+
+            code_len = len(code)
+            if code_len == 2:
+                organized["nuts_level_0"] = code
+            elif code_len == 3:
+                organized["nuts_level_1"] = code
+            elif code_len == 4:
+                organized["nuts_level_2"] = code
+            elif code_len >= 5:
+                organized["nuts_level_3"] = code
+
+        return organized
+
     def _create_research_outputs(
         self, session: Session, project_data: Dict
     ) -> List[ResearchOutput]:
@@ -323,6 +391,8 @@ class CordisLoader(ILoader):
 
             # ToDo: Check here for attachments, assess first
 
+            details, author_str = self._extract_publication_details(result_data)
+
             research_output, created = get_or_create(
                 session,
                 ResearchOutput,
@@ -337,13 +407,14 @@ class CordisLoader(ILoader):
                 comment=parse_content(result_data.get("teaser")),
                 fulltext=None,
                 funding_number=None,
+                **details
             )
 
             if created:
                 research_outputs.append(research_output)
 
                 # ToDo: Check if flush here is needed
-                # session.flush()
+                session.flush()
 
                 output_topics = self._create_output_topics(session, result_data)
                 output_weblinks = self._create_output_weblinks(session, result_data)
@@ -351,7 +422,9 @@ class CordisLoader(ILoader):
                     session, result_data
                 )
 
-                self._create_output_authors(session, result_data, research_output)
+                self._create_output_authors(
+                    session, author_str, research_output
+                )
 
                 self._create_output_topics_junction(
                     session, research_output, output_topics
@@ -365,6 +438,23 @@ class CordisLoader(ILoader):
 
         research_output_pdfs = self._create_research_output_attachments(session)
         return research_outputs + research_output_pdfs
+
+    def _extract_publication_details(self, result_data: Dict) -> Tuple[Dict, str]:
+        """Extract all publication details for research output"""
+        details = get_nested(result_data, "details") or {}
+        identifiers = get_nested(result_data, "identifiers") or {}
+
+        return (
+            {
+                "journal_number": parse_string(details.get("journalNumber")),
+                "journal_title": parse_string(details.get("journalTitle")),
+                "published_pages": parse_string(details.get("publishedPages")),
+                "published_year": parse_string(details.get("publishedYear")),
+                "publisher": parse_string(details.get("publisher")),
+                "issn": parse_string(identifiers.get("issn")),
+            },
+            parse_string(details.get("authors")),
+        )
 
     def _create_research_output_attachments(
         self, session: Session
@@ -492,18 +582,19 @@ class CordisLoader(ILoader):
         return institutions
 
     def _create_output_authors(
-        self, session: Session, result_data: Dict, research_output: ResearchOutput
+        self, session: Session, authors_str: str, research_output: ResearchOutput
     ):
         """Create or retrieve authors for a research output and create junction records."""
-        authors_str = get_nested(result_data, "details.authors")
         if not authors_str:
             return
 
+        seen_authors = set()
         position = 0
         for author_name in authors_str.split(","):
             author_name = parse_names_and_identifiers(author_name)
-            if not author_name:
+            if not author_name or author_name in seen_authors:
                 continue
+            seen_authors.add(author_name)
 
             person, _ = get_or_create(
                 session,
