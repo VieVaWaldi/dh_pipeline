@@ -7,6 +7,6 @@ SELECT
     title as description,
     CURRENT_TIMESTAMP as created_at,
     CURRENT_TIMESTAMP as updated_at
-FROM {{ ref('int_arxiv_links_dedup') }}
+FROM {{ ref('int_arxiv_link_dedup') }}
 WHERE url IS NOT NULL
 ORDER BY url, link_id

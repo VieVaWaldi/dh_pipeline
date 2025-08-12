@@ -24,5 +24,5 @@ SELECT
     CURRENT_TIMESTAMP as created_at,
     CURRENT_TIMESTAMP as updated_at
 
-FROM {{ ref('int_arxiv_entries_dedup') }}
+FROM {{ ref('int_arxiv_entry_dedup') }}
 ORDER BY entry_id
