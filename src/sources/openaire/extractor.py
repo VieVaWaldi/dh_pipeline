@@ -319,6 +319,10 @@ class OpenAIREExtractor(IExtractor):
                 if not response:
                     break
 
+                # Meise Botanic Garden has over numFound: 272374, which is like an inf loop.
+                if response.get("header", {}).get("numFound", 0) > 10_000:
+                    break
+
                 if "results" in response and response["results"]:
                     all_results.extend(response["results"])
 
