@@ -38,10 +38,63 @@ CREATE TABLE openaire.project (
     updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
--- Research Output placeholder for later
+CREATE TABLE openaire.container (
+    id SERIAL PRIMARY KEY,
+    name TEXT UNIQUE NOT NULL,
+    issn_printed TEXT,
+    issn_online TEXT,
+    issn_linking TEXT,
+
+    -- Volume/issue/page info
+    volume TEXT,
+    issue TEXT,
+    start_page TEXT,
+    end_page TEXT,
+    edition TEXT,
+
+    -- Conference info
+    conference_place TEXT,
+    conference_date DATE,
+
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
 CREATE TABLE openaire.researchoutput (
     id SERIAL PRIMARY KEY,
-    -- WIP
+    id_original TEXT UNIQUE NOT NULL,
+    main_title TEXT NOT NULL,
+    sub_title TEXT,
+    publication_date DATE,
+    publisher TEXT,
+    type TEXT,
+
+    -- Language info
+    language_code TEXT,
+    language_label TEXT,
+
+    -- Access and funding info
+    open_access_color TEXT,
+    publicly_funded BOOLEAN,
+    is_green BOOLEAN,
+    is_in_diamond_journal BOOLEAN,
+
+    -- Description
+    description TEXT,
+
+    -- Citation metrics
+    citation_count FLOAT,
+    influence FLOAT,
+    popularity FLOAT,
+    impulse FLOAT,
+    citation_class TEXT,
+    influence_class TEXT,
+    impulse_class TEXT,
+    popularity_class TEXT,
+
+    -- Container relationship
+    container_id INTEGER REFERENCES openaire.container(id),
+
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
@@ -118,12 +171,24 @@ CREATE TABLE openaire.h2020_programme (
 );
 
 -----------------------------------------------
+-- Research Output related entities
+
+CREATE TABLE openaire.author (
+    id SERIAL PRIMARY KEY,
+    full_name TEXT UNIQUE NOT NULL,
+    first_name TEXT,
+    surname TEXT,
+    pid TEXT,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+-----------------------------------------------
 -- Junction Tables
 
--- Research Output Junction placeholder for later
 CREATE TABLE openaire.j_project_researchoutput (
-    project_id INTEGER REFERENCES openaire.project(id),
-    researchoutput_id INTEGER REFERENCES openaire.researchoutput(id),
+    project_id INTEGER REFERENCES openaire.project(id) ON DELETE CASCADE,
+    researchoutput_id INTEGER REFERENCES openaire.researchoutput(id) ON DELETE CASCADE,
     relation_type TEXT,
     PRIMARY KEY (project_id, researchoutput_id)
 );
@@ -171,6 +236,22 @@ CREATE TABLE openaire.j_project_h2020_programme (
     PRIMARY KEY (project_id, h2020_programme_id)
 );
 
+CREATE TABLE openaire.j_researchoutput_author (
+    research_output_id INTEGER REFERENCES openaire.researchoutput(id) ON DELETE CASCADE,
+    author_id INTEGER REFERENCES openaire.author(id) ON DELETE CASCADE,
+    rank FLOAT,
+    PRIMARY KEY (research_output_id, author_id)
+);
+
+CREATE TABLE openaire.j_researchoutput_organization (
+    research_output_id INTEGER REFERENCES openaire.researchoutput(id) ON DELETE CASCADE,
+    organization_id INTEGER REFERENCES openaire.organization(id) ON DELETE CASCADE,
+    relation_type TEXT,
+    country_code TEXT,
+    country_label TEXT,
+    PRIMARY KEY (research_output_id, organization_id)
+);
+
 -----------------------------------------------
 -- Indexes
 
@@ -181,6 +262,18 @@ CREATE INDEX idx_project_end_date ON openaire.project(end_date);
 CREATE INDEX idx_openaire_project_title_search ON openaire.project USING gin(to_tsvector('english', title));
 CREATE INDEX idx_openaire_project_summary_search ON openaire.project USING gin(to_tsvector('english', coalesce(summary, '')));
 
+CREATE INDEX idx_researchoutput_title ON openaire.researchoutput(main_title);
+CREATE INDEX idx_researchoutput_publication_date ON openaire.researchoutput(publication_date);
+CREATE INDEX idx_researchoutput_type ON openaire.researchoutput(type);
+CREATE INDEX idx_researchoutput_citation_count ON openaire.researchoutput(citation_count);
+CREATE INDEX idx_researchoutput_title_search ON openaire.researchoutput USING gin(to_tsvector('english', main_title));
+CREATE INDEX idx_researchoutput_description_search ON openaire.researchoutput USING gin(to_tsvector('english', coalesce(description, '')));
+
+CREATE INDEX idx_author_full_name ON openaire.author(full_name);
+CREATE INDEX idx_author_surname ON openaire.author(surname);
+
+CREATE INDEX idx_container_name ON openaire.container(name);
+CREATE INDEX idx_container_issn_online ON openaire.container(issn_online);
 
 CREATE INDEX idx_organization_legal_name ON openaire.organization(legal_name);
 
@@ -203,6 +296,10 @@ CREATE TRIGGER update_project_updated_at BEFORE UPDATE
 ON openaire.project FOR EACH ROW EXECUTE PROCEDURE
 openaire.update_updated_at_column();
 
+CREATE TRIGGER update_researchoutput_updated_at BEFORE UPDATE
+ON openaire.researchoutput FOR EACH ROW EXECUTE PROCEDURE
+openaire.update_updated_at_column();
+
 CREATE TRIGGER update_organization_updated_at BEFORE UPDATE
 ON openaire.organization FOR EACH ROW EXECUTE PROCEDURE
 openaire.update_updated_at_column();
@@ -215,10 +312,6 @@ CREATE TRIGGER update_measure_updated_at BEFORE UPDATE
 ON openaire.measure FOR EACH ROW EXECUTE PROCEDURE
 openaire.update_updated_at_column();
 
-CREATE TRIGGER update_researchoutput_updated_at BEFORE UPDATE
-ON openaire.researchoutput FOR EACH ROW EXECUTE PROCEDURE
-openaire.update_updated_at_column();
-
 CREATE TRIGGER update_funder_updated_at BEFORE UPDATE
 ON openaire.funder FOR EACH ROW EXECUTE PROCEDURE
 openaire.update_updated_at_column();
@@ -229,4 +322,12 @@ openaire.update_updated_at_column();
 
 CREATE TRIGGER update_h2020_programme_updated_at BEFORE UPDATE
 ON openaire.h2020_programme FOR EACH ROW EXECUTE PROCEDURE
+openaire.update_updated_at_column();
+
+CREATE TRIGGER update_author_updated_at BEFORE UPDATE
+ON openaire.author FOR EACH ROW EXECUTE PROCEDURE
+openaire.update_updated_at_column();
+
+CREATE TRIGGER update_container_updated_at BEFORE UPDATE
+ON openaire.container FOR EACH ROW EXECUTE PROCEDURE
 openaire.update_updated_at_column();

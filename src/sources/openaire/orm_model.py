@@ -91,16 +91,97 @@ class ResearchOutput(Base):
     __table_args__ = {"schema": "openaire"}
 
     id = Column(Integer, primary_key=True)
-    # WIP as per schema
+    id_original = Column(Text, unique=True, nullable=False)
+    main_title = Column(Text, nullable=False)
+    sub_title = Column(Text)
+    publication_date = Column(Date)
+    publisher = Column(Text)
+    type = Column(Text)
+
+    language_code = Column(Text)
+    language_label = Column(Text)
+
+    open_access_color = Column(Text)
+    publicly_funded = Column(Boolean)
+    is_green = Column(Boolean)
+    is_in_diamond_journal = Column(Boolean)
+
+    description = Column(Text)
+
+    citation_count = Column(Float)
+    influence = Column(Float)
+    popularity = Column(Float)
+    impulse = Column(Float)
+    citation_class = Column(Text)
+    influence_class = Column(Text)
+    impulse_class = Column(Text)
+    popularity_class = Column(Text)
+
+    container_id = Column(Integer, ForeignKey("openaire.container.id"))
+
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
-    # Relationships
     projects = relationship(
         "Project",
         secondary="openaire.j_project_researchoutput",
         back_populates="research_outputs",
     )
+    authors = relationship(
+        "Author",
+        secondary="openaire.j_researchoutput_author",
+        back_populates="research_outputs",
+    )
+    organizations = relationship(
+        "Organization",
+        secondary="openaire.j_researchoutput_organization",
+        back_populates="research_outputs",
+    )
+    container = relationship("Container", back_populates="research_outputs")
+
+
+class Author(Base):
+    __tablename__ = "author"
+    __table_args__ = {"schema": "openaire"}
+
+    id = Column(Integer, primary_key=True)
+    full_name = Column(Text, unique=True, nullable=False)
+    first_name = Column(Text)
+    surname = Column(Text)
+    pid = Column(Text)
+    created_at = Column(DateTime, default=datetime.now)
+    updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
+
+    research_outputs = relationship(
+        "ResearchOutput",
+        secondary="openaire.j_researchoutput_author",
+        back_populates="authors",
+    )
+
+
+class Container(Base):
+    __tablename__ = "container"
+    __table_args__ = {"schema": "openaire"}
+
+    id = Column(Integer, primary_key=True)
+    name = Column(Text, unique=True, nullable=False)
+    issn_printed = Column(Text)
+    issn_online = Column(Text)
+    issn_linking = Column(Text)
+
+    volume = Column(Text)
+    issue = Column(Text)
+    start_page = Column(Text)
+    end_page = Column(Text)
+    edition = Column(Text)
+
+    conference_place = Column(Text)
+    conference_date = Column(Date)
+
+    created_at = Column(DateTime, default=datetime.now)
+    updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
+
+    research_outputs = relationship("ResearchOutput", back_populates="container")
 
 
 class Organization(Base):
@@ -124,6 +205,12 @@ class Organization(Base):
     projects = relationship(
         "Project",
         secondary="openaire.j_project_organization",
+        back_populates="organizations",
+    )
+
+    research_outputs = relationship(
+        "ResearchOutput",
+        secondary="openaire.j_researchoutput_organization",
         back_populates="organizations",
     )
 
@@ -327,3 +414,37 @@ class JunctionProjectH2020Programme(Base):
         ForeignKey("openaire.h2020_programme.id", ondelete="CASCADE"),
         primary_key=True,
     )
+
+
+class JunctionResearchOutputAuthor(Base):
+    __tablename__ = "j_researchoutput_author"
+    __table_args__ = {"schema": "openaire"}
+
+    research_output_id = Column(
+        Integer,
+        ForeignKey("openaire.researchoutput.id", ondelete="CASCADE"),
+        primary_key=True,
+    )
+    author_id = Column(
+        Integer, ForeignKey("openaire.author.id", ondelete="CASCADE"), primary_key=True
+    )
+    rank = Column(Float)
+
+
+class JunctionResearchOutputOrganization(Base):
+    __tablename__ = "j_researchoutput_organization"
+    __table_args__ = {"schema": "openaire"}
+
+    research_output_id = Column(
+        Integer,
+        ForeignKey("openaire.researchoutput.id", ondelete="CASCADE"),
+        primary_key=True,
+    )
+    organization_id = Column(
+        Integer,
+        ForeignKey("openaire.organization.id", ondelete="CASCADE"),
+        primary_key=True,
+    )
+    relation_type = Column(Text)
+    country_code = Column(Text)
+    country_label = Column(Text)

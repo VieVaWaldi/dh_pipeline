@@ -1,3 +1,4 @@
+import logging
 from typing import Dict, List, Tuple, Optional
 
 from sqlalchemy.orm import Session
@@ -5,6 +6,7 @@ from sqlalchemy.orm import Session
 from interfaces.i_loader import ILoader
 from lib.database.get_or_create import get_or_create
 from lib.file_handling.dict_utils import ensure_list, get_nested
+from lib.file_handling.json_utils import load_json_file
 from lib.sanitizers.parse_primitives import (
     parse_bool,
     parse_float,
@@ -31,6 +33,12 @@ from sources.openaire.orm_model import (
     JunctionProjectFunder,
     JunctionProjectFundingStream,
     JunctionProjectH2020Programme,
+    ResearchOutput,
+    Author,
+    Container,
+    JunctionResearchOutputAuthor,
+    JunctionResearchOutputOrganization,
+    JunctionProjectResearchOutput,
 )
 
 
@@ -49,7 +57,7 @@ class OpenaireLoader(ILoader):
         Transforms JSON data into Project, Organization, Subject, etc. models and their relationships.
         """
         if self.path_to_file and self.path_to_file.name == "research_products.json":
-            # ToDo: Add research output parsing
+            # RO must be loaded within a project to get the relations right
             return
 
         assert (
@@ -85,6 +93,48 @@ class OpenaireLoader(ILoader):
 
         self._create_project_funding_streams(session, project, funding_streams)
         self._create_project_h2020_programmes(session, project, h2020_programmes)
+
+        """ Research Output """
+
+        research_products_path = self.path_to_file.parent / "research_products.json"
+        if not self.path_to_file:
+            return
+        if not research_products_path.exists():
+            return
+
+        try:
+            research_products_data = load_json_file(research_products_path)
+
+            for ro_data in ensure_list(research_products_data):
+                research_output, created_ro = self._create_research_output(
+                    session, ro_data
+                )
+                if not created_ro or not research_output:
+                    continue
+
+                authors = self._create_authors(session, ro_data)
+                ro_organizations = self._create_ro_organizations(session, ro_data)
+                container = self._create_ro_container(session, ro_data)
+
+                session.flush()
+
+                self._create_ro_authors(session, research_output, authors)
+                self._create_ro_organizations_junctions(
+                    session, research_output, ro_organizations
+                )
+
+                if project:
+                    self._create_project_research_output(
+                        session, project, research_output
+                    )
+
+                if container[0]:
+                    research_output.container_id = container[0].id
+
+        except Exception as e:
+            logging.warning(
+                f"Error processing research_products.json at {research_products_path}: {str(e)}"
+            )
 
     def _create_project(
         self, session: Session, project_data: Dict, openaire_id: Optional[str]
@@ -125,7 +175,7 @@ class OpenaireLoader(ILoader):
         total_cost = parse_float(get_nested(project_data, "totalcost.$"))
         funded_amount = parse_float(get_nested(project_data, "fundedamount.$"))
 
-        website_url = parse_web_resources(get_nested(project_data, "websiteUrl.$"))
+        website_url = parse_web_resources(get_nested(project_data, "websiteurl.$"))
         call_identifier = parse_string(get_nested(project_data, "callidentifier.$"))
 
         project, created = get_or_create(
@@ -281,8 +331,6 @@ class OpenaireLoader(ILoader):
                 website_url=website_url,
                 country_code=country_code,
                 country_label=country_label,
-                # For geolocation and alternative_names, we would need additional data
-                # Defaults to empty/null per model
             )
 
             relation_metadata = {
@@ -495,3 +543,267 @@ class OpenaireLoader(ILoader):
                     JunctionProjectH2020Programme,
                     {"project_id": project.id, "h2020_programme_id": programme.id},
                 )
+
+    """ RESEARCH OUTPUT """
+
+    def _create_research_output(
+        self, session: Session, ro_data: Dict
+    ) -> Tuple[Optional[ResearchOutput], bool]:
+        """Create or retrieve a ResearchOutput entity from the document."""
+        ro_id = parse_string(get_nested(ro_data, "id"))
+        if not ro_id:
+            return None, False
+
+        main_title = parse_titles_and_labels(get_nested(ro_data, "mainTitle"))
+        if not main_title:
+            return None, False
+
+        sub_title = parse_titles_and_labels(get_nested(ro_data, "subTitle"))
+        publication_date = parse_date(get_nested(ro_data, "publicationDate"))
+        publisher = parse_string(get_nested(ro_data, "publisher"))
+        ro_type = parse_string(get_nested(ro_data, "type"))
+
+        language_code = parse_string(get_nested(ro_data, "language.code"))
+        language_label = parse_string(get_nested(ro_data, "language.label"))
+
+        open_access_color = parse_string(get_nested(ro_data, "openAccessColor"))
+        publicly_funded = parse_bool(get_nested(ro_data, "publiclyFunded"))
+        is_green = parse_bool(get_nested(ro_data, "isGreen"))
+        is_in_diamond_journal = parse_bool(get_nested(ro_data, "isInDiamondJournal"))
+
+        descriptions = ensure_list(get_nested(ro_data, "descriptions"))
+        combined_description = None
+        if descriptions:
+            combined_description = parse_content(
+                " ".join(str(desc) for desc in descriptions if desc)
+            )
+
+        citation_count = parse_float(
+            get_nested(ro_data, "indicators.citationImpact.citationCount")
+        )
+        influence = parse_float(
+            get_nested(ro_data, "indicators.citationImpact.influence")
+        )
+        popularity = parse_float(
+            get_nested(ro_data, "indicators.citationImpact.popularity")
+        )
+        impulse = parse_float(get_nested(ro_data, "indicators.citationImpact.impulse"))
+        citation_class = parse_string(
+            get_nested(ro_data, "indicators.citationImpact.citationClass")
+        )
+        influence_class = parse_string(
+            get_nested(ro_data, "indicators.citationImpact.influenceClass")
+        )
+        impulse_class = parse_string(
+            get_nested(ro_data, "indicators.citationImpact.impulseClass")
+        )
+        popularity_class = parse_string(
+            get_nested(ro_data, "indicators.citationImpact.popularityClass")
+        )
+
+        research_output, created = get_or_create(
+            session,
+            ResearchOutput,
+            {"id_original": ro_id},
+            main_title=main_title,
+            sub_title=sub_title,
+            publication_date=publication_date,
+            publisher=publisher,
+            type=ro_type,
+            language_code=language_code,
+            language_label=language_label,
+            open_access_color=open_access_color,
+            publicly_funded=publicly_funded,
+            is_green=is_green,
+            is_in_diamond_journal=is_in_diamond_journal,
+            description=combined_description,
+            citation_count=citation_count,
+            influence=influence,
+            popularity=popularity,
+            impulse=impulse,
+            citation_class=citation_class,
+            influence_class=influence_class,
+            impulse_class=impulse_class,
+            popularity_class=popularity_class,
+        )
+
+        return research_output, created
+
+    def _create_authors(
+        self, session: Session, ro_data: Dict
+    ) -> List[Tuple[Author, dict]]:
+        """Create Author entities from research output data."""
+        authors_with_metadata = []
+        seen_authors = set()
+
+        for author_data in ensure_list(get_nested(ro_data, "authors")):
+            full_name = parse_names_and_identifiers(get_nested(author_data, "fullName"))
+            if not full_name or full_name in seen_authors:
+                continue
+            seen_authors.add(full_name)
+
+            first_name = parse_names_and_identifiers(get_nested(author_data, "name"))
+            surname = parse_names_and_identifiers(get_nested(author_data, "surname"))
+            rank = parse_float(get_nested(author_data, "rank"))
+            pid = parse_string(get_nested(author_data, "pid"))
+
+            author, created = get_or_create(
+                session,
+                Author,
+                {"full_name": full_name},
+                first_name=first_name,
+                surname=surname,
+                pid=pid,
+            )
+
+            author_metadata = {
+                "rank": rank,
+            }
+
+            authors_with_metadata.append((author, author_metadata))
+
+        return authors_with_metadata
+
+    def _create_ro_organizations(
+        self, session: Session, ro_data: Dict
+    ) -> List[Tuple[Organization, dict]]:
+        """Create Organization entities from research output contributors/countries."""
+        organizations_with_metadata = []
+        seen_orgs = set()
+
+        for contributor in ensure_list(get_nested(ro_data, "contributors")):
+            contributor_name = parse_names_and_identifiers(contributor)
+            if not contributor_name or contributor_name in seen_orgs:
+                continue
+            seen_orgs.add(contributor_name)
+
+            organization, created = get_or_create(
+                session,
+                Organization,
+                {"legal_name": contributor_name},
+            )
+
+            org_metadata = {
+                "relation_type": "contributor",
+                "country_code": None,
+                "country_label": None,
+            }
+
+            organizations_with_metadata.append((organization, org_metadata))
+
+        for country_data in ensure_list(get_nested(ro_data, "countries")):
+            country_code = parse_string(get_nested(country_data, "code"))
+            country_label = parse_string(get_nested(country_data, "label"))
+
+            if not country_label or country_label in seen_orgs:
+                continue
+            seen_orgs.add(country_label)
+
+            organization, created = get_or_create(
+                session,
+                Organization,
+                {"legal_name": country_label},
+                country_code=country_code,
+                country_label=country_label,
+            )
+
+            org_metadata = {
+                "relation_type": "country",
+                "country_code": country_code,
+                "country_label": country_label,
+            }
+
+            organizations_with_metadata.append((organization, org_metadata))
+
+        return organizations_with_metadata
+
+    def _create_ro_container(
+        self, session: Session, ro_data: Dict
+    ) -> Tuple[Optional[Container], bool]:
+        """Create Container (journal/conference) entity from research output data."""
+        container_data = get_nested(ro_data, "container")
+        if not container_data:
+            return None, False
+
+        name = parse_string(get_nested(container_data, "name"))
+        if not name:
+            return None, False
+
+        issn_printed = parse_string(get_nested(container_data, "issnPrinted"))
+        issn_online = parse_string(get_nested(container_data, "issnOnline"))
+        issn_linking = parse_string(get_nested(container_data, "issnLinking"))
+
+        volume = parse_string(get_nested(container_data, "vol"))
+        issue = parse_string(get_nested(container_data, "iss"))
+        start_page = parse_string(get_nested(container_data, "sp"))
+        end_page = parse_string(get_nested(container_data, "ep"))
+        edition = parse_string(get_nested(container_data, "edition"))
+
+        conference_place = parse_string(get_nested(container_data, "conferencePlace"))
+        conference_date = parse_date(get_nested(container_data, "conferenceDate"))
+
+        container, created = get_or_create(
+            session,
+            Container,
+            {"name": name},
+            issn_printed=issn_printed,
+            issn_online=issn_online,
+            issn_linking=issn_linking,
+            volume=volume,
+            issue=issue,
+            start_page=start_page,
+            end_page=end_page,
+            edition=edition,
+            conference_place=conference_place,
+            conference_date=conference_date,
+        )
+
+        return container, created
+
+    def _create_ro_authors(
+        self,
+        session: Session,
+        research_output: ResearchOutput,
+        authors_with_metadata: List[Tuple[Author, dict]],
+    ):
+        """Create junction table entries between ResearchOutput and Author entities."""
+        for author, metadata in authors_with_metadata:
+            if research_output.id and author.id:
+                get_or_create(
+                    session,
+                    JunctionResearchOutputAuthor,
+                    {"research_output_id": research_output.id, "author_id": author.id},
+                    rank=metadata.get("rank"),
+                )
+
+    def _create_ro_organizations_junctions(
+        self,
+        session: Session,
+        research_output: ResearchOutput,
+        organizations_with_metadata: List[Tuple[Organization, dict]],
+    ):
+        """Create junction table entries between ResearchOutput and Organization entities."""
+        for organization, metadata in organizations_with_metadata:
+            if research_output.id and organization.id:
+                get_or_create(
+                    session,
+                    JunctionResearchOutputOrganization,
+                    {
+                        "research_output_id": research_output.id,
+                        "organization_id": organization.id,
+                    },
+                    relation_type=metadata.get("relation_type"),
+                    country_code=metadata.get("country_code"),
+                    country_label=metadata.get("country_label"),
+                )
+
+    def _create_project_research_output(
+        self, session: Session, project: Project, research_output: ResearchOutput
+    ):
+        """Create junction table entry between Project and ResearchOutput entities."""
+        if project.id and research_output.id:
+            get_or_create(
+                session,
+                JunctionProjectResearchOutput,
+                {"project_id": project.id, "researchoutput_id": research_output.id},
+            )
