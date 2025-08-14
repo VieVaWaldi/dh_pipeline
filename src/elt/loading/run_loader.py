@@ -48,6 +48,10 @@ def run_loader(config: LoaderConfig):
             yield_all_documents(config.source_path)
         ):
             doc_count += 1
+            # ToDo: Remove!
+            if config["name"] == "cordis" and doc_idx < 53_000:
+                skip_count += 1
+                continue
             if cp.should_skip_or_store(mtime):
                 skip_count += 1
                 continue

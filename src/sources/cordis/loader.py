@@ -472,7 +472,12 @@ class CordisLoader(ILoader):
         for idx, file_path in enumerate(attachments_dir.iterdir()):
             if not file_path.name.endswith(".pdf"):
                 continue
-            fulltext = parse_content(pdf_to_text(file_path))
+            # ToDo: /var/spool/slurm/d/job4197661/slurm_script: line 25: 1613720 Killed                  
+            #python src/elt/loading/run_loader.py --source "$SOURCE" --query_id "$QUERY_ID"
+            # slurmstepd: error: Detected 1 oom_kill event in StepId=4197661.batch. Some of the step tasks have been OOM Killed.
+
+            # fulltext = parse_content(pdf_to_text(file_path))
+            fulltext = None
             research_output, created = get_or_create(
                 session,
                 ResearchOutput,
@@ -590,8 +595,11 @@ class CordisLoader(ILoader):
 
         seen_authors = set()
         position = 0
-        for author_name in authors_str.split(","):
+        for author_name in re.split(r'[,;]', authors_str):
             author_name = parse_names_and_identifiers(author_name)
+            MAX_NAME_LENGTH = 500
+            if len(author_name) > MAX_NAME_LENGTH:
+                author_name = author_name[:MAX_NAME_LENGTH].strip()
             if not author_name or author_name in seen_authors:
                 continue
             seen_authors.add(author_name)

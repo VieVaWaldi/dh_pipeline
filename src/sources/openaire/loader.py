@@ -308,7 +308,7 @@ class OpenaireLoader(ILoader):
             original_id = parse_string(get_nested(rel_data, "to.$"))
             legal_name = parse_names_and_identifiers(
                 get_nested(rel_data, "legalname.$")
-            )
+            )[:600]
             if not legal_name or legal_name in seen_orgs:
                 continue
             seen_orgs.add(legal_name)
@@ -671,49 +671,28 @@ class OpenaireLoader(ILoader):
         organizations_with_metadata = []
         seen_orgs = set()
 
-        for contributor in ensure_list(get_nested(ro_data, "contributors")):
-            contributor_name = parse_names_and_identifiers(contributor)
-            if not contributor_name or contributor_name in seen_orgs:
-                continue
-            seen_orgs.add(contributor_name)
+        for contributors in ensure_list(get_nested(ro_data, "contributors")):
+            for contributor in re.split(r'[,;]', contributors):
+                contributor_name = parse_names_and_identifiers(contributor)
+                if len(contributor_name) > MAX_NAME_LENGTH:
+                    contributor_name = contributor_name[:MAX_NAME_LENGTH].strip()
+                if not contributor_name or contributor_name in seen_orgs:
+                    continue
+                seen_orgs.add(contributor_name)
 
-            organization, created = get_or_create(
-                session,
-                Organization,
-                {"legal_name": contributor_name},
-            )
+                organization, created = get_or_create(
+                    session,
+                    Organization,
+                    {"legal_name": contributor_name},
+                )
 
-            org_metadata = {
-                "relation_type": "contributor",
-                "country_code": None,
-                "country_label": None,
-            }
+                org_metadata = {
+                    "relation_type": "contributor",
+                    "country_code": None,
+                    "country_label": None,
+                }
 
-            organizations_with_metadata.append((organization, org_metadata))
-
-        for country_data in ensure_list(get_nested(ro_data, "countries")):
-            country_code = parse_string(get_nested(country_data, "code"))
-            country_label = parse_string(get_nested(country_data, "label"))
-
-            if not country_label or country_label in seen_orgs:
-                continue
-            seen_orgs.add(country_label)
-
-            organization, created = get_or_create(
-                session,
-                Organization,
-                {"legal_name": country_label},
-                country_code=country_code,
-                country_label=country_label,
-            )
-
-            org_metadata = {
-                "relation_type": "country",
-                "country_code": country_code,
-                "country_label": country_label,
-            }
-
-            organizations_with_metadata.append((organization, org_metadata))
+                organizations_with_metadata.append((organization, org_metadata))
 
         return organizations_with_metadata
 

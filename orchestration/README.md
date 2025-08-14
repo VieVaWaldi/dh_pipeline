@@ -1,7 +1,7 @@
 # Orchestration with Apache Airflow
 
 # Connecting to Running Instance
-* Password is here: cat $AIRFLOW_HOME/simple_auth_manager_passwords.json.generated
+* Password is here: `cat $AIRFLOW_HOME/simple_auth_manager_passwords.json.generated`
 * IMPORTANT: idk why but it keeps adding passwords to the file. You must delete all but the first one for it to work.
 * Connect using tunnel: ssh -N -L 8080:localhost:8080 draco
 
