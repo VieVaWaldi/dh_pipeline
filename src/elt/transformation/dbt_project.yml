@@ -32,9 +32,8 @@ models:
       +materialized: table
       arxiv:
         +schema: arxiv_intermediate
-      # Future sources:
-      # cordis:
-      #   +schema: cordis_intermediate
+      cordis:
+        +schema: cordis_intermediate
       # coreac:
       #   +schema: coreac_intermediate
       # openaire:

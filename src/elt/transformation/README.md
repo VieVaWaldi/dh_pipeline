@@ -18,6 +18,11 @@ ToDo:
       optimal for production PyPIdbt. For your 2-day sprint, stick with the default, but note for production you'd want
       to compile psycopg2 from source for better performance."
 
+## Import
+
+* Doc this or something:
+* For openaire we ignore measure for project
+
 ## Process Overview
 
 * `src/elt/transformation` is the dbt working directory
@@ -56,16 +61,20 @@ ToDo:
 according to Claude
 -> We do not need to manage junctions of duplicate records as we only use non-duplicate records for the intermediate tables. 
 That means we currently ignore junctions from duplicate entries.
-
 -> Always keep the latest record using 
-   * **updated_date DESC** for Arxiv
+   * **publiaction date DESC** or something similar
+-> Junctions will only be filtered by the primary table they are pointing to
+-> In the next unification step they will be recreated using the source_id
 
 * We can use DISTINCT or ROW_NUMBER() for DOI
 * We can use pg_trgm or levenshtein() or fuzzy similarity() for titles
 
+## Deduplication with changing Junction Pointers
+
 ## Marts Unification
 1. For normal tables: Select the deduplicated table and all relevant columns, include source_id!
 2. For junctions: Join with both marts tables using source_id's
+-> Each table in core must know its source_id for the junctions to be picked up correctly
 
 ## Enrichment
 

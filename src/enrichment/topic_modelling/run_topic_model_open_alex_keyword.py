@@ -25,7 +25,10 @@ max_workers = psutil.cpu_count(logical=False)  # Gets physical cores only
 batch_size = 128
 
 try:
-    nlp = spacy.load("en_core_web_sm")
+    # TODO:
+    # check if that does work
+    # claude added , disable=["parser", "ner"] and says x3 to x5 speedup
+    nlp = spacy.load("en_core_web_sm", disable=["parser", "ner"])
 except OSError as e:
     raise Exception(
         "Dont forget to download the dataset first: `python -m spacy download en_core_web_sm`."

@@ -82,7 +82,6 @@ CREATE TABLE ResearchOutputs (
 CREATE TABLE Institutions (
     id SERIAL PRIMARY KEY,
     name TEXT UNIQUE NOT NULL,
-    -- Extra data from cordis -- Find API for other sources given just the name
     sme BOOLEAN,
     address_street TEXT,
     address_postbox TEXT,

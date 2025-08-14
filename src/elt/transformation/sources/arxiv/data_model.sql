@@ -1,8 +1,6 @@
 -----------------------------------------------
 -- Arxiv Data Model
 
--- ToDo: cascading in junctions
-
 CREATE SCHEMA IF NOT EXISTS arxiv;
 
 CREATE TABLE arxiv.entry (

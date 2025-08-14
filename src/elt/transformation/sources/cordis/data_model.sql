@@ -61,6 +61,12 @@ CREATE TABLE cordis.institution (
     city TEXT,
     country TEXT,
     geolocation float[], -- POINT?
+    type TEXT,
+    type_title TEXT,
+    nuts_level_0 TEXT,
+    nuts_level_1 TEXT,
+    nuts_level_2 TEXT,
+    nuts_level_3 TEXT,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
@@ -78,6 +84,12 @@ CREATE TABLE cordis.researchoutput (
     comment TEXT, -- comment
     fulltext TEXT, -- fulltext
     funding_number TEXT, -- funding_number
+    journal_number TEXT,
+    journal_title TEXT,
+    published_pages TEXT,
+    published_year TEXT,
+    publisher TEXT,
+    issn TEXT,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
