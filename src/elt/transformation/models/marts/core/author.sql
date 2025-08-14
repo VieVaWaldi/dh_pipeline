@@ -11,7 +11,7 @@ SELECT
     author_id::TEXT as source_id,
     CURRENT_TIMESTAMP as created_at,
     CURRENT_TIMESTAMP as updated_at
-FROM {{ ref('int_arxiv_authors_dedup') }}
+FROM {{ ref('int_arxiv_author_dedup') }}
 WHERE name IS NOT NULL
     AND TRIM(name) != ''
 ORDER BY name

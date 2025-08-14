@@ -1,7 +1,7 @@
 {{ config(materialized='table') }}
 
 WITH step1_doi AS (
-  {{ dedup_by_doi(ref('stg_arxiv_entries', id_col='entry_id', doi_col='doi', updated_col='updated_date')) }}
+  {{ dedup_by_doi(ref('stg_arxiv_entry', id_col='entry_id', doi_col='doi', updated_col='updated_date')) }}
 ),
 
 step2_title AS (
