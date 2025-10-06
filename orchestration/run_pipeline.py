@@ -12,7 +12,7 @@ with DAG(
     default_args={
         "depends_on_past": False,
         "retries": 10,
-        "retry_delay": timedelta(minutes=60),
+        "retry_delay": timedelta(minutes=20),
         # 'queue': 'bash_queue',
         # 'pool': 'backfill',
         # 'priority_weight': 10,
@@ -27,7 +27,7 @@ with DAG(
         # 'trigger_rule': 'all_success'
     },
     description="DAG of the entire pipeline",
-    schedule=timedelta(days=10),
+    schedule=timedelta(days=14),
     start_date=datetime(2025, 1, 1),
     catchup=False,
 ) as dag:
@@ -46,13 +46,13 @@ with DAG(
 
     """ Arxiv """
 
-    # extraction_arxiv_q0 = BashOperator(
-    #     task_id="run_extractor_arxiv_q0",
-    #     bash_command=f"sbatch --wait {WORKING_DIR}/sbatch/sbatch_extractor.sh arxiv 0",
-    #     execution_timeout=timedelta(days=3),
-    # )
-    # extraction_arxiv_q0.doc_md = "Extraction runner for arxiv query_id=0"
-    #
+    extraction_arxiv_q0 = BashOperator(
+        task_id="run_extractor_arxiv_q0",
+        bash_command=f"sbatch --wait {WORKING_DIR}/sbatch/sbatch_extractor.sh arxiv 0",
+        execution_timeout=timedelta(days=3),
+    )
+    extraction_arxiv_q0.doc_md = "Extraction runner for arxiv query_id=0"
+    
     # loader_arxiv_q0 = BashOperator(
     #     task_id="run_loader_arxiv_q0",
     #     bash_command=f"sbatch --wait {WORKING_DIR}/sbatch/sbatch_loader.sh arxiv 0",
@@ -62,19 +62,19 @@ with DAG(
 
     """ Cordis """
 
-    # extraction_cordis_q0 = BashOperator(
-    #     task_id="run_extractor_cordis_q0",
-    #     bash_command=f"sbatch --wait {WORKING_DIR}/sbatch/sbatch_extractor.sh cordis 0",
-    #     execution_timeout=timedelta(days=3),
-    # )
-    # extraction_cordis_q0.doc_md = "Extraction runner for cordis query_id=0"
-
-    loader_cordis_q0 = BashOperator(
-        task_id="run_loader_cordis_q0",
-        bash_command=f"sbatch --wait {WORKING_DIR}/sbatch/sbatch_loader.sh cordis 0",
+    extraction_cordis_q0 = BashOperator(
+        task_id="run_extractor_cordis_q0",
+        bash_command=f"sbatch --wait {WORKING_DIR}/sbatch/sbatch_extractor.sh cordis 0",
         execution_timeout=timedelta(days=3),
     )
-    loader_cordis_q0.doc_md = "Loading runner for cordis query_id=0"
+    extraction_cordis_q0.doc_md = "Extraction runner for cordis query_id=0"
+
+    # loader_cordis_q0 = BashOperator(
+    #     task_id="run_loader_cordis_q0",
+    #     bash_command=f"sbatch --wait {WORKING_DIR}/sbatch/sbatch_loader.sh cordis 0",
+    #     execution_timeout=timedelta(days=3),
+    # )
+    # loader_cordis_q0.doc_md = "Loading runner for cordis query_id=0"
 
     """ CoreAc """
 
@@ -94,12 +94,12 @@ with DAG(
 
     """ OpenAIRE """
 
-    # extraction_openaire_q0 = BashOperator(
-    #     task_id="run_extractor_openaire_q0",
-    #     bash_command=f"sbatch --wait {WORKING_DIR}/sbatch/sbatch_extractor.sh openaire 0",
-    #     execution_timeout=timedelta(days=3),
-    # )
-    # extraction_openaire_q0.doc_md = "Extraction runner for openaire query_id=0"
+    extraction_openaire_q0 = BashOperator(
+        task_id="run_extractor_openaire_q0",
+        bash_command=f"sbatch --wait {WORKING_DIR}/sbatch/sbatch_extractor.sh openaire 0",
+        execution_timeout=timedelta(days=3),
+    )
+    extraction_openaire_q0.doc_md = "Extraction runner for openaire query_id=0"
 
     # loader_openaire_q0 = BashOperator(
     #     task_id="run_loader_openaire_q0",
@@ -110,12 +110,12 @@ with DAG(
 
     # ---
 
-    # extraction_openaire_q1 = BashOperator(
-    #     task_id="run_extractor_openaire_q1",
-    #     bash_command=f"sbatch --wait {WORKING_DIR}/sbatch/sbatch_extractor.sh openaire 1",
-    #     execution_timeout=timedelta(days=3),
-    # )
-    # extraction_openaire_q1.doc_md = "Extraction runner for openaire query_id=1"
+    extraction_openaire_q1 = BashOperator(
+        task_id="run_extractor_openaire_q1",
+        bash_command=f"sbatch --wait {WORKING_DIR}/sbatch/sbatch_extractor.sh openaire 1",
+        execution_timeout=timedelta(days=3),
+    )
+    extraction_openaire_q1.doc_md = "Extraction runner for openaire query_id=1"
 
     # loader_openaire_q1 = BashOperator(
     #     task_id="run_loader_openaire_q1",
@@ -126,12 +126,12 @@ with DAG(
 
     # ---
 
-    # extraction_openaire_q2 = BashOperator(
-    #     task_id="run_extractor_openaire_q2",
-    #     bash_command=f"sbatch --wait {WORKING_DIR}/sbatch/sbatch_extractor.sh openaire 2",
-    #     execution_timeout=timedelta(days=3),
-    # )
-    # extraction_openaire_q2.doc_md = "Extraction runner for openaire query_id=2"
+    extraction_openaire_q2 = BashOperator(
+        task_id="run_extractor_openaire_q2",
+        bash_command=f"sbatch --wait {WORKING_DIR}/sbatch/sbatch_extractor.sh openaire 2",
+        execution_timeout=timedelta(days=3),
+    )
+    extraction_openaire_q2.doc_md = "Extraction runner for openaire query_id=2"
 
     # loader_openaire_q2 = BashOperator(
     #     task_id="run_loader_openaire_q2",
@@ -142,12 +142,12 @@ with DAG(
 
     # ---
 
-    # extraction_openaire_q3 = BashOperator(
-    #     task_id="run_extractor_openaire_q3",
-    #     bash_command=f"sbatch --wait {WORKING_DIR}/sbatch/sbatch_extractor.sh openaire 3",
-    #     execution_timeout=timedelta(days=3),
-    # )
-    # extraction_openaire_q3.doc_md = "Extraction runner for openaire query_id=3"
+    extraction_openaire_q3 = BashOperator(
+        task_id="run_extractor_openaire_q3",
+        bash_command=f"sbatch --wait {WORKING_DIR}/sbatch/sbatch_extractor.sh openaire 3",
+        execution_timeout=timedelta(days=3),
+    )
+    extraction_openaire_q3.doc_md = "Extraction runner for openaire query_id=3"
 
     # loader_openaire_q3 = BashOperator(
     #     task_id="run_loader_openaire_q3",
@@ -157,6 +157,10 @@ with DAG(
     # loader_openaire_q3.doc_md = "Loading runner for openaire query_id=3"
 
     """ Task Dependencies """
+
+    extraction_cordis_q0
+    extraction_arxiv_q0
+    extraction_openaire_q0 >> extraction_openaire_q1 >> extraction_openaire_q2 >> extraction_openaire_q3
 
     # Loaders depend on their extractors
     # extraction_arxiv_q0 >> loader_arxiv_q0
@@ -176,6 +180,5 @@ with DAG(
         # >> loader_openaire_q1
         # >> loader_openaire_q2
         # >> loader_openaire_q3
-        # >> 
-        loader_cordis_q0
+        # >> loader_cordis_q0
     )

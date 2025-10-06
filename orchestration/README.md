@@ -3,7 +3,7 @@
 # Connecting to Running Instance
 * Password is here: `cat $AIRFLOW_HOME/simple_auth_manager_passwords.json.generated`
 * IMPORTANT: idk why but it keeps adding passwords to the file. You must delete all but the first one for it to work.
-* Connect using tunnel: ssh -N -L 8080:localhost:8080 draco
+* Connect using tunnel: ssh -N -L 8080:localhost:8080 draco and localhost:8080
 
 ## Local Development
 Use `airflow standalone` for local development and testing.
@@ -18,12 +18,14 @@ Config file location: `~/.config/supervisor/supervisord.conf`
 
 ### Starting Airflow (Production)
 ```bash
+# Do not forget (venv)
 # Start supervisor daemon (manages airflow processes)
 supervisord -c ~/.config/supervisor/supervisord.conf
 ```
 
 ### Managing Supervisor Services
 ```bash
+# Do not forget (venv)
 supervisorctl -c ~/.config/supervisor/supervisord.conf status
 supervisorctl -c ~/.config/supervisor/supervisord.conf start airflow-scheduler
 supervisorctl -c ~/.config/supervisor/supervisord.conf restart all
