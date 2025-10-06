@@ -18,8 +18,8 @@
     "data_path": "/vast/lu72hip/data/pile/",
     "orchestration_path": "orchestration/",
     "db": {
-      "url": "lu72hip@localhost",
-      "port": "5433",
+      "url": "wehrenberger@localhost",
+      "port": "5432",
       "db_name": "db_digicher_v2"
     }
   }

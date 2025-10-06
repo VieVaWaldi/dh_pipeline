@@ -1,5 +1,6 @@
 import logging
 import os
+import shutil
 import time
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -85,12 +86,10 @@ class CordisExtractor(IExtractor):
         should_continue = self.should_continue()
 
         if should_continue:
-            # Normal progression: move to next checkpoint
             new_checkpoint = self.checkpoint_to_string(self.get_checkpoint_end())
             self.save_checkpoint(new_checkpoint)
             logging.info(f"Advanced checkpoint to: {new_checkpoint}")
         else:
-            # No more data in future, reset to collect updates
             reset_checkpoint = self._get_reset_checkpoint()
             self.save_checkpoint(reset_checkpoint)
             logging.info(
@@ -124,7 +123,6 @@ class CordisExtractor(IExtractor):
         best_checkpoint = self.checkpoint_start
         min_diff = abs((current - target_date).days)
 
-        # Walk through the progression to find closest to 5 years ago
         while current < datetime.now():
             diff = abs((current - target_date).days)
             if diff < min_diff:
@@ -271,6 +269,11 @@ class CordisExtractor(IExtractor):
     def _download_attachments(self, xml_path: Path, record_folder: Path):
         try:
             attachment_dir = record_folder / "attachments"
+
+            if attachment_dir.exists():
+                shutil.rmtree(attachment_dir)
+                logging.info(f"Cleared existing attachments in {attachment_dir}")
+
             ensure_path_exists(attachment_dir)
 
             link_dicts = extract_element_as_dict(xml_path, "webLink")

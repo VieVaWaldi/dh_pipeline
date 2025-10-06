@@ -4,6 +4,8 @@
 -- CONTAINER TO RESEARCHOUTPUT RELATIONSHIP ANALYSIS
 -- =====================================================
 
+select * from openaire.container limit 10;
+
 -- Check if container_id relationship is 1:1, 1:many, or many:1
 SELECT 'Container to ResearchOutput Cardinality' as analysis_type;
 
@@ -179,44 +181,84 @@ ORDER BY project_count DESC
 LIMIT 10;
 
 -- =====================================================
--- CONSOLIDATION RECOMMENDATION ANALYSIS
+-- MORE FUNDING CHECKS
 -- =====================================================
 
-SELECT 'Data Consolidation Recommendations' as analysis_type;
+SELECT column_name, data_type 
+FROM information_schema.columns 
+WHERE table_schema = 'openaire' 
+  AND table_name = 'j_project_organization'
+ORDER BY ordinal_position;
 
--- Check for overlapping funding information
-SELECT
-    'Projects with multiple funding types' as metric,
-    COUNT(*) as projects_with_funders,
-    COUNT(CASE WHEN has_funding_stream THEN 1 END) as projects_with_funding_streams,
-    COUNT(CASE WHEN has_h2020 THEN 1 END) as projects_with_h2020,
-    COUNT(CASE WHEN has_funding_stream AND has_h2020 THEN 1 END) as projects_with_both_stream_and_h2020
-FROM (
-    SELECT
-        p.id,
-        EXISTS(SELECT 1 FROM openaire.j_project_funder jpf WHERE jpf.project_id = p.id) as has_funders,
-        EXISTS(SELECT 1 FROM openaire.j_project_funding_stream jpfs WHERE jpfs.project_id = p.id) as has_funding_stream,
-        EXISTS(SELECT 1 FROM openaire.j_project_h2020_programme jph WHERE jph.project_id = p.id) as has_h2020
-    FROM openaire.project p
-) funding_overlap;
+-- Sample data from j_project_organization to see what's available
+SELECT *
+FROM openaire.j_project_organization
+LIMIT 10;
 
--- Sample project with all funding types
-SELECT 'Sample project with comprehensive funding info' as analysis_type;
-SELECT
+-- Check if there are any financial fields we missed
+SELECT 'Projects with multiple organizations' as analysis_type;
+SELECT 
+    project_id,
+    COUNT(*) as org_count,
+    ARRAY_AGG(relation_type) as relation_types
+FROM openaire.j_project_organization
+GROUP BY project_id
+HAVING COUNT(*) > 1
+ORDER BY org_count DESC
+LIMIT 10;
+
+-- =====================================================
+-- CORDINATOR CHECK
+-- =====================================================
+
+-- Check all unique relation types to see if there's a coordinator indicator
+SELECT 'Unique relation types in project-organization' as analysis_type;
+SELECT 
+    relation_type,
+    COUNT(*) as count
+FROM openaire.j_project_organization
+GROUP BY relation_type
+ORDER BY count DESC;
+
+-- Check if organization.is_first_listed could indicate coordinator
+SELECT 'Organizations marked as first_listed' as analysis_type;
+SELECT 
+    COUNT(*) as total_organizations,
+    COUNT(CASE WHEN is_first_listed THEN 1 END) as first_listed_count,
+    COUNT(CASE WHEN is_first_listed THEN 1 END) * 100.0 / COUNT(*) as first_listed_percentage
+FROM openaire.organization;
+
+select * from openaire.organization;
+
+-- Check if first_listed correlates with project leadership
+SELECT 'Projects with first_listed organizations' as analysis_type;
+SELECT 
+    jpo.project_id,
+    COUNT(*) as total_orgs,
+    COUNT(CASE WHEN o.is_first_listed THEN 1 END) as first_listed_orgs
+FROM openaire.j_project_organization jpo
+JOIN openaire.organization o ON jpo.organization_id = o.id
+GROUP BY jpo.project_id
+HAVING COUNT(CASE WHEN o.is_first_listed THEN 1 END) > 0
+ORDER BY first_listed_orgs DESC
+LIMIT 10;
+
+-- Sample projects with their organizations and first_listed status
+SELECT 'Sample project-organization relationships' as analysis_type;
+SELECT 
     p.title,
-    p.code,
-    f.name as funder_name,
-    fs.name as funding_stream_name,
-    h.code as h2020_code,
-    jpf.funded_amount
+    o.legal_name,
+    o.is_first_listed,
+    jpo.relation_type,
+    jpo.validated
 FROM openaire.project p
-LEFT JOIN openaire.j_project_funder jpf ON p.id = jpf.project_id
-LEFT JOIN openaire.funder f ON jpf.funder_id = f.id
-LEFT JOIN openaire.j_project_funding_stream jpfs ON p.id = jpfs.project_id
-LEFT JOIN openaire.funding_stream fs ON jpfs.funding_stream_id = fs.id
-LEFT JOIN openaire.j_project_h2020_programme jph ON p.id = jph.project_id
-LEFT JOIN openaire.h2020_programme h ON jph.h2020_programme_id = h.id
-WHERE jpf.project_id IS NOT NULL
-   OR jpfs.project_id IS NOT NULL
-   OR jph.project_id IS NOT NULL
-LIMIT 5;
+JOIN openaire.j_project_organization jpo ON p.id = jpo.project_id
+JOIN openaire.organization o ON jpo.organization_id = o.id
+WHERE p.id IN (
+    SELECT project_id 
+    FROM openaire.j_project_organization 
+    GROUP BY project_id 
+    HAVING COUNT(*) > 1 
+    LIMIT 3
+)
+ORDER BY p.id, o.is_first_listed DESC;

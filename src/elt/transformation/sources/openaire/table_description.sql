@@ -4,44 +4,55 @@
 -----------------------------------------------
 -- Entities Count
 
-select count(*) from openaire.project;
--- 10263
-select count(*) from openaire.researchoutput;
--- 0
-select count(*) from openaire.organization;
--- 17470
--- the is_first_listed is dumb obviously, put it in the junction
--- make country_code and label None, not unknown
+SELECT COUNT(*) FROM openaire.project;
+-- 29_486
+-- 4_887 with doi
+SELECT COUNT(*) FROM openaire.researchoutput; -- forgot pid: doi
+-- 140_352
+SELECT COUNT(*) FROM openaire.organization;
+-- 90_483
 
-select count(*) from openaire.subject;
--- 264
-select count(*) from openaire.measure;
--- 1904
+SELECT COUNT(*) FROM openaire.container;
+-- Journal and publisher information for RO
+-- 17_622
+SELECT COUNT(*) FROM openaire.author;
+-- 413_596
 
-select count(*) from openaire.funder;
--- 21
-select count(*) from openaire.funding_stream;
--- 238
-select count(*) from openaire.h2020_programme;
+SELECT COUNT(*) FROM openaire.subject;
+-- 1_074
+SELECT COUNT(*) FROM openaire.measure;
+-- 2_170
+
+SELECT COUNT(*) FROM openaire.funder;
+-- eg european commision or national ones
+-- 33
+SELECT COUNT(*) FROM openaire.funding_stream;
+-- 552
+SELECT COUNT(*) FROM openaire.h2020_programme;
 -- 0
 
 -----------------------------------------------
 -- JUNCTION Count
 
-select count(*) from openaire.j_project_researchoutput;
+SELECT COUNT(*) FROM openaire.j_project_researchoutput;
+-- 140_331
+SELECT COUNT(*) FROM openaire.j_project_organization;
+-- 80_167
+SELECT COUNT(*) FROM openaire.j_project_subject;
+-- 4_404
+SELECT COUNT(*) FROM openaire.j_project_measure;
+-- 30_776
+SELECT COUNT(*) FROM openaire.j_project_funder;
+-- 18_291
+SELECT COUNT(*) FROM openaire.j_project_funding_stream;
+-- 15_585
+SELECT COUNT(*) FROM openaire.j_project_h2020_programme;
 -- 0
-select count(*) from openaire.j_project_organization;
--- 33505
-select count(*) from openaire.j_project_subject;
--- 1264
-select count(*) from openaire.j_project_measure;
--- 9959
-select count(*) from openaire.j_project_funder;
--- 8728
-select count(*) from openaire.j_project_funding_stream;
--- 4552
-select count(*) from openaire.j_project_h2020_programme;
--- 0
+
+SELECT COUNT(*) FROM openaire.j_researchoutput_author;
+-- 738_177
+SELECT COUNT(*) FROM openaire.j_researchoutput_organization;
+-- 215_537
 
 -----------------------------------------------
 -- Project
@@ -84,4 +95,4 @@ SELECT 'call_identifier', COUNT(*) - COUNT(call_identifier), ROUND(COUNT(call_id
 -----------------------------------------------
 -- Organizations
 
-select * from openaire.organization limit 100;
+select * FROM openaire.organization limit 100;

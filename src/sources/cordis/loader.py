@@ -1,10 +1,10 @@
+import re
 import uuid
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
 from sqlalchemy.orm import Session
 
-from enrichment.ocr.pdf_ocr_reader import pdf_to_text
 from interfaces.i_loader import ILoader
 from lib.database.get_or_create import get_or_create
 from lib.file_handling.dict_utils import ensure_list, get_nested
@@ -597,9 +597,8 @@ class CordisLoader(ILoader):
         position = 0
         for author_name in re.split(r'[,;]', authors_str):
             author_name = parse_names_and_identifiers(author_name)
-            MAX_NAME_LENGTH = 500
-            if len(author_name) > MAX_NAME_LENGTH:
-                author_name = author_name[:MAX_NAME_LENGTH].strip()
+            if author_name and len(author_name) > self.MAX_NAME_LENGTH:
+                author_name = author_name[:self.MAX_NAME_LENGTH].strip()
             if not author_name or author_name in seen_authors:
                 continue
             seen_authors.add(author_name)

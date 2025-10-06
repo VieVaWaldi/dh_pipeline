@@ -12,6 +12,7 @@ SELECT
     COUNT(doi) as ro_with_doi,
     ROUND(COUNT(doi) * 100.0 / COUNT(*), 2) as doi_coverage_pct
 FROM cordis.researchoutput;
+-- 44%, 279k ROs with doi
 
 ------------------------------
 -- DOI Duplicates
@@ -21,6 +22,7 @@ WHERE doi IS NOT NULL
 GROUP BY doi
 HAVING COUNT(*) > 1
 ORDER BY duplicate_count DESC;
+-- 14_478 doi duplicate with count of up to 9
 
 ------------------------------
 -- Exact title matches
@@ -32,17 +34,8 @@ GROUP BY LOWER(TRIM(title))
 HAVING COUNT(*) > 1
 ORDER BY duplicate_count DESC;
 
--- ==> Very tricky because we got lots of generic names like 'data management plan', 
--- 	   'project website' etc.
--- ==> Guess we cant use that for now ... OR we make a list of the generic ones we can ignore
--- ==> cant use type: attachment OR relatedResult
-
-SELECT *
-FROM cordis.researchoutput
-WHERE lower(trim(title)) = 'data management plan';
-
-select * from cordis.researchoutput
-where type = 'attachment';
+-- Do not use! Very tricky because we got lots of generic names like 'data management plan', 
+-- 	   'project website' etc. Unusable with 24k duplicate groups
 
 ------------------------------
 -- Research Output Types Distribution
@@ -69,7 +62,7 @@ WHERE title_matches > 1
 AND from_pdf = false
 ORDER BY title_matches DESC, LOWER(TRIM(title));
 
--- ==> RO is tricky, doi works. For title matching we need a list of the generic titles to ignore.
+-- Do not use! Same naming issue.
 
 ------------------------------
 ----  Projects
@@ -81,6 +74,7 @@ SELECT
     COUNT(doi) as projects_with_doi,
     ROUND(COUNT(doi) * 100.0 / COUNT(*), 2) as doi_coverage_pct
 FROM cordis.project;
+-- 53%, 34k projects with doi
 
 ------------------------------
 -- Project DOI Duplicates
@@ -90,6 +84,7 @@ WHERE doi IS NOT NULL
 GROUP BY doi
 HAVING COUNT(*) > 1
 ORDER BY duplicate_count DESC;
+-- 0 project duplicates with doi
 
 ------------------------------
 -- Project Title Duplicates
@@ -99,7 +94,18 @@ GROUP BY LOWER(TRIM(title))
 HAVING COUNT(*) > 1
 ORDER BY duplicate_count DESC;
 
--- 42 with count 2 each, count 3 twice and count 4 ince
+-- 338 duplicate project names with count up to 9
+
+SELECT SUM(duplicate_count - 1) as excess_duplicates,
+       SUM(duplicate_count) as total_records_with_duplicates
+FROM (
+    SELECT LOWER(TRIM(title)) as clean_title, COUNT(*) as duplicate_count
+    FROM cordis.project
+    GROUP BY LOWER(TRIM(title))
+    HAVING COUNT(*) > 1
+) subquery;
+
+-- 409 excess duplicates
 
 ------------------------------
 -- Project Acronym Duplicates
@@ -110,7 +116,7 @@ GROUP BY UPPER(TRIM(acronym))
 HAVING COUNT(*) > 1
 ORDER BY duplicate_count DESC;
 
--- Can definitely be used multiple times, the acronyms are short. Ignore for deduplication!
+-- Do not use! Can definitely be used multiple times, the acronyms are short. Ignore for deduplication!
 
 
 ------------------------------
@@ -148,6 +154,9 @@ GROUP BY LOWER(TRIM(legal_name))
 HAVING COUNT(*) > 1
 ORDER BY duplicate_count DESC;
 
+-- 2_2565 duplicates with count up to 4
+-- Some are just called university
+
 select * from cordis.institution
 where lower(legal_name) = 'university';
 
@@ -160,7 +169,7 @@ GROUP BY short_name
 HAVING COUNT(*) > 1
 ORDER BY duplicate_count DESC;
 
--- These are 2 small and could actually refer to different institutions. Do not use.
+-- Do not use! These are 2 small and could actually refer to different institutions.
 
 ------------------------------
 -- Institution VAT Number Duplicates (should be unique)
@@ -171,10 +180,13 @@ GROUP BY vat_number
 HAVING COUNT(*) > 1
 ORDER BY duplicate_count DESC;
 
--- IGNORE 'MISSING' or 'NOTAPPLICABLE' here
+-- 130 duplicates with count up to 11
+-- Filter out 'MISSING' or 'NOTAPPLICABLE' here
 
 select * from cordis.institution 
-where vat_number = 'GB659372008';--ESS0811001G';
+where vat_number = 'DE811335517';-- ESS0811001G, GB888808059
+
+-- Seems to be a good deparment indicator!
 
 ------------------------------
 -- Institution URL Duplicates
@@ -185,5 +197,9 @@ GROUP BY url
 HAVING COUNT(*) > 1
 ORDER BY duplicate_count DESC;
 
+-- 1_781 duplicates with count up to 28
+
 select * from cordis.institution 
-where url = 'http://www.cam.ac.uk'; --'http://www.uni-frankfurt.de';
+where url = 'http://www.ethz.ch'; -- http://www.mpg.de, http://www.uni-frankfurt.de, http://www.cam.ac.uk
+
+-- Seems to be a very good indicator of duplicates

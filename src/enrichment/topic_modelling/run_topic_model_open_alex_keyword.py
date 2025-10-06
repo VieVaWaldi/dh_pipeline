@@ -9,11 +9,7 @@ import psutil
 import spacy
 from pandas import DataFrame
 
-from elt.core_orm_model import (
-    JResearchOutputTopicOpenalexKeywordDensity,
-    TopicOpenalexKeywordDensity,
-    ResearchOutput,
-)
+from enrichment.core_orm_model import Project, JProjectTopicOA, TopicOA
 from enrichment.utils.batch_requester import BatchRequester
 from lib.database.create_db_session import create_db_session
 from lib.database.get_or_create import get_or_create
@@ -54,6 +50,8 @@ def run_topic_modelling(batch_requester: BatchRequester, offset=0):
             f"took {datetime.datetime.now() - start} seconds to process batch #{idx}"
         )
         upload_topics_to_db(processed_batch)
+        # DEBUG ### Just one run
+        return
 
 
 def process_document(
@@ -108,9 +106,9 @@ def _calculate_topic_significance_keyword_density(
 def upload_topics_to_db(batch: List[Tuple[int, int, int]]):
     with create_db_session()() as session:
         junction_records = [
-            JResearchOutputTopicOpenalexKeywordDensity(
-                researchoutput_id=doc_id,
-                topic_openalex_keyword_density_id=topic_id,
+            JProjectTopicOA(
+                project_id=doc_id,
+                topic_id=topic_id,
                 score=score,
             )
             for doc_id, topic_id, score in batch
@@ -166,7 +164,7 @@ def _seed_topics(df: DataFrame):
             }
             get_or_create(
                 session,
-                TopicOpenalexKeywordDensity,
+                TopicOA,
                 unique_key={"id": row["topic_id"]},
                 **fields,
             )
@@ -203,6 +201,14 @@ if __name__ == "__main__":
     logging.info(f"Got {max_workers} CPUs available.")
     logging.info(f"Using batch size {batch_size}.")
 
-    load_topics(do_seed=True)
+    load_topics(do_seed=False)
 
-    run_topic_modelling(BatchRequester(ResearchOutput), offset=916 * 64)
+    run_topic_modelling(BatchRequester(Project), offset=0)
+
+"""
+
+1. Project, Topics & j_project_topic
+2. Dry run log first batch output
+3. change to tfidf
+
+"""

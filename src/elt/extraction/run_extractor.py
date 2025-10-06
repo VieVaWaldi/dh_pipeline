@@ -20,8 +20,8 @@ def run_extractor(config: ExtractorConfig, extractor_class: Type[IExtractor]):
     """Main extraction runner that handles the extraction loop."""
     start_time = datetime.now()
     logging.info(
-        f"Starting extraction for {config.name}, query_id: {config.query_id}\
-        \n\t- with query: {config.query}\
+        f"Starting extraction for {config.name}, query_id: {config.query_id} \
+        \n\t- with query: {config.query} \
         \n\t- with checkpoint: {config.checkpoint_name} \
         \n\t- with range: {config.checkpoint_range} \
         \n\t- with download attachment: {config.download_attachments}"
@@ -40,7 +40,6 @@ def run_extractor(config: ExtractorConfig, extractor_class: Type[IExtractor]):
 
 
 if __name__ == "__main__":
-
     parser = argparse.ArgumentParser(description="Extractor Runner")
     parser.add_argument("--source", help="Select data source", required=True)
     parser.add_argument(

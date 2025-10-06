@@ -2,19 +2,18 @@
 -- ENTITIES COUNT
 
 select count(*) from arxiv.entry;
-where doi is not null;
--- 46_312
--- 7_844 with doi
+-- 99_200
+-- 24_095 with doi
 -- 44_385 with fulltext
 select count(*) from arxiv.author;
--- 112_484
+-- 244_329
 select count(*) from arxiv.link;
--- 100_481
+-- 222_513
 
 -----------------------------------------------
 -- JUNCTIONS COUNT
 
 select count(*) from arxiv.j_entry_author;
--- 219_058
+-- 527_495
 select count(*) from arxiv.j_entry_link;
--- 100_489 - 12
+-- 222_535

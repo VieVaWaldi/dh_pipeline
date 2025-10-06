@@ -14,6 +14,7 @@ class ILoader(ABC):
 
     def __init__(self, path_to_file: Path):
         self.path_to_file = path_to_file
+        self.MAX_NAME_LENGTH = 500
 
     @abstractmethod
     def load(self, session: Session, document: Dict):

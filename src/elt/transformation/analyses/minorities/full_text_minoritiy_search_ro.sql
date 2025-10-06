@@ -2,29 +2,29 @@ select count(*) from core.researchoutput
 where title is not null
 and abstract is not null;
 
--- -> Searching on 268497 RO's
+-- -> Searching on 411714 RO's
 
 SELECT *
 FROM core.researchoutput
 WHERE title IS NOT NULL 
   AND abstract IS NOT NULL
   AND (
-    to_tsvector('english', title) @@ 'ladin'::tsquery
+    to_tsvector('english', title) @@ 'jewish | jew | jews | judaism | hebrew | yiddish'::tsquery
     OR 
-    to_tsvector('english', coalesce(abstract, '')) @@ 'ladin'::tsquery
+    to_tsvector('english', coalesce(abstract, '')) @@ 'jewish | jew | jews | judaism | hebrew | yiddish'::tsquery
   );
 
 -- 1. Simple one word Keyword search
 
 -- ladin: 1 result
--- sami: 30 results
--- jewish: 106 results
+-- sami: 31 results
+-- jewish: 98 results
 
 -- 2. Multi Keyword search
 
 -- ladin | ladino | gardenese | badiese | fascian | marebbano | ampezzan
--- -> 3 results
+-- -> 12 results
 -- sami | saami | sapmi | same | joik | yoik
--- -> 58 results
+-- -> 43 results
 -- jewish | jew | jews | judaism | hebrew | yiddish
--- -> 199 results
+-- -> 187 results

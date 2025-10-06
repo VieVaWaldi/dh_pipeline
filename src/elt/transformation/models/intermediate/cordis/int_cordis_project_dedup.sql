@@ -5,7 +5,6 @@ WITH step1_doi AS (
 ),
 
 step2_title AS (
-  -- Apply title dedup to the DOI-deduped results
   SELECT *
   FROM step1_doi
   WHERE title IS NOT NULL

@@ -37,11 +37,12 @@ Installs the repo as an editable package and install all requirements:
 The next part sucks, to enable dbt, you know have to manually install it:
 
 > pip install dbt-core==1.10.3
+> 
 > pip install dbt-postgres==1.9.0
 
 If someone reading this manages to add these to the requirements.in successfully i would be so happy.
 
-## Installing new packages
+### Installing new packages
 
 Run `pip install pip-tools`, then do:
 
@@ -50,12 +51,18 @@ Run `pip install pip-tools`, then do:
 3. `pip-sync requirements.txt` (installs new packages, removes unused ones)
 4. `pip install -e .`
 
-### Database
+## Database
 
 The [Database Documentation](README_DB.md) explains how you can control the PostgreSQL server locally and on the
 cluster. A `PostgreSQL DB 17.5` is being used for the project.
 
-### Orchestration
+### Provenance
+
+Stable IDs?
+1. Source IDs are serial -> does that stay the same with upsert?
+2. Core IDs are created using a hash from (source_id, source_system) -> so stable right?
+
+## Orchestration
 
 The [Orchestration Documentation](orchestration/README.md) explains how orchestration with Airflow is set up and works.
 

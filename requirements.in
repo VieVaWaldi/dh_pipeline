@@ -4,8 +4,10 @@ black
 datamodels
 graphviz
 openai
+pandas
 pip-tools
 psutil
+psycopg2-binary
 protobuf
 psycopg2
 PyPDF2
@@ -17,4 +19,6 @@ xlrd
 urllib3
 xmltodict
 xlrd
+scikit-learn
+spacy
 supervisor

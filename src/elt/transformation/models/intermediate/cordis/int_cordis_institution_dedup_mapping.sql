@@ -1,5 +1,3 @@
--- models/intermediate/cordis/int_cordis_institution_dedup_mapping.sql
-
 {{ config(materialized='table') }}
 
 WITH canonical_institutions AS (

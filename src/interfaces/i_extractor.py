@@ -27,9 +27,6 @@ class ExtractorConfig:
 class IExtractor(ABC):
     """
     Base Extractor class that sets up paths and checkpoint.
-    Enforces
-    - extract_until_next_checkpoint(self) -> bool
-    -
     """
 
     def __init__(

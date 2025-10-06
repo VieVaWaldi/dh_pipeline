@@ -1,4 +1,5 @@
 import logging
+import re
 from typing import Dict, List, Tuple, Optional
 
 from sqlalchemy.orm import Session
@@ -308,7 +309,9 @@ class OpenaireLoader(ILoader):
             original_id = parse_string(get_nested(rel_data, "to.$"))
             legal_name = parse_names_and_identifiers(
                 get_nested(rel_data, "legalname.$")
-            )[:600]
+            )
+            if legal_name and len(legal_name) > self.MAX_NAME_LENGTH:
+                legal_name = legal_name[:self.MAX_NAME_LENGTH].strip()
             if not legal_name or legal_name in seen_orgs:
                 continue
             seen_orgs.add(legal_name)
@@ -674,7 +677,8 @@ class OpenaireLoader(ILoader):
         for contributors in ensure_list(get_nested(ro_data, "contributors")):
             for contributor in re.split(r'[,;]', contributors):
                 contributor_name = parse_names_and_identifiers(contributor)
-                if len(contributor_name) > MAX_NAME_LENGTH:
+                MAX_NAME_LENGTH = 500
+                if contributor_name and len(contributor_name) > MAX_NAME_LENGTH:
                     contributor_name = contributor_name[:MAX_NAME_LENGTH].strip()
                 if not contributor_name or contributor_name in seen_orgs:
                     continue

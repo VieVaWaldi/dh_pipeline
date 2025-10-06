@@ -34,10 +34,12 @@ models:
         +schema: arxiv_intermediate
       cordis:
         +schema: cordis_intermediate
-      # coreac:
-      #   +schema: coreac_intermediate
-      # openaire:
-      #   +schema: openaire_intermediate
+      coreac:
+       +schema: coreac_intermediate
+      openaire:
+       +schema: openaire_intermediate
+      core:
+        +schema: core_intermediate
 
     marts:
       +materialized: table

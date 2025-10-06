@@ -17,7 +17,7 @@ CREATE TYPE project_funding_type AS (
 
 -- Then use this type in the materialized view
 CREATE MATERIALIZED VIEW mat_institution_funding AS
-SELECT 
+SELECT
     i.id as id,
     i.address_geolocation as address_geolocation,
     i.address_country as address_country,
@@ -32,14 +32,14 @@ SELECT
 	-- 		'total_cost', pi.total_cost
 	-- 	)
 	-- ) as projects_funding
-FROM 
+FROM
     Institutions i
     INNER JOIN Projects_Institutions pi ON i.id = pi.institution_id
     INNER JOIN Projects p ON p.id = pi.project_id
-WHERE 
+WHERE
     pi.total_cost IS NOT NULL
     AND i.address_geolocation IS NOT NULL
-GROUP BY 
+GROUP BY
     i.id
 ORDER BY i.id;
 
@@ -50,7 +50,7 @@ ORDER BY i.id;
 SELECT * FROM mat_institution_funding
 LIMIT 100;
 
-SELECT 
+SELECT
     'JSON Type' as type,
     pg_size_pretty(pg_total_relation_size('mat_institution_funding')) as total_size,
     pg_size_pretty(sum(pg_column_size(projects_funding))) as projects_funding_size

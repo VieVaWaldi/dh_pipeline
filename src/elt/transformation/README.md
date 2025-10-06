@@ -11,6 +11,8 @@ Never worked with dbt? Start [here](https://www.blef.fr/get-started-dbt/), the d
 
 Connect to db_digicher_v2 database using: `ssh -N -L 5433:localhost:5433 draco`.
 
+Install `dbt deps` !
+
 ToDo:
 
 * Do or remove this
@@ -38,7 +40,8 @@ ToDo:
    * `ref()` in e.g. junctions will make them run last due to DBT's dependency graph 
 4. We transform the intermediate tables with **marts** to the unified core data model
    * DBT creates these tables (like for int) automatically based on the DBT SELECT statements
-5. Post: Create Constraints, Indexes, triggers etc
+   * The core.* tables have their constraints at the top
+5. Post: Create Constraints, Indexes, triggers etc -> in `macros/post_core_indexes.sql`
 6. Which we then clean and deduplicate again
 
 ## Important commands
@@ -75,6 +78,11 @@ That means we currently ignore junctions from duplicate entries.
 1. For normal tables: Select the deduplicated table and all relevant columns, include source_id!
 2. For junctions: Join with both marts tables using source_id's
 -> Each table in core must know its source_id for the junctions to be picked up correctly
+3. Calculate the new id's for each record using `{{ dbt_utils.generate_surrogate_key(['source_system', 'source_id']) }} as id,`, to get deterministic same keys
+
+## Post Core Indexes 
+* Can be found under `macros/post_core_indexes.sql`
+* Rerun with `dbt run-operation post_core_indexes`, BUT only when u actually changed something there.
 
 ## Enrichment
 
