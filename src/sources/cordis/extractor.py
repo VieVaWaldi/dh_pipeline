@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 import shutil
@@ -162,6 +163,11 @@ class CordisExtractor(IExtractor):
         while True:
             response = make_get_request(url, params)
             payload = response.get("payload", {})
+
+            if payload.get("failed"):
+                dump = json.dumps(response, indent=2)
+                logging.info(f"Full API response: {dump}")
+                log_and_exit(f"Extraction status error: {dump}")
 
             if payload.get("error"):
                 log_and_exit(f"Extraction status error: {payload['error']}")
