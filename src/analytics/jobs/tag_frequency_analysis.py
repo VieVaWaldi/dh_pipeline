@@ -3,8 +3,8 @@ import csv
 from collections import defaultdict
 from typing import Dict, Any
 
-from analysis.utils.analysis_interface import IAnalysisJob
-from analysis.utils.analysis_utils import clean_value
+from analytics.utils.analysis_interface import IAnalysisJob
+from analytics.utils.analysis_utils import clean_value
 from lib.file_handling.yield_documents import yield_all_documents
 
 

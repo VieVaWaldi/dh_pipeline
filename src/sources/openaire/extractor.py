@@ -174,7 +174,7 @@ class OpenAIREExtractor(IExtractor):
             response = make_get_request(self.base_project_url, params, timeout=300, disable_retry=True)
         except Exception as e:
             logging.error(f"Request error on page {page} of year {year}, skipping page: {e}")
-            return [], 0, page, True # A project json in 2011 is malformed fml
+            return [], 0, page, True  # A project json in 2011 is malformed fml
 
         try:
             header = response.get("response", {}).get("header", {})

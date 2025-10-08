@@ -1,6 +1,6 @@
 from itertools import islice
 
-from analysis.utils.analysis_interface import IAnalysisJob
+from analytics.utils.analysis_interface import IAnalysisJob
 from lib.file_handling.dict_utils import ensure_list, get_nested
 from lib.file_handling.yield_documents import yield_all_documents
 

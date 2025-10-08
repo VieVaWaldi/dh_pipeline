@@ -108,12 +108,11 @@ SELECT
     id,
     title,
     LENGTH(fulltext) as fulltext_length,
-    ts_rank(to_tsvector('english', COALESCE(fulltext, '')), to_tsquery('english', 'neural & network')) as rank
+    ts_rank(to_tsvector('english', COALESCE(fulltext, '')), to_tsquery('english', 'acknowledgments')) as rank
 FROM core.researchoutput
-WHERE to_tsvector('english', COALESCE(fulltext, '')) @@ to_tsquery('english', 'neural & network')
+WHERE to_tsvector('english', COALESCE(fulltext, '')) @@ to_tsquery('english', 'acknowledgments')
 AND fulltext IS NOT NULL
-ORDER BY rank DESC
-LIMIT 10;
+ORDER BY rank DESC;
 
 -- 11 minutes C:
 
