@@ -1,6 +1,7 @@
 import argparse
 import os
 from collections import defaultdict
+from datetime import datetime
 from pathlib import Path
 from typing import Dict, Tuple
 
@@ -97,7 +98,7 @@ def run_raw_file_analysis():
 
     with create_db_session()() as session:
         for source_name, data in results.items():
-            get_or_create(session, RawFiles,{"source_query_id": source_name},
+            get_or_create(session, RawFiles,{"analysis_date": datetime.now(), "source_query_id": source_name},
                           total_disk_usage_gb=data['total_disk_usage_gb'],
                           file_types_total=data["total_file_types"],
                           checkpoints=data["checkpoints"])
