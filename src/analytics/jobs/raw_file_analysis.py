@@ -1,3 +1,4 @@
+import argparse
 import os
 from collections import defaultdict
 from pathlib import Path
@@ -74,6 +75,10 @@ def analyze_source(source_path: Path) -> Dict:
 
 
 def run_raw_file_analysis():
+    parser = argparse.ArgumentParser(description="Raw File Analytics")
+    parser.add_argument("--source_query_id", help="Select source_query_id")
+    args = parser.parse_args()
+
     load_dotenv()
     config = get_config()
 
@@ -86,19 +91,18 @@ def run_raw_file_analysis():
     for source_dir in sorted(pile_path.iterdir()):
         if not source_dir.is_dir():
             continue
+        if args.source_query_id and args.source_query_id != source_dir.name:
+            continue
         results[source_dir.name] = analyze_source(source_dir)
 
     with create_db_session()() as session:
         for source_name, data in results.items():
-            get_or_create(session, RawFiles,{"source_query_id": source_name}, total_disk_usage_gb=data['total_disk_usage_gb'], file_types_total=data["total_file_types"], checkpoints=data["checkpoints"])
-
-            # print(f"\n{source_name}:")
-            # print(f"  Total disk usage: {data['total_disk_usage_gb']:.2f} GB")
-            # print(f"  File types:")
-            # for ext, count in sorted(data["total_file_types"].items()):
-            #     print(f"    {ext}: {count} files")
-            # print(f"  Checkpoints analyzed: {len(data['checkpoints'])}")
+            get_or_create(session, RawFiles,{"source_query_id": source_name},
+                          total_disk_usage_gb=data['total_disk_usage_gb'],
+                          file_types_total=data["total_file_types"],
+                          checkpoints=data["checkpoints"])
         session.commit()
+
 
 if __name__ == "__main__":
     run_raw_file_analysis()
