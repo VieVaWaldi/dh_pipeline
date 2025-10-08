@@ -6,6 +6,11 @@
 
 SOURCE=$1
 
+pg_ctl -D $PGDATA stop
+sleep 10
+pg_ctl -D $PGDATA start
+sleep 3
+
 cd /home/lu72hip/DIGICHer/dh_pipeline || exit
 source venv/bin/activate
 
