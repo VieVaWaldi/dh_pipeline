@@ -22,3 +22,4 @@ xlrd
 scikit-learn
 spacy
 supervisor
+duckdb
