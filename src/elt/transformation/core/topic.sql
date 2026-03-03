@@ -1,4 +1,4 @@
-select * from core.topicoa;
+select confidence from core.topicoa;
 
 select * from core.project where source_system = 'openaire' and objective is not null;
 
@@ -38,6 +38,8 @@ CREATE TABLE core.topicoa (
     keywords TEXT NOT NULL,
     summary TEXT NOT NULL,
     wikipedia_url TEXT,
+    is_ch BOOL NOT NULL,
+    confidence DOUBLE PRECISION NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
@@ -59,4 +61,27 @@ CREATE TABLE core.j_researchoutput_topicoa (
     PRIMARY KEY (researchoutput_id, topic_id)
 );
 
-drop table core.j_project_topicoa;
+-----------------------------------------------
+-- Topics and RO sorted with confidence and TF score
+-----------------------------------------------
+
+SELECT 
+    t.topic_name,
+    t.is_ch,
+    t.confidence,
+    ro.publication_date,
+    ro.title,
+    ro.abstract,
+    jrt.score
+FROM core.topicoa t
+INNER JOIN LATERAL (
+    SELECT jrt.researchoutput_id, jrt.score
+    FROM core.j_researchoutput_topicoa jrt
+    WHERE jrt.topic_id = t.id
+    ORDER BY jrt.score DESC
+    LIMIT 10
+) jrt ON true
+INNER JOIN core.researchoutput ro ON ro.id = jrt.researchoutput_id
+WHERE t.confidence > 0.59
+  AND t.is_ch = false
+ORDER BY t.confidence DESC, t.topic_name, ro.publication_date DESC, jrt.score DESC;

@@ -35,6 +35,9 @@ class TopicOA(Base):
     summary = Column(Text, nullable=False)
     wikipedia_url = Column(Text, nullable=False)
 
+    is_ch = Column(Boolean, nullable=False)
+    confidence = Column(Float, nullable=False)
+
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 

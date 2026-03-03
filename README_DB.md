@@ -3,6 +3,9 @@
 We use PostgreSQL version 17.2. The source models are written in AlchemySQL, 
 therefore any other Database can be used.
 
+## Tunnels 
+For connecting from local PgAdmin to remote database
+
 ## Config
 - Local (default): 5432
 - Cluster: 5433
