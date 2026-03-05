@@ -9,8 +9,8 @@ from dotenv import load_dotenv
 
 from elt.loading.checkpoint_manager import CheckpointManager
 from interfaces.i_loader import ILoader
-from lib.database.create_db_session import create_db_session
-from lib.database.get_or_create import ModelCreationMonitor
+from lib.database.postgres.create_db_session import create_db_session
+from lib.database.postgres.get_or_create import ModelCreationMonitor
 from lib.file_handling.path_utils import get_source_data_path
 from lib.file_handling.yield_documents import yield_all_documents
 from sources.arxiv.loader import ArxivLoader

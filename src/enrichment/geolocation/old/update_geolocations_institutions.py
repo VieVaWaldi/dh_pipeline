@@ -5,7 +5,7 @@ import pandas as pd
 from datamodels.digicher.entities import Institutions
 from sqlalchemy import select
 
-from lib.database import create_db_session
+from lib.database.postgres import create_db_session
 from lib.sanitizers.parse_specialized import parse_geolocation
 from utils.config.config_loader import get_config
 from utils.logger.logger import setup_logging

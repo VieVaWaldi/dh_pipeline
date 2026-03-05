@@ -8,8 +8,8 @@ from typing import Dict, Tuple
 from dotenv import load_dotenv
 
 from analytics.sql.orm_raw_files import RawFiles
-from lib.database.create_db_session import create_db_session
-from lib.database.get_or_create import get_or_create
+from lib.database.postgres.create_db_session import create_db_session
+from lib.database.postgres.get_or_create import get_or_create
 from utils.config.config_loader import get_config, get_project_root_path
 
 

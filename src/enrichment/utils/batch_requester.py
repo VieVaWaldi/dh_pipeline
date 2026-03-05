@@ -1,8 +1,4 @@
-from typing import Generator, List, Tuple
-
-from lib.database.create_db_session import create_db_session
-
-from lib.database.create_db_session import create_db_session
+from lib.database.postgres.create_db_session import create_db_session
 
 
 class BatchRequester:

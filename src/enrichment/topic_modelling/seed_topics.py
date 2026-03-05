@@ -3,8 +3,8 @@ import pandas as pd
 from pandas import DataFrame
 
 from enrichment.core_orm_model import TopicOA
-from lib.database.create_db_session import create_db_session
-from lib.database.get_or_create import get_or_create
+from lib.database.postgres.create_db_session import create_db_session
+from lib.database.postgres.get_or_create import get_or_create
 from utils.config.config_loader import get_project_root_path
 
 

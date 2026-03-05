@@ -6,7 +6,7 @@ import pandas as pd
 from dotenv import load_dotenv
 
 from datamodels.digicher.entities import Institutions
-from lib.database import create_db_session
+from lib.database.postgres import create_db_session
 from enrichment.geolocation.search_geolocations import search_geolocation
 
 

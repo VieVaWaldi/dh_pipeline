@@ -15,8 +15,8 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 from enrichment.core_orm_model import ResearchOutput, JResearchOutputTopicOA, TopicOA
 from enrichment.utils.batch_requester import BatchRequester
-from lib.database.create_db_session import create_db_session
-from lib.database.get_or_create import get_or_create
+from lib.database.postgres.create_db_session import create_db_session
+from lib.database.postgres.get_or_create import get_or_create
 from lib.file_handling.path_utils import get_project_root_path
 from utils.logger.logger import setup_logging
 

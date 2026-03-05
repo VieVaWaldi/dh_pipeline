@@ -10,7 +10,7 @@ import spacy
 from enrichment.core_orm_model import Project, JProjectTopicOA
 from enrichment.topic_modelling.seed_topics import seed_topics
 from enrichment.utils.batch_requester import BatchRequester
-from lib.database.create_db_session import create_db_session
+from lib.database.postgres.create_db_session import create_db_session
 from lib.file_handling.path_utils import get_project_root_path
 from utils.logger.logger import setup_logging
 

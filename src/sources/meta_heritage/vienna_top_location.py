@@ -7,14 +7,13 @@ import pandas as pd
 from pandas import DataFrame
 from sqlalchemy.orm import Session
 
-from lib.database.create_db_session import create_db_session
-from lib.database.get_or_create import get_or_create, ModelCreationMonitor
+from lib.database.postgres.create_db_session import create_db_session
+from lib.database.postgres.get_or_create import get_or_create, ModelCreationMonitor
 from lib.file_handling.path_utils import get_source_data_path
 from lib.sanitizers.parse_primitives import parse_float
 from lib.sanitizers.parse_text import (
     parse_names_and_identifiers,
     parse_content,
-    parse_titles_and_labels,
     parse_web_resources,
     parse_string
 )

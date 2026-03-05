@@ -9,7 +9,7 @@ from datamodels.digicher.entities import Institutions
 
 from enrichment.geolocation.noise_words import normalize_institution_name
 from enrichment.utils.batch_requester import BatchRequester
-from lib.database.create_db_session import create_db_session
+from lib.database.postgres.create_db_session import create_db_session
 from lib.requests.requests import make_get_request
 from lib.sanitizers.parse_specialized import parse_geolocation
 from utils.logger.logger import setup_logging

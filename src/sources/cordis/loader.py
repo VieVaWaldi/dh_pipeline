@@ -6,7 +6,7 @@ from typing import Dict, List, Optional, Tuple
 from sqlalchemy.orm import Session
 
 from interfaces.i_loader import ILoader
-from lib.database.get_or_create import get_or_create
+from lib.database.postgres.get_or_create import get_or_create
 from lib.file_handling.dict_utils import ensure_list, get_nested
 from lib.sanitizers.parse_primitives import (
     parse_bool,

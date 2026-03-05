@@ -1,13 +1,12 @@
 import logging
 from pathlib import Path
-from typing import List
 
 import pandas as pd
 from pandas import DataFrame
 from sqlalchemy.orm import Session
 
-from lib.database.create_db_session import create_db_session
-from lib.database.get_or_create import get_or_create, ModelCreationMonitor
+from lib.database.postgres.create_db_session import create_db_session
+from lib.database.postgres.get_or_create import get_or_create, ModelCreationMonitor
 from lib.file_handling.path_utils import get_source_data_path
 from lib.sanitizers.parse_text import (
     parse_names_and_identifiers,
