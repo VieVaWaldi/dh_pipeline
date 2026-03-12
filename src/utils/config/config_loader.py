@@ -27,6 +27,7 @@ def _get_config(config_name: str) -> Dict[str, Any]:
     config_file_path = get_project_root_path() / "config" / f"{config_name}.json"
 
     config = load_json_file(config_file_path)
+    print(config_file_path, config)
     if not config:
         raise Exception("Error reading the logger file.")
 

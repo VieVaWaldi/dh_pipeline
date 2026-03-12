@@ -28,6 +28,7 @@ anyio==4.9.0
     # via
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
     #   httpx
+    #   jupyter-server
     #   openai
     #   starlette
     #   watchfiles
@@ -72,10 +73,22 @@ argcomplete==3.6.2
     # via
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
     #   apache-airflow-core
+argon2-cffi==25.1.0
+    # via jupyter-server
+argon2-cffi-bindings==25.1.0
+    # via argon2-cffi
+arrow==1.4.0
+    # via isoduration
 asgiref==3.8.1
     # via
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
     #   apache-airflow-core
+asttokens==3.0.0
+    # via
+    #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
+    #   stack-data
+async-lru==2.2.0
+    # via jupyterlab
 attrs==25.3.0
     # via
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
@@ -86,10 +99,22 @@ attrs==25.3.0
     #   referencing
     #   svcs
     #   trio
+babel==2.17.0
+    # via
+    #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
+    #   jupyterlab-server
+beautifulsoup4==4.13.4
+    # via
+    #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
+    #   nbconvert
 black==25.1.0
     # via
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
     #   -r requirements.in
+bleach[css]==6.2.0
+    # via
+    #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
+    #   nbconvert
 blis==1.2.1
     # via thinc
 build==1.2.2.post1
@@ -113,6 +138,7 @@ certifi==2025.4.26
 cffi==1.17.1
     # via
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
+    #   argon2-cffi-bindings
     #   cryptography
 charset-normalizer==3.4.2
     # via
@@ -133,6 +159,11 @@ colorlog==6.9.0
     # via
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
     #   apache-airflow-core
+comm==0.2.2
+    # via
+    #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
+    #   ipykernel
+    #   ipywidgets
 confection==0.1.5
     # via
     #   thinc
@@ -156,6 +187,18 @@ cymem==2.0.11
     #   thinc
 datamodels==0.8.2
     # via -r requirements.in
+debugpy==1.8.14
+    # via
+    #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
+    #   ipykernel
+decorator==5.2.1
+    # via
+    #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
+    #   ipython
+defusedxml==0.7.1
+    # via
+    #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
+    #   nbconvert
 deprecated==1.2.18
     # via
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
@@ -184,6 +227,10 @@ email-validator==2.2.0
     # via
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
     #   fastapi
+executing==2.2.0
+    # via
+    #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
+    #   stack-data
 fastapi[standard]==0.115.12
     # via
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
@@ -193,10 +240,16 @@ fastapi-cli[standard]==0.0.7
     # via
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
     #   fastapi
+fastjsonschema==2.21.1
+    # via
+    #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
+    #   nbformat
 flask==2.2.5
     # via
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
     #   apache-airflow-core
+fqdn==1.5.1
+    # via jsonschema
 fsspec==2025.3.2
     # via
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
@@ -243,6 +296,7 @@ httpx==0.27.0
     #   apache-airflow-core
     #   apache-airflow-task-sdk
     #   fastapi
+    #   jupyterlab
     #   openai
     #   retryhttp
 idna==3.10
@@ -251,6 +305,7 @@ idna==3.10
     #   anyio
     #   email-validator
     #   httpx
+    #   jsonschema
     #   requests
     #   trio
 importlib-metadata==8.4.0
@@ -258,11 +313,36 @@ importlib-metadata==8.4.0
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
     #   apache-airflow-core
     #   opentelemetry-api
+ipykernel==6.29.5
+    # via
+    #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
+    #   -r requirements.in
+    #   jupyter
+    #   jupyter-console
+    #   jupyterlab
+ipython==9.2.0
+    # via
+    #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
+    #   ipykernel
+    #   ipywidgets
+    #   jupyter-console
+ipython-pygments-lexers==1.1.1
+    # via
+    #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
+    #   ipython
+ipywidgets==8.1.8
+    # via jupyter
+isoduration==20.11.0
+    # via jsonschema
 itsdangerous==2.2.0
     # via
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
     #   apache-airflow-core
     #   flask
+jedi==0.19.2
+    # via
+    #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
+    #   ipython
 jinja2==3.1.6
     # via
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
@@ -271,6 +351,10 @@ jinja2==3.1.6
     #   cadwyn
     #   fastapi
     #   flask
+    #   jupyter-server
+    #   jupyterlab
+    #   jupyterlab-server
+    #   nbconvert
     #   spacy
 jiter==0.9.0
     # via
@@ -280,14 +364,72 @@ joblib==1.5.0
     # via
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
     #   scikit-learn
-jsonschema==4.23.0
+json5==0.13.0
+    # via jupyterlab-server
+jsonpointer==3.0.0
+    # via
+    #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
+    #   jsonschema
+jsonschema[format-nongpl]==4.23.0
     # via
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
     #   apache-airflow-core
+    #   jupyter-events
+    #   jupyterlab-server
+    #   nbformat
 jsonschema-specifications==2025.4.1
     # via
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
     #   jsonschema
+jupyter==1.1.1
+    # via -r requirements.in
+jupyter-client==8.6.3
+    # via
+    #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
+    #   ipykernel
+    #   jupyter-console
+    #   jupyter-server
+    #   nbclient
+jupyter-console==6.6.3
+    # via jupyter
+jupyter-core==5.7.2
+    # via
+    #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
+    #   ipykernel
+    #   jupyter-client
+    #   jupyter-console
+    #   jupyter-server
+    #   jupyterlab
+    #   nbclient
+    #   nbconvert
+    #   nbformat
+jupyter-events==0.12.0
+    # via jupyter-server
+jupyter-lsp==2.3.0
+    # via jupyterlab
+jupyter-server==2.17.0
+    # via
+    #   jupyter-lsp
+    #   jupyterlab
+    #   jupyterlab-server
+    #   notebook
+    #   notebook-shim
+jupyter-server-terminals==0.5.4
+    # via jupyter-server
+jupyterlab==4.5.5
+    # via
+    #   jupyter
+    #   notebook
+jupyterlab-pygments==0.3.0
+    # via
+    #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
+    #   nbconvert
+jupyterlab-server==2.28.0
+    # via
+    #   jupyterlab
+    #   notebook
+jupyterlab-widgets==3.0.16
+    # via ipywidgets
 langcodes==3.5.0
     # via spacy
 language-data==1.3.0
@@ -324,7 +466,13 @@ markupsafe==3.0.2
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
     #   jinja2
     #   mako
+    #   nbconvert
     #   werkzeug
+matplotlib-inline==0.1.7
+    # via
+    #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
+    #   ipykernel
+    #   ipython
 mdurl==0.1.2
     # via
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
@@ -335,6 +483,10 @@ methodtools==0.4.7
     #   apache-airflow-core
     #   apache-airflow-providers-common-sql
     #   apache-airflow-task-sdk
+mistune==3.1.3
+    # via
+    #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
+    #   nbconvert
 more-itertools==10.7.0
     # via
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
@@ -352,6 +504,33 @@ mypy-extensions==1.1.0
     # via
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
     #   black
+nbclient==0.10.2
+    # via
+    #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
+    #   nbconvert
+nbconvert==7.16.6
+    # via
+    #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
+    #   jupyter
+    #   jupyter-server
+nbformat==5.10.4
+    # via
+    #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
+    #   jupyter-server
+    #   nbclient
+    #   nbconvert
+nest-asyncio==1.6.0
+    # via
+    #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
+    #   ipykernel
+notebook==7.5.4
+    # via
+    #   -r requirements.in
+    #   jupyter
+notebook-shim==0.2.4
+    # via
+    #   jupyterlab
+    #   notebook
 numpy==1.26.4
     # via
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
@@ -409,6 +588,8 @@ outcome==1.3.0.post0
     # via
     #   trio
     #   trio-websocket
+overrides==7.7.0
+    # via jupyter-server
 packaging==25.0
     # via
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
@@ -416,6 +597,12 @@ packaging==25.0
     #   black
     #   build
     #   gunicorn
+    #   ipykernel
+    #   jupyter-events
+    #   jupyter-server
+    #   jupyterlab
+    #   jupyterlab-server
+    #   nbconvert
     #   spacy
     #   thinc
     #   weasel
@@ -423,6 +610,14 @@ pandas==2.1.4
     # via
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
     #   -r requirements.in
+pandocfilters==1.5.1
+    # via
+    #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
+    #   nbconvert
+parso==0.8.4
+    # via
+    #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
+    #   jedi
 pathspec==0.12.1
     # via
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
@@ -433,12 +628,17 @@ pendulum==3.1.0
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
     #   apache-airflow-core
     #   apache-airflow-task-sdk
+pexpect==4.9.0
+    # via
+    #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
+    #   ipython
 pip-tools==7.4.1
     # via -r requirements.in
 platformdirs==4.3.8
     # via
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
     #   black
+    #   jupyter-core
 pluggy==1.5.0
     # via
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
@@ -447,6 +647,15 @@ preshed==3.0.10
     # via
     #   spacy
     #   thinc
+prometheus-client==0.21.1
+    # via
+    #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
+    #   jupyter-server
+prompt-toolkit==3.0.51
+    # via
+    #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
+    #   ipython
+    #   jupyter-console
 protobuf==4.25.7
     # via
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
@@ -459,12 +668,22 @@ psutil==7.0.0
     #   -r requirements.in
     #   apache-airflow-core
     #   apache-airflow-task-sdk
+    #   ipykernel
 psycopg2==2.9.10
     # via -r requirements.in
 psycopg2-binary==2.9.10
     # via
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
     #   -r requirements.in
+ptyprocess==0.7.0
+    # via
+    #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
+    #   pexpect
+    #   terminado
+pure-eval==0.2.3
+    # via
+    #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
+    #   stack-data
 pycparser==2.22
     # via
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
@@ -489,6 +708,10 @@ pygments==2.19.1
     # via
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
     #   apache-airflow-core
+    #   ipython
+    #   ipython-pygments-lexers
+    #   jupyter-console
+    #   nbconvert
     #   rich
 pyjwt==2.10.1
     # via
@@ -512,7 +735,9 @@ python-dateutil==2.9.0.post0
     #   -r requirements.in
     #   apache-airflow-core
     #   apache-airflow-task-sdk
+    #   arrow
     #   croniter
+    #   jupyter-client
     #   pandas
     #   pendulum
 python-dotenv==1.1.0
@@ -520,6 +745,8 @@ python-dotenv==1.1.0
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
     #   -r requirements.in
     #   uvicorn
+python-json-logger==4.0.0
+    # via jupyter-events
 python-multipart==0.0.20
     # via
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
@@ -536,17 +763,27 @@ pytz==2025.2
 pyyaml==6.0.2
     # via
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
+    #   jupyter-events
     #   libcst
     #   uvicorn
+pyzmq==26.4.0
+    # via
+    #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
+    #   ipykernel
+    #   jupyter-client
+    #   jupyter-console
+    #   jupyter-server
 referencing==0.36.2
     # via
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
     #   jsonschema
     #   jsonschema-specifications
+    #   jupyter-events
 requests==2.32.3
     # via
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
     #   apache-airflow-core
+    #   jupyterlab-server
     #   opentelemetry-exporter-otlp-proto-http
     #   retryhttp
     #   spacy
@@ -555,6 +792,15 @@ retryhttp==1.3.3
     # via
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
     #   apache-airflow-task-sdk
+rfc3339-validator==0.1.4
+    # via
+    #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
+    #   jsonschema
+    #   jupyter-events
+rfc3986-validator==0.1.1
+    # via
+    #   jsonschema
+    #   jupyter-events
 rich==13.9.4
     # via
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
@@ -585,6 +831,8 @@ scipy==1.15.3
     #   scikit-learn
 selenium==4.33.0
     # via -r requirements.in
+send2trash==2.1.0
+    # via jupyter-server
 setproctitle==1.3.6
     # via
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
@@ -597,6 +845,7 @@ six==1.17.0
     # via
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
     #   python-dateutil
+    #   rfc3339-validator
     #   wirerope
 smart-open==7.1.0
     # via
@@ -613,6 +862,10 @@ sortedcontainers==2.4.0
     # via
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
     #   trio
+soupsieve==2.7
+    # via
+    #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
+    #   beautifulsoup4
 spacy==3.8.7
     # via -r requirements.in
 spacy-legacy==3.0.12
@@ -645,6 +898,10 @@ srsly==2.5.1
     #   spacy
     #   thinc
     #   weasel
+stack-data==0.6.3
+    # via
+    #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
+    #   ipython
 starlette==0.46.2
     # via
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
@@ -673,6 +930,10 @@ termcolor==3.1.0
     # via
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
     #   apache-airflow-core
+terminado==0.18.1
+    # via
+    #   jupyter-server
+    #   jupyter-server-terminals
 text-unidecode==1.3
     # via
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
@@ -683,11 +944,41 @@ threadpoolctl==3.6.0
     # via
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
     #   scikit-learn
+tinycss2==1.4.0
+    # via
+    #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
+    #   bleach
+tornado==6.4.2
+    # via
+    #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
+    #   ipykernel
+    #   jupyter-client
+    #   jupyter-server
+    #   jupyterlab
+    #   notebook
+    #   terminado
 tqdm==4.67.1
     # via
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
     #   openai
     #   spacy
+traitlets==5.14.3
+    # via
+    #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
+    #   comm
+    #   ipykernel
+    #   ipython
+    #   ipywidgets
+    #   jupyter-client
+    #   jupyter-console
+    #   jupyter-core
+    #   jupyter-events
+    #   jupyter-server
+    #   jupyterlab
+    #   matplotlib-inline
+    #   nbclient
+    #   nbconvert
+    #   nbformat
 trio==0.30.0
     # via
     #   selenium
@@ -710,8 +1001,10 @@ typing-extensions==4.13.2
     #   aiosqlite
     #   alembic
     #   anyio
+    #   beautifulsoup4
     #   cadwyn
     #   fastapi
+    #   ipython
     #   openai
     #   opentelemetry-sdk
     #   pydantic
@@ -728,6 +1021,7 @@ typing-inspection==0.4.0
 tzdata==2025.2
     # via
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
+    #   arrow
     #   pandas
     #   pendulum
 uc-micro-py==1.0.3
@@ -738,6 +1032,8 @@ universal-pathlib==0.2.6
     # via
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
     #   apache-airflow-core
+uri-template==1.3.0
+    # via jsonschema
 urllib3[socks]==2.4.0
     # via
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
@@ -767,11 +1063,23 @@ watchfiles==1.0.5
     # via
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
     #   uvicorn
+wcwidth==0.2.13
+    # via
+    #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
+    #   prompt-toolkit
 weasel==0.4.1
     # via spacy
+webcolors==25.10.0
+    # via jsonschema
+webencodings==0.5.1
+    # via
+    #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
+    #   bleach
+    #   tinycss2
 websocket-client==1.8.0
     # via
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
+    #   jupyter-server
     #   selenium
 websockets==14.2
     # via
@@ -783,6 +1091,8 @@ werkzeug==2.2.3
     #   flask
 wheel==0.45.1
     # via pip-tools
+widgetsnbextension==4.0.15
+    # via ipywidgets
 wirerope==1.0.0
     # via
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt

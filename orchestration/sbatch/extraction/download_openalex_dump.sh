@@ -1,12 +1,12 @@
 #!/bin/bash
-#SBATCH --job-name=oa_secure_ingest
+#SBATCH --job-name=openalex_secure_download
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=8G
 #SBATCH --time=8:00:00
 #SBATCH --partition=standard
-#SBATCH --output=/vast/lu72hip/logs/oa_ingest_%j.log
+#SBATCH --output=/vast/lu72hip/logs/openalex_download_%j.log
 #SBATCH --mail-user=walter.ehrenberger@uni-jena.de
 #SBATCH --mail-type=ALL
 

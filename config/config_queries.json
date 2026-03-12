@@ -29,7 +29,8 @@
         "query": "contenttype='project' AND '*'",
         "download_attachments": false,
         "checkpoint_start": "1985-01-01",
-        "checkpoint_range": "1"
+        "checkpoint_range": "1",
+        "path_duck": "/vast/lu72hip/data/duckdb/sources/cordis_raw.duckdb"
       }
     ]
   },
@@ -75,5 +76,17 @@
   },
   "meta_heritage": {
     "checkpoint": null
+  },
+  "openaire_dump": {
+    "path_raw": "/vast/lu72hip/data/pile/openaire_2025_12_01_dump",
+    "path_duck": "/vast/lu72hip/data/duckdb/sources/openaire_raw.duckdb"
+  },
+  "openalex_dump": {
+    "path_raw": "/vast/lu72hip/data/pile/openalex_2026_02_03_dump",
+    "path_duck": "/vast/lu72hip/data/duckdb/sources/openalex_raw.duckdb"
+  },
+  "ror_dump": {
+    "path_raw": "/vast/lu72hip/data/pile/ror_2026_02_24_dump/v2.3-2026-02-24-ror-data.json",
+    "path_duck": "/vast/lu72hip/data/duckdb/sources/ror_raw.duckdb"
   }
 }
