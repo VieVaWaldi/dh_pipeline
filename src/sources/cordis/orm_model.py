@@ -9,7 +9,8 @@ from sqlalchemy import (
     Float,
     Boolean,
     Date,
-    ARRAY,
+    JSON,
+    Sequence,
 )
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
@@ -22,9 +23,9 @@ Base = declarative_base()
 
 class Person(Base):
     __tablename__ = "person"
-    __table_args__ = {"schema": "cordis"}
+    # __table_args__ = {"schema": "cordis"}
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, Sequence("person_id_seq"), primary_key=True)
     title = Column(Text)
     name = Column(Text)
     first_name = Column(Text)
@@ -34,60 +35,60 @@ class Person(Base):
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
     institutions = relationship(
-        "Institution", secondary="cordis.j_institution_person", back_populates="persons"
+        "Institution", secondary="j_institution_person", back_populates="persons"
     )
     research_outputs = relationship(
         "ResearchOutput",
-        secondary="cordis.j_researchoutput_person",
+        secondary="j_researchoutput_person",
         back_populates="persons",
     )
 
 
 class Topic(Base):
     __tablename__ = "topic"
-    __table_args__ = {"schema": "cordis"}
+    # __table_args__ = {"schema": "cordis"}
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, Sequence("topic_id_seq"), primary_key=True)
     name = Column(Text, unique=True, nullable=False)
     level = Column(Integer, nullable=False)
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
     projects = relationship(
-        "Project", secondary="cordis.j_project_topic", back_populates="topics"
+        "Project", secondary="j_project_topic", back_populates="topics"
     )
     research_outputs = relationship(
         "ResearchOutput",
-        secondary="cordis.j_researchoutput_topic",
+        secondary="j_researchoutput_topic",
         back_populates="topics",
     )
 
 
 class Weblink(Base):
     __tablename__ = "weblink"
-    __table_args__ = {"schema": "cordis"}
+    # __table_args__ = {"schema": "cordis"}
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, Sequence("weblink_id_seq"), primary_key=True)
     url = Column(Text, unique=True, nullable=False)
     title = Column(Text)
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
     projects = relationship(
-        "Project", secondary="cordis.j_project_weblink", back_populates="weblinks"
+        "Project", secondary="j_project_weblink", back_populates="weblinks"
     )
     research_outputs = relationship(
         "ResearchOutput",
-        secondary="cordis.j_researchoutput_weblink",
+        secondary="j_researchoutput_weblink",
         back_populates="weblinks",
     )
 
 
 class FundingProgramme(Base):
     __tablename__ = "fundingprogramme"
-    __table_args__ = {"schema": "cordis"}
+    # __table_args__ = {"schema": "cordis"}
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, Sequence("fundingprogramme_id_seq"), primary_key=True)
     code = Column(Text, unique=True, nullable=False)
     title = Column(Text)
     short_title = Column(Text)
@@ -99,7 +100,7 @@ class FundingProgramme(Base):
 
     projects = relationship(
         "Project",
-        secondary="cordis.j_project_fundingprogramme",
+        secondary="j_project_fundingprogramme",
         back_populates="funding_programmes",
     )
 
@@ -109,9 +110,9 @@ class FundingProgramme(Base):
 
 class Institution(Base):
     __tablename__ = "institution"
-    __table_args__ = {"schema": "cordis"}
+    # __table_args__ = {"schema": "cordis"}
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, Sequence("institution_id_seq"), primary_key=True)
     legal_name = Column(Text, unique=True, nullable=False)
     sme = Column(Boolean)
     url = Column(Text)
@@ -122,7 +123,7 @@ class Institution(Base):
     postalcode = Column(Text)
     city = Column(Text)
     country = Column(Text)
-    geolocation = Column(ARRAY(Float))
+    geolocation = Column(JSON)
 
     type_title = Column(Text)
     nuts_level_0 = Column(Text)
@@ -134,25 +135,25 @@ class Institution(Base):
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
     persons = relationship(
-        "Person", secondary="cordis.j_institution_person", back_populates="institutions"
+        "Person", secondary="j_institution_person", back_populates="institutions"
     )
     projects = relationship(
         "Project",
-        secondary="cordis.j_project_institution",
+        secondary="j_project_institution",
         back_populates="institutions",
     )
     research_outputs = relationship(
         "ResearchOutput",
-        secondary="cordis.j_researchoutput_institution",
+        secondary="j_researchoutput_institution",
         back_populates="institutions",
     )
 
 
 class ResearchOutput(Base):
     __tablename__ = "researchoutput"
-    __table_args__ = {"schema": "cordis"}
+    # __table_args__ = {"schema": "cordis"}
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, Sequence("researchoutput_id_seq"), primary_key=True)
     id_original = Column(Text, unique=True, nullable=False)
     from_pdf = Column(Boolean)
     type = Column(Text, nullable=False)
@@ -177,36 +178,36 @@ class ResearchOutput(Base):
 
     projects = relationship(
         "Project",
-        secondary="cordis.j_project_researchoutput",
+        secondary="j_project_researchoutput",
         back_populates="research_outputs",
     )
     persons = relationship(
         "Person",
-        secondary="cordis.j_researchoutput_person",
+        secondary="j_researchoutput_person",
         back_populates="research_outputs",
     )
     topics = relationship(
         "Topic",
-        secondary="cordis.j_researchoutput_topic",
+        secondary="j_researchoutput_topic",
         back_populates="research_outputs",
     )
     weblinks = relationship(
         "Weblink",
-        secondary="cordis.j_researchoutput_weblink",
+        secondary="j_researchoutput_weblink",
         back_populates="research_outputs",
     )
     institutions = relationship(
         "Institution",
-        secondary="cordis.j_researchoutput_institution",
+        secondary="j_researchoutput_institution",
         back_populates="research_outputs",
     )
 
 
 class Project(Base):
     __tablename__ = "project"
-    __table_args__ = {"schema": "cordis"}
+    # __table_args__ = {"schema": "cordis"}
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, Sequence("project_id_seq"), primary_key=True)
     id_original = Column(Text, unique=True, nullable=False)
     doi = Column(Text)
     title = Column(Text, nullable=False)
@@ -226,23 +227,23 @@ class Project(Base):
 
     research_outputs = relationship(
         "ResearchOutput",
-        secondary="cordis.j_project_researchoutput",
+        secondary="j_project_researchoutput",
         back_populates="projects",
     )
     topics = relationship(
-        "Topic", secondary="cordis.j_project_topic", back_populates="projects"
+        "Topic", secondary="j_project_topic", back_populates="projects"
     )
     weblinks = relationship(
-        "Weblink", secondary="cordis.j_project_weblink", back_populates="projects"
+        "Weblink", secondary="j_project_weblink", back_populates="projects"
     )
     funding_programmes = relationship(
         "FundingProgramme",
-        secondary="cordis.j_project_fundingprogramme",
+        secondary="j_project_fundingprogramme",
         back_populates="projects",
     )
     institutions = relationship(
         "Institution",
-        secondary="cordis.j_project_institution",
+        secondary="j_project_institution",
         back_populates="projects",
     )
 
@@ -254,16 +255,14 @@ class Project(Base):
 
 class JunctionInstitutionPerson(Base):
     __tablename__ = "j_institution_person"
-    __table_args__ = {"schema": "cordis"}
+    # __table_args__ = {"schema": "cordis"}
 
     institution_id = Column(
         Integer,
-        ForeignKey("cordis.institution.id", ondelete="CASCADE"),
+        ForeignKey("institution.id"),
         primary_key=True,
     )
-    person_id = Column(
-        Integer, ForeignKey("cordis.person.id", ondelete="CASCADE"), primary_key=True
-    )
+    person_id = Column(Integer, ForeignKey("person.id"), primary_key=True, index=True)
 
 
 """ Junction ResearchOutput """
@@ -271,60 +270,52 @@ class JunctionInstitutionPerson(Base):
 
 class JunctionResearchOutputPerson(Base):
     __tablename__ = "j_researchoutput_person"
-    __table_args__ = {"schema": "cordis"}
+    # __table_args__ = {"schema": "cordis"}
 
     researchoutput_id = Column(
         Integer,
-        ForeignKey("cordis.researchoutput.id", ondelete="CASCADE"),
+        ForeignKey("researchoutput.id"),
         primary_key=True,
     )
-    person_id = Column(
-        Integer, ForeignKey("cordis.person.id", ondelete="CASCADE"), primary_key=True
-    )
+    person_id = Column(Integer, ForeignKey("person.id"), primary_key=True, index=True)
     person_position = Column(Integer, nullable=False)
 
 
 class JunctionResearchOutputTopic(Base):
     __tablename__ = "j_researchoutput_topic"
-    __table_args__ = {"schema": "cordis"}
+    # __table_args__ = {"schema": "cordis"}
 
     researchoutput_id = Column(
         Integer,
-        ForeignKey("cordis.researchoutput.id", ondelete="CASCADE"),
+        ForeignKey("researchoutput.id"),
         primary_key=True,
     )
-    topic_id = Column(
-        Integer, ForeignKey("cordis.topic.id", ondelete="CASCADE"), primary_key=True
-    )
+    topic_id = Column(Integer, ForeignKey("topic.id"), primary_key=True, index=True)
 
 
 class JunctionResearchOutputWeblink(Base):
     __tablename__ = "j_researchoutput_weblink"
-    __table_args__ = {"schema": "cordis"}
+    # __table_args__ = {"schema": "cordis"}
 
     researchoutput_id = Column(
         Integer,
-        ForeignKey("cordis.researchoutput.id", ondelete="CASCADE"),
+        ForeignKey("researchoutput.id"),
         primary_key=True,
     )
-    weblink_id = Column(
-        Integer, ForeignKey("cordis.weblink.id", ondelete="CASCADE"), primary_key=True
-    )
+    weblink_id = Column(Integer, ForeignKey("weblink.id"), primary_key=True, index=True)
 
 
 class JunctionResearchOutputInstitution(Base):
     __tablename__ = "j_researchoutput_institution"
-    __table_args__ = {"schema": "cordis"}
+    # __table_args__ = {"schema": "cordis"}
 
     researchoutput_id = Column(
         Integer,
-        ForeignKey("cordis.researchoutput.id", ondelete="CASCADE"),
+        ForeignKey("researchoutput.id"),
         primary_key=True,
     )
     institution_id = Column(
-        Integer,
-        ForeignKey("cordis.institution.id", ondelete="CASCADE"),
-        primary_key=True,
+        Integer, ForeignKey("institution.id"), primary_key=True, index=True
     )
 
 
@@ -333,53 +324,37 @@ class JunctionResearchOutputInstitution(Base):
 
 class JunctionProjectTopic(Base):
     __tablename__ = "j_project_topic"
-    __table_args__ = {"schema": "cordis"}
+    # __table_args__ = {"schema": "cordis"}
 
-    project_id = Column(
-        Integer, ForeignKey("cordis.project.id", ondelete="CASCADE"), primary_key=True
-    )
-    topic_id = Column(
-        Integer, ForeignKey("cordis.topic.id", ondelete="CASCADE"), primary_key=True
-    )
+    project_id = Column(Integer, ForeignKey("project.id"), primary_key=True)
+    topic_id = Column(Integer, ForeignKey("topic.id"), primary_key=True, index=True)
 
 
 class JunctionProjectWeblink(Base):
     __tablename__ = "j_project_weblink"
-    __table_args__ = {"schema": "cordis"}
+    # __table_args__ = {"schema": "cordis"}
 
-    project_id = Column(
-        Integer, ForeignKey("cordis.project.id", ondelete="CASCADE"), primary_key=True
-    )
-    weblink_id = Column(
-        Integer, ForeignKey("cordis.weblink.id", ondelete="CASCADE"), primary_key=True
-    )
+    project_id = Column(Integer, ForeignKey("project.id"), primary_key=True)
+    weblink_id = Column(Integer, ForeignKey("weblink.id"), primary_key=True, index=True)
 
 
 class JunctionProjectFundingProgramme(Base):
     __tablename__ = "j_project_fundingprogramme"
-    __table_args__ = {"schema": "cordis"}
+    # __table_args__ = {"schema": "cordis"}
 
-    project_id = Column(
-        Integer, ForeignKey("cordis.project.id", ondelete="CASCADE"), primary_key=True
-    )
+    project_id = Column(Integer, ForeignKey("project.id"), primary_key=True)
     fundingprogramme_id = Column(
-        Integer,
-        ForeignKey("cordis.fundingprogramme.id", ondelete="CASCADE"),
-        primary_key=True,
+        Integer, ForeignKey("fundingprogramme.id"), primary_key=True, index=True
     )
 
 
 class JunctionProjectInstitution(Base):
     __tablename__ = "j_project_institution"
-    __table_args__ = {"schema": "cordis"}
+    # __table_args__ = {"schema": "cordis"}
 
-    project_id = Column(
-        Integer, ForeignKey("cordis.project.id", ondelete="CASCADE"), primary_key=True
-    )
+    project_id = Column(Integer, ForeignKey("project.id"), primary_key=True)
     institution_id = Column(
-        Integer,
-        ForeignKey("cordis.institution.id", ondelete="CASCADE"),
-        primary_key=True,
+        Integer, ForeignKey("institution.id"), primary_key=True, index=True
     )
 
     institution_position = Column(Integer, nullable=False)
@@ -393,13 +368,9 @@ class JunctionProjectInstitution(Base):
 
 class JunctionProjectResearchOutput(Base):
     __tablename__ = "j_project_researchoutput"
-    __table_args__ = {"schema": "cordis"}
+    # __table_args__ = {"schema": "cordis"}
 
-    project_id = Column(
-        Integer, ForeignKey("cordis.project.id", ondelete="CASCADE"), primary_key=True
-    )
+    project_id = Column(Integer, ForeignKey("project.id"), primary_key=True)
     researchoutput_id = Column(
-        Integer,
-        ForeignKey("cordis.researchoutput.id", ondelete="CASCADE"),
-        primary_key=True,
+        Integer, ForeignKey("researchoutput.id"), primary_key=True, index=True
     )

@@ -71,6 +71,7 @@ class CordisLoader(ILoader):
         self.seen_institutions = set()
         self.seen_weblinks = set()
         self.seen_topics = set()
+        self.seen_person_institution = set()
 
     def load(self, session: Session, document: Dict):
         assert (
@@ -80,6 +81,7 @@ class CordisLoader(ILoader):
         self.seen_institutions = set()
         self.seen_weblinks = set()
         self.seen_topics = set()
+        self.seen_person_institution = set()
 
         project_data = document.get(PROJECT, {})
         if not project_data:
@@ -407,7 +409,7 @@ class CordisLoader(ILoader):
                 comment=parse_content(result_data.get("teaser")),
                 fulltext=None,
                 funding_number=None,
-                **details
+                **details,
             )
 
             if created:
@@ -422,9 +424,7 @@ class CordisLoader(ILoader):
                     session, result_data
                 )
 
-                self._create_output_authors(
-                    session, author_str, research_output
-                )
+                self._create_output_authors(session, author_str, research_output)
 
                 self._create_output_topics_junction(
                     session, research_output, output_topics
@@ -472,8 +472,8 @@ class CordisLoader(ILoader):
         for idx, file_path in enumerate(attachments_dir.iterdir()):
             if not file_path.name.endswith(".pdf"):
                 continue
-            # ToDo: /var/spool/slurm/d/job4197661/slurm_script: line 25: 1613720 Killed                  
-            #python src/elt/loading/run_loader.py --source "$SOURCE" --query_id "$QUERY_ID"
+            # ToDo: /var/spool/slurm/d/job4197661/slurm_script: line 25: 1613720 Killed
+            # python src/elt/loading/run_loader.py --source "$SOURCE" --query_id "$QUERY_ID"
             # slurmstepd: error: Detected 1 oom_kill event in StepId=4197661.batch. Some of the step tasks have been OOM Killed.
 
             # fulltext = parse_content(pdf_to_text(file_path))
@@ -595,10 +595,10 @@ class CordisLoader(ILoader):
 
         seen_authors = set()
         position = 0
-        for author_name in re.split(r'[,;]', authors_str):
+        for author_name in re.split(r"[,;]", authors_str):
             author_name = parse_names_and_identifiers(author_name)
             if author_name and len(author_name) > self.MAX_NAME_LENGTH:
-                author_name = author_name[:self.MAX_NAME_LENGTH].strip()
+                author_name = author_name[: self.MAX_NAME_LENGTH].strip()
             if not author_name or author_name in seen_authors:
                 continue
             seen_authors.add(author_name)
@@ -624,12 +624,19 @@ class CordisLoader(ILoader):
         self, session: Session, person: Person, institution: Institution
     ):
         """Create junction table entry between Person and Institution."""
-        if person.id and institution.id:
-            get_or_create(
-                session,
-                JunctionInstitutionPerson,
-                {"institution_id": institution.id, "person_id": person.id},
-            )
+        if not person.id or not institution.id:
+            session.flush()
+        if not person.id or not institution.id:
+            return
+        key = (institution.id, person.id)
+        if key in self.seen_person_institution:
+            return
+        self.seen_person_institution.add(key)
+        get_or_create(
+            session,
+            JunctionInstitutionPerson,
+            {"institution_id": institution.id, "person_id": person.id},
+        )
 
     def _create_person_output_junction(
         self,

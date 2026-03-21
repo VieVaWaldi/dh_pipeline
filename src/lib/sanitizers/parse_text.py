@@ -6,14 +6,18 @@ DOIs and acronyms should generally NOT be sanitized.
 """
 
 
+_BOM_CHARS = "\ufeff\u200b\u200c\u200d\ufffe"
+
+
 def _ensure_string(value: Any) -> Optional[str]:
-    """Convert any value to string, or return None if conversion fails."""
+    """Convert any value to string, strip BOM/zero-width chars, or return None."""
     if value is None:
         return None
     try:
-        return str(value)
+        s = str(value)
     except (ValueError, TypeError):
         return None
+    return s.strip(_BOM_CHARS) or None
 
 
 def parse_string(value: Optional[str]) -> Optional[str]:

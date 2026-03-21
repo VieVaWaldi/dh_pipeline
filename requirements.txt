@@ -223,6 +223,9 @@ duckdb==1.2.2
     # via
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
     #   -r requirements.in
+    #   duckdb-engine
+duckdb-engine==0.17.0
+    # via -r requirements.in
 email-validator==2.2.0
     # via
     #   -c https://raw.githubusercontent.com/apache/airflow/constraints-3.0.1/constraints-3.11.txt
@@ -596,6 +599,7 @@ packaging==25.0
     #   apache-airflow-core
     #   black
     #   build
+    #   duckdb-engine
     #   gunicorn
     #   ipykernel
     #   jupyter-events
@@ -878,6 +882,7 @@ sqlalchemy[asyncio]==1.4.54
     #   -r requirements.in
     #   alembic
     #   apache-airflow-core
+    #   duckdb-engine
     #   sqlalchemy-jsonfield
     #   sqlalchemy-utils
 sqlalchemy-jsonfield==1.0.2

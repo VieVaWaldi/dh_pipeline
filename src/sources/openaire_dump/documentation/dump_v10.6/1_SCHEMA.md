@@ -10,7 +10,7 @@ This document explains the source data schema as available in the dump.
 - **Format**: Each entity is a directory of `part-XXXXX.json.gz` files (newline-delimited JSON, gzip-compressed).
 - **Data model**: https://graph.openaire.eu/docs/data-model/
 
---- 
+---
 
 ## Entities and Scale
 
@@ -18,19 +18,17 @@ This is the complete list of all entity types in the dump. All are present as di
 
 | Entity | Parts on disk | Row count | Notes |
 |---|---|---|---|
-| `communities_infrastructures` | 1 | **36** (exact) | tiny — single part |
+| `communities_infrastructures` | 1 | 36 | tiny — single part |
 | `dataset` | 573 | ~74M | same schema as publication |
 | `datasource` | 2 | ~216K | journals, repos, etc. |
-| `organization` | 120 | **448,161** (exact) | |
+| `organization` | 120 | 448,161 | |
 | `otherresearchproduct` | 250 | ~32M | same schema as publication |
-| `project` | 12 | **3,673,360** (exact) | funding grants |
+| `project` | 12 | 3,673,360 | funding grants |
 | `publication` | 1500 | ~165M | |
 | `relation` | 2934 | ~2B | all cross-entity edges; see breakdown below |
 | `software` | 18 | ~862K | same schema as publication |
 
 **Note:** The API docs list fields like `projects`, `organizations`, `communities` as embedded cross-references *within* research product records. **Those embedded fields are absent from the dump.** All cross-entity links live exclusively in the `relation/` directory. The entity types themselves (`project/`, `organization/`, etc.) all exist as separate directories.
-
----
 
 ## DuckDB Loading
 
@@ -173,7 +171,7 @@ The 9 `JSON`-typed fields at the bottom are null in the sampled publication and 
 | `startDate` | DATE | nullable |
 | `endDate` | DATE | nullable |
 | `callIdentifier` | VARCHAR | nullable |
-| `keywords` | VARCHAR[] | nullable |
+| `keywords` | VARCHAR | nullable; single string, not an array |
 | `openAccessMandateForPublications` | BOOLEAN | |
 | `openAccessMandateForDataset` | BOOLEAN | |
 | `subjects` | VARCHAR[] | nullable |
@@ -213,7 +211,7 @@ The relation table covers **all cross-entity relationships**, not just citations
 | `participation` | isParticipant | organization↔project |
 | `relationship` | IsRelatedTo, IsSourceOf, IsDerivedFrom, IsReferencedBy, References | product↔product, product↔community, project↔community, etc. |
 
-**Dominant type by volume is `provision`** (product↔datasource links). For pipeline purposes, `affiliation` (product→organization) and `outcome` (project→product) are the most relevant.
+**Dominant type by volume is `provision`** (product↔datasource links).
 
 ---
 
@@ -244,7 +242,7 @@ SELECT * FROM read_json('/vast/.../openaire_2025_12_01_dump/publication/*.json.g
 
 ### Relations (~2B rows, 2934 parts) — the hard problem
 
-**Option A — Filter to useful relation types only** (recommended)
+Filter to useful relation types only**
 ```sql
 COPY (
     SELECT * FROM read_json('/vast/.../openaire_2025_12_01_dump/relation/*.json.gz',
@@ -253,38 +251,3 @@ COPY (
 ) TO 'relations_filtered.parquet' (FORMAT parquet, COMPRESSION zstd)
 ```
 Excludes `provision` and `similarity` edges which dominate by count but are unlikely needed.
-
-**Option B — Batch by part files into Parquet**
-If memory is a concern, process in batches, appending to Parquet.
-
-**Option C — Skip relations entirely**
-If only publication metadata and organization records are needed, skip. The `affiliation` and `outcome` edges are only needed for product→organization or product→project linkage.
-
----
-
-## Key Risks and Gotchas
-
-1. **Relations scale** — ~2B rows, 2934 parts. Even filtered, a multi-hour slurm job. The dominant type (`provision`) is likely not needed — filter early.
-
-2. **`product` not `result`** — dump uses `product` as sourceType/targetType for research outputs; API docs say `result`.
-
-3. **`provision` edges dominate** — most relation rows are datasource↔product links; exclude unless specifically needed.
-
-4. **`publicationDate` data quality** — values like `0001-12-30` exist in publications. Load as VARCHAR or filter.
-
-5. **Dump schema ≠ API docs** — embedded `projects`, `organizations`, `communities`, `collectedfrom` fields within publication records are absent. Cross-entity links live in `relation/` only.
-
-6. **`coverages` field** — inferred as `JSON` due to type inconsistency. Not a blocker but cannot be used as a typed STRUCT.
-
-7. **Datasource `subjects` field** — may contain `{NULL}` string artifacts. Clean on load if using this field.
-
----
-
-## Open Questions (remaining)
-
-- [ ] Does `union_by_name=true` handle type conflicts across all 1500 publication parts (only single-tar tested)?
-- [ ] Are the 9 JSON-typed fields (codeRepositoryUrl, programmingLanguage, etc.) ever non-null in software/dataset records, or are they truly always null?
-- [ ] Is `publicationDate` as DATE safe to use, or should it be loaded as VARCHAR and cleaned post-load?
-- [ ] Available memory on compute node for loading all relations — check before running.
-- [ ] Total wall-clock time to load filtered relations into Parquet — schedule as dedicated slurm job.
-- [ ] Are the ~2B relations needed, or can affiliations/outcomes alone be loaded?

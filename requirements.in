@@ -23,6 +23,7 @@ scikit-learn
 spacy
 supervisor
 duckdb
+duckdb-engine
 jupyter
 notebook
 ipykernel

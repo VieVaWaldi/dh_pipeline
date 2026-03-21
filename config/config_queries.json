@@ -79,7 +79,8 @@
   },
   "openaire_dump": {
     "path_raw": "/vast/lu72hip/data/pile/openaire_2025_12_01_dump",
-    "path_duck": "/vast/lu72hip/data/duckdb/sources/openaire_raw.duckdb"
+    "path_duck": "/vast/lu72hip/data/duckdb/sources/openaire_raw.duckdb",
+    "path_duck_staging": "/vast/lu72hip/data/duckdb/sources/openaire_staging.duckdb"
   },
   "openalex_dump": {
     "path_raw": "/vast/lu72hip/data/pile/openalex_2026_02_03_dump",
@@ -88,5 +89,9 @@
   "ror_dump": {
     "path_raw": "/vast/lu72hip/data/pile/ror_2026_02_24_dump/v2.3-2026-02-24-ror-data.json",
     "path_duck": "/vast/lu72hip/data/duckdb/sources/ror_raw.duckdb"
+  },
+  "core_v3": {
+    "path_staging_duck": "/vast/lu72hip/data/duckdb/core/core_v3.duckdb",
+    "path_topics_duck": "/vast/lu72hip/data/duckdb/core/core_v3_topics.duckdb"
   }
 }
