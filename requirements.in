@@ -27,3 +27,5 @@ duckdb-engine
 jupyter
 notebook
 ipykernel
+torch
+transformers

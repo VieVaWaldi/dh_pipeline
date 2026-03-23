@@ -24,5 +24,5 @@ Core_v3 is saved as a duckdb file in `/vast/lu72hip/data/duckdb/core/core_v3.duc
     * From ROR organization information like geolocation and others are needed.
 6. Enrichment
     * TFIdf Topic Classification using `src/enrichment/topic_modelling` -> I did this before step 5 so the intermediate core file is called path_topics_duck in the config.
-    * CH Classification using `WIP`
+    * CH Classification
 7. And finally a deployment from duckdb to postgresdb

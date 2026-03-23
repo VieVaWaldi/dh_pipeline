@@ -9,6 +9,7 @@
 /logs
 /data
 /checkpoints
+/models
 
 ### DBT ignores ###
 

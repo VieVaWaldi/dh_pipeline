@@ -114,15 +114,15 @@ con.execute("""
 triplet_count = con.execute("SELECT COUNT(*) FROM _cordis_triplets").fetchone()[0]
 logging.info(f"Triplets matched: {triplet_count:,}")
 
-logging.info("Updating relation rows (both directions)...")
+logging.info("Updating relation rows (project → organization direction only)...")
 con.execute("""
     UPDATE relation r
     SET
         cordis_ec_contribution = ct.cordis_ec_contribution,
         cordis_type            = ct.cordis_type
     FROM _cordis_triplets ct
-    WHERE (r.source = ct.core_project_id AND r.target = ct.core_org_id)
-       OR (r.source = ct.core_org_id     AND r.target = ct.core_project_id)
+    WHERE r.source = ct.core_project_id
+      AND r.target = ct.core_org_id
 """)
 
 enriched_rel = con.execute(

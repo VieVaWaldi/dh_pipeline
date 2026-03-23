@@ -155,8 +155,8 @@ con.execute("""
         cordis_ec_contribution = ct.cordis_ec_contribution,
         cordis_type            = ct.cordis_type
     FROM _cordis_triplets ct
-    WHERE (r.source = ct.core_project_id AND r.target = ct.core_org_id)
-       OR (r.source = ct.core_org_id     AND r.target = ct.core_project_id)
+    WHERE r.source = ct.core_project_id
+      AND r.target = ct.core_org_id
 """)
 
 cordis_result = con.execute("""

@@ -131,14 +131,15 @@ JOIN cordis.j_project_institution jpi ON jpi.project_id = cp.id
 JOIN cordis.institution      ci  ON ci.id = jpi.institution_id
 JOIN organization            co  ON LOWER(TRIM(co.legalName)) = LOWER(TRIM(ci.legal_name));
 
--- Update both directions
+-- Update project → organization direction only (org → project is the same fact reversed,
+-- enriching both would cause double-counting in any SUM(cordis_ec_contribution) query)
 UPDATE relation r
 SET
     cordis_ec_contribution = ct.cordis_ec_contribution,
     cordis_type            = ct.cordis_type
 FROM _cordis_triplets ct
-WHERE (r.source = ct.core_project_id AND r.target = ct.core_org_id)
-   OR (r.source = ct.core_org_id     AND r.target = ct.core_project_id);
+WHERE r.source = ct.core_project_id
+  AND r.target = ct.core_org_id;
 ```
 
 ### Expected yield
@@ -147,6 +148,6 @@ WHERE (r.source = ct.core_project_id AND r.target = ct.core_org_id)
 |---|---|
 | Cordis projects matched to core | 96,056 |
 | Triplets with institution name match | 317,818 |
-| Relation rows enriched (both directions) | ~386K |
+| Relation rows enriched (project→org direction only) | ~193K |
 | `cordis_ec_contribution` non-null after enrichment | ~55% of enriched rows |
 | `cordis_type` non-null after enrichment | 100% of enriched rows |
